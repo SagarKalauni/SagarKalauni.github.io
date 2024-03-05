@@ -1,0 +1,57 @@
+/*Sagar Kalauni*/
+/*Lab4-Kalauni*/
+
+/*Q NO. 1) Write a query that will select all columns from the Specialty table without using the (*) in your query. You may wish to use the DESCRIBE command to examine the structure of the Specialty table*/
+/*First let's look at all the columns in the Specialty Table using DESC command */
+DESC Specialty;
+
+/*Manually selecting all columns of the Specialty table*/
+SELECT SpecialtyID, Title, AwardedBy
+FROM Specialty;
+
+/*Q NO.2)Your manager wonders what types of employee titles are tracked in the Employee table.  Produce a sample listing of the titles of employees at the hospital that does not include any duplicate rows. */
+/*Using distinct command to select the all non duplicated titles in the employee table*/
+SELECT distinct title 
+FROM Employee;
+
+/*Q NO. 3)Execute a query that will display all treatment dates for patient 100302.  Include the patientID, employeeID, and date treated.*/
+/*To fully show column name and make our output infromative, formating done initially*/
+COLUMN PatientID    FORMAT   A10;
+COLUMN EmployeeID   FORMAT   A12;
+COLUMN DateTreated  FORMAT   A12;
+SELECT  PatientID, EmployeeID, DateTreated
+From Treatment
+WHERE PatientID='100302';
+
+/*Q NO.4)Execute a query that lists all the male nurses – i.e., employees with a job title that includes the degree ‘R.N..’ List each employee’s last name, first name, title, and gender. Format your columns so that lastName is 12 characters, firstName is 12 characters, title is 5 characters, and gender is 6 characters.*/
+/*M- Male as a gender*/
+COLUMN LastName  FORMAT   A12;
+COLUMN FirstName FORMAT   A12;
+COLUMN Title     FORMAT   A5;
+COLUMN Gender    FORMAT   A6;
+SELECT LastName, FirstName, Title, Gender
+FROM Employee
+WHERE Gender='M';
+
+/*Q No.5)Produce a listing that will only display patients from Alton or Collinsville. The result table should display the first name and last name of these patients as well as the city they are from. Sort the report by city. Format first name and last name so they are 12 characters wide each.*/
+/*While looking for city in where condition, we should give the city name as they are in the table, because it is case sensetive*/
+COLUMN LastName FORMAT A12;
+COLUMN FirstName FORMAT A12;
+SELECT FirstName, LastName, City
+FROM Patient
+WHERE City='Alton' OR City='Collinsville'
+ORDER BY City;
+
+/*Q NO.6)Execute a query that will display all equipment with an original cost below $500, AND either have 10 or more items in stock (quantityAvailable) OR are used in project 8.  List the equipment description, original cost, quantity available, and project number.  Format your columns so that the output fits on one row.  Format your columns so the output fits on one row.*/
+SET WRAP OFF;
+COLUMN Description FORMAT A12;
+COLUMN "Orginal Cost" FORMAT A12;
+SELECT Description, OriginalCost "Orginal Cost", QuantityAvailable, ProjectNumber
+FROM Equipment
+WHERE OriginalCost<500 AND QuantityAvailable>=10 OR ProjectNumber=8;
+
+/*Q NO.7)The CFO needs a report to justify standard charges to the State Health Department. The report should contain the description, standard charge, and category ID. Sort the report by categoryID and then by standard charge. Use the appropriate command to limit the output column width for the description to 30 characters. The report should be sorted first by categoryID and then by standard charge with the highest standard charge for each category appearing first.*/
+COLUMN Description  A30;
+SELECT Description, StandardCharge, CategoryID
+FROM Service
+ORDER BY CategoryID, StandardCharge DESC;

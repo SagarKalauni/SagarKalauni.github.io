@@ -1,0 +1,271 @@
+---
+title: "ML Project STAT 562"
+author: "Sagar Kalauni"
+date: "2023-11-18"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Overview
+This project involves the analysis of data that is related to a travel insurance package that a tour and travels company is offering to its customers which also includes COVID — 19 coverage as a new insurance package. The company wants to know which of its customers would be interested in buying the insurance package which was(i.e insurance package) initially offered to some of its customers in 2019.
+
+The dataset consists of several predictor variables that are related to its customers and one target variable, TravelInsurance, which represents whether or not the customer will buy travel insurance package. Predictor variables includes: Age- Age of the customer, Employment Type - The sector in which customer is employed, GraduateOrNot - Whether the customer is college graduate or not, AnnualIncome - The yearly income of the customer, FamilyMembers - Number of members in customer's family, ChronicDiseases - Whether the customer suffers from any major disease, FrequentFlyer - Derived data based on customer's history of booking air tickets on at least 4 different instances in the last 2 years And EverTravelledAbroad - Has the customer ever travelled to a foreign country. The data we have for the analysis is of almost 2000 of its customer, extracted from the performance and sales figures of the insurance package during the year 2019.
+
+This project was the part of my academic course STAT 562 (Machine learning and classification Methods). The primary language for the analysis will be R programming as per the course requirement and since R is purely for statistics and data analysis, with graphs are nicer and more customizable in R compared to python. For this analysis purpose we are assuming data were unbiased while collection but only needing some cleaning before analysis i.e we will not question on the biasedness of the data.
+
+# Objective
+The objective of this project is to predict whether or not the customer will buy travel insurance package, based on factors included in the dataset that pertain to customer Age, Employment Type,GraduateOrNot, AnnualIncome, FamilyMembers, ChronicDiseases, FrequentFlyer and EverTravelledAbroad.
+
+By predicting whether or not the customer will buy a travel insurance package, management at the tour and travels company can optimize their or may be focus on specific advertising campaigns. Clear explination is not given future use of this analysis but we can easily assume that this analysis will be helpful for the company's future growth and development.
+
+# Review of the data source
+The data that was used for this assignment (TravelInsuranceData.csv and TravelInsuranceTest.csv) was provided by Professor Dr. Bidi Qiang for the project purpose. The dataset contain 10 columns and 1,887 rows. The dataset does not contain any null values in any columns. Unnecessary columns were dropped (Column 1 was just a indicies column) so we are remained with 9 variables in the dataset among which 8 are Predictor variable and 1 target variable.
+
+It is always a good idea to spend good amount of time knowing more about your data because study of metadata of the data makes the data analysis process smooth and fine. In our dataset we have GraduateOrNot, FrequentFlyer, EverTravelledAbroad, EmploymentType as categorical variables and remaining as Numerical variable. We can also perform necessary datatype transformation if needed.
+
+
+```{r}
+library(readxl)
+data= read.csv('TravelInsuranceData.csv')
+dim(data)
+```
+```{r}
+Insurance_data= data[,-1] # Removing very first column as it was not necessary in the data analysis.
+```
+
+```{r}
+Insurance_data$ChronicDiseases=as.factor(Insurance_data$ChronicDiseases)
+Insurance_data$Employment.Type= as.factor(Insurance_data$Employment.Type)
+Insurance_data$GraduateOrNot= as.factor(Insurance_data$GraduateOrNot)
+Insurance_data$FrequentFlyer= as.factor(Insurance_data$FrequentFlyer)
+Insurance_data$EverTravelledAbroad= as.factor(Insurance_data$EverTravelledAbroad)
+```
+
+```{r}
+# getting familier with my data set
+str(Insurance_data)
+colnames(Insurance_data)
+```
+
+
+```{r}
+sum(is.na(Insurance_data)) # This clearly shows that there is no any null value in the data set.
+```
+# Exploratory Data Analysis (EDA)
+Exploratory Data Analysis (EDA) is a critical step in the data analysis process. It involves examining and visualizing the dataset to summarize its main characteristics, often with the help of statistical graphics and other data visualization methods. Some common steps and techniques involved in Exploratory Data Analysis are:
+
+1) Summary Statistics
+2) Data Visualization
+3) Outlier Detection
+4) Correlation Analysis etc and more.
+
+Looking at the summary statistics of the dataset we get the following observation
+- Minimum and maximum age of the customer is 25 and 35 respectively and average age is around 30 (i.e 29.64)
+- Minimum and maximum annual income of the customer is 300,000 and 1,800,000 respectively and average salary is around 900,000
+-Minimum and maximum number of family members in the customer's family is 2 and 9 respectively with average of around 5 (i.e 4.749)
+
+```{r}
+summary(Insurance_data)
+```
+
+
+### For numerical variables
+```{r}
+library(ggplot2)
+library(gridExtra)
+# Box plot
+box_plot <- ggplot(Insurance_data, aes(x = "", y = Age)) +
+  geom_boxplot(color = "black", fill = "white") +
+  labs(title = "Age Distribution") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+
+# Histogram
+histogram_plot <- ggplot(Insurance_data, aes(x = Age)) +
+  geom_histogram(binwidth = 2, color = "black", fill = "white") +
+  labs(title = "Age Distribution") +
+  theme_minimal()
+
+# Combine the plots using grid.arrange from gridExtra package
+grid.arrange(box_plot, histogram_plot, ncol = 2)
+```
+Observations:
+-Age distribution has certain peaks among which the peak at 26 is highest, indicating highest number of people of age 26
+
+
+```{r}
+# Box plot
+box_plot <- ggplot(Insurance_data, aes(x = "", y = AnnualIncome)) +
+  geom_boxplot(color = "black", fill = "white") +
+  labs(title = "Annual Income Distribution") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+
+# Histogram
+histogram_plot <- ggplot(Insurance_data, aes(x = AnnualIncome)) +
+  geom_histogram(binwidth = 100000, color = "black", fill = "green") +
+  labs(title = "Annual Income Distribution") +
+  theme_minimal()
+
+# Combine the plots using grid.arrange from gridExtra package
+grid.arrange(box_plot, histogram_plot, ncol = 2)
+```
+Observation:
+-The income distribution of the Annual income looks modified normal.
+
+```{r}
+# Box plot
+box_plot <- ggplot(Insurance_data, aes(x = "", y = FamilyMembers)) +
+  geom_boxplot(color = "black", fill = "white") +
+  labs(title = "No. of family member's Distribution") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank())
+
+# Histogram
+histogram_plot <- ggplot(Insurance_data, aes(x = FamilyMembers)) +
+  geom_histogram(binwidth = 1, color = "black", fill = "white") +
+  labs(title = "No. of family member's Distribution") +
+  theme_minimal()
+
+# Combine the plots using grid.arrange from gridExtra package
+grid.arrange(box_plot, histogram_plot, ncol = 2)
+```
+Observation
+-The number of family members in a family of the customer distribution is right-skewed, which means some families has high family member
+### For categoricail variable
+
+```{r}
+# Employment.Type Distribution Plot - Simple Pie Chart
+Employment_Type_plot <- ggplot(Insurance_data, aes(x = "", fill = Employment.Type)) +
+  geom_bar(width = 1) +
+  labs(title = "Customer Employment type Distribution", fill = "Employment.Type", x = NULL, y = NULL) +
+  theme_minimal() +
+  coord_polar(theta = "y")
+
+Employment_bar_plot <- ggplot(Insurance_data, aes(x = Employment.Type)) +
+  geom_bar(fill = "black") +
+  labs(title = "Customer Employment type Distribution", x = "Employment type", y = "Count") +
+  theme_minimal()
+
+# Combine the plots using grid.arrange from gridExtra package
+grid.arrange(Employment_Type_plot, Employment_bar_plot, ncol = 2)
+```
+Observation:
+-Most of the customer's are working in the private sector or we can call them self employed.
+-Only $1/3$ rd of total customer works in the governmental sector
+
+```{r}
+# GraduateOrNot Distribution Plot - Simple Pie Chart
+graduate_Type_plot <- ggplot(Insurance_data, aes(x = "", fill = GraduateOrNot)) +
+  geom_bar(width = 1) +
+  labs(title = "Customer is college graduate or not \n     type Distribution", fill = "GraduateOrNot", x = NULL, y = NULL) +
+  theme_minimal() +
+  coord_polar(theta = "y")
+
+graduate_bar_plot <- ggplot(Insurance_data, aes(x = GraduateOrNot)) +
+  geom_bar(fill = "black") +
+  labs(title = "Customer is college graduate or not \n     type Distribution", x = "Employment type", y = "Count") +
+  theme_minimal()
+
+# Combine the plots using grid.arrange from gridExtra package
+grid.arrange(graduate_Type_plot, graduate_bar_plot, ncol = 2)
+```
+-Most of the customer's are graduate degree holder.
+-Only few of the customer's does not have graduate degree.
+
+```{r}
+# FrequentFlyer Distribution Plot - Simple Pie Chart
+FrequentFlyer_Type_plot <- ggplot(Insurance_data, aes(x = "", fill = FrequentFlyer)) +
+  geom_bar(width = 1) +
+  labs(title = "Is Customer's flying frequently \n     type Distribution", fill = "FrequentFlyer", x = NULL, y = NULL) +
+  theme_minimal() +
+  coord_polar(theta = "y")
+
+FrequentFlyer_bar_plot <- ggplot(Insurance_data, aes(x = FrequentFlyer)) +
+  geom_bar(fill = "black") +
+  labs(title = "Is Customer's flying frequently \n     type Distribution", x = "Employment type", y = "Count") +
+  theme_minimal()
+
+# Combine the plots using grid.arrange from gridExtra package
+grid.arrange(FrequentFlyer_Type_plot, FrequentFlyer_bar_plot, ncol = 2)
+```
+Observation
+-graph shows that most of the customer's are not the frequent flyer.
+```{r}
+# EverTravelledAbroad Distribution Plot - Simple Pie Chart
+EverTravelledAbroad_Type_plot <- ggplot(Insurance_data, aes(x = "", fill = EverTravelledAbroad)) +
+  geom_bar(width = 1) +
+  labs(title = "Has customer ever travelled to a foreign country \n     type Distribution", fill = "EverTravelledAbroad", x = NULL, y = NULL) +
+  theme_minimal() +
+  coord_polar(theta = "y")
+
+EverTravelledAbroad_bar_plot <- ggplot(Insurance_data, aes(x = EverTravelledAbroad)) +
+  geom_bar(fill = "black") +
+  labs(title = "Has customer ever travelled to a foreign country \n     type Distribution", x = "Employment type", y = "Count") +
+  theme_minimal()
+
+# Combine the plots using grid.arrange from gridExtra package
+grid.arrange(EverTravelledAbroad_Type_plot, EverTravelledAbroad_bar_plot, ncol = 2)
+```
+Observation:
+-Infact graph show that Most of the customer's does not even have travelled to a foreign country.
+
+### Multivariate analysis
+
+
+
+```{r}
+library(dplyr)
+
+# Box plot of Annual income by Employment.Type
+boxplot <- ggplot(Insurance_data, aes(x = Employment.Type, y = AnnualIncome, fill = Employment.Type)) +
+  geom_boxplot(color = "black", alpha = 0.7, outlier.shape = NA) +
+  labs(title = "Annual income Distribution by Employment.Type", x = "Employment.Type", y = "AnnualIncome") +
+  theme_minimal() +
+  theme(legend.position = "none")
+boxplot
+```
+
+
+```{r}
+barplot(table(Insurance_data$AnnualIncome, Insurance_data$Employment.Type),
+beside = T,
+legend.text = T,
+xlab = "Annual Income Status",
+ylab = "frequency",
+main = "Annual Income distribution by Type of Employment Type ")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,119 @@
+/*Sagar Kalauni*/
+/* Lab8-Kalauni*/
+
+/*Q.No.1)Management requires a listing of employees by last name, first name, and middle initial for department number 8.  The last name should be displayed in all capital letters.  The entire name should be concatenated together so as to display in a single field with a column heading of "Employee Name."  The rows should be sorted by employee last name, then employee first name*/
+SELECT UPPER(LastName) ||','|| FirstName ||' '||  NVL(MiddleName, ' ') "Employee Name"
+FROM Employee
+WHERE DepartmentNumber=8
+ORDER BY UPPER(LastName), FirstName;
+
+/*Q.No.2)Write a query that displays the department name and the length in number of characters of each department's name.  Use the department table.  Label the column headings appropriately*/
+SELECT DepartmentName "Dept. Name", LENGTH(DepartmentName) "Length"
+FROM Department;
+
+/*Q.No.3)Management wants a listing of department numbers and names (use the department table)—display the output as a single column with the heading "Department Information" – convert the DepartmentNumber column to character data as part of the query. */
+SELECT To_CHAR(DepartmentNumber, 9999)||' - '|| DepartmentName "Department Information"
+FROM Department;
+
+/*Q.No.4)Write a query that displays the first four characters of each employee's last name and the last four digits of each employee's SSN for department 8.  Label the column headings "Name" and "SSN."  Order the result table rows by employee last name. */
+SELECT SUBSTR(LastName, 1,4) SUBSTR(SSN,6)
+FROM Employee
+WHERE DepartmentNumber=8
+ORDER BY SUBSTR(LastName, 1,5);
+
+/*Q.No.5)Write a query that displays all employee names as well as their work phone.  Format their workphone to 999-999-9999.*/
+SELECT LastName ||','|| FirstName "Employee Name", TO_CHAR(WorkPhone, '999-999-9999') "Phone No."
+FROM Employee;
+
+/*Q.No.6)Write a query to display a listing of employee last names and the EmployeeID of each employee's supervisor for the employees working in department 8.  If the employee has no supervisor, display the message "Top Supervisor."  Provide appropriate headings.  Sort the result table by employee last name. */
+SELECT LastName, NVL(SupervisorID, 'Top Supervisor') "EmployeeId"
+FROM Employee
+WHERE DepartmentNumber=8
+ORDER BY LastName;
+
+/*Q.No.7Develop a listing for the company's senior project manager that lists employees that reported working between 15 and 25 hours (inclusive) on assigned projects.  List the employee last name, project number, and hours worked.  Use the ABS function.  Do NOT use the BETWEEN operator or any logical operator.  Join the tables by use of the FROM clause.  Use meaningful column headings.  Sort the rows of the result table by employee last name.  HINT:  20 is the midpoint between 15 and 25 hours, the absolute value of the difference would be 5 hours. */
+SELECT LastName, ProjectNumber, HoursWorked, ABS(HoursWorked -20) "Hours"
+FROM Employee e JOIN ProjectAssignment pa ON (e.employeeId=pa.employeeId)
+WHERE ABS(HoursWorked -20) >=5
+ORDER By LastName;
+
+/*Q.No.8)The senior project manager needs a listing by employee last name, project number, and hours worked (HoursWorked column) rounded to the nearest integer value for projects 3 and 8.   Join the tables by use of the FROM clause.  Sort the result table by employee last name within project number.  Use meaningful column names. */
+SELECT LastName "Emp Last Name", ProjectNumber "Project NO.", ROUND(HoursWorked,0)
+FROM Employee e JOIN ProjectAssignment pa ON (e.employeeId=pa.employeeId)
+WHERE DepartmentNumber IN (3,8)
+ORDER BY ProjectNumber, LastName;
+
+/*Q.No.9)Write a query to display information about female dependents for the human resources manager.  Display each dependent's name, gender, and date of birth.  The date of birth should be displayed as:  Month Name (spelled out), two-digit day, and four-digit year (e.g., December 05, 1970).  Use the COLUMN commands shown here to format the first two columns of output. */
+COLUMN "Gender" Format A6;
+COLUMN "Dep Name" FORMAT A15;
+SELECT Name "Dep Name", Gender "Gender", TO_CHAR(BirthDate, 'Month DD, YYYY') "Date of Birth"
+FROM Dependent
+WHERE Gender= 'F';
+
+/*Q.No.10)Write a query to display each dependent's name, date of birth, and date on which the dependent turned or will turn 65 years of age, but only for dependents born after January 1, 1980.  Use meaningful column names.  Display each date using the DD-MON-YYYY format.  Use the ADD_MONTHS, TO_CHAR, and TO_DATE functions.  Hint: 65 years equals 780 months. */
+SELECT Name "Dep Name", TO_CHAR(BirthDate, 'DD-MON-YYYY') AS "Date of Birth", TO_CHAR(ADD_MONTHS(BirthDate, 780), 'DD-MON-YYYY') AS "Date of 65th Birthday"
+FROM Dependent
+WHERE BirthDate > TO_DATE('01-JAN-1980', 'DD-MON-YYYY');
+
+/*Q.No.11)Write a short query to display the current day of the week spelled out, for example Monday or Wednesday.  The value should be obtained from the operating system internal date.*/
+SELECT TO_CHAR(SYSDATE, 'DAY') AS "Current Day"
+FROM Dual;
+
+/*Q.No.12)The human resources manager needs a listing of dependents including their name and gender, but only for dependents that are spouses.  Instead of displaying the coded values for gender, the result table must display the terms "Male" and "Female," as appropriate.  Use meaningful column headings.  Sort the result table by dependent name. */
+SELECT Name "Dep Name", DECODE(Gender, 'M', 'Male', 'Female') "Gender"
+FROM Dependent
+WHERE RelationshipToEmployee= 'Spouse';
+ORDER BY Name;
+
+/*Q.No.13)Write a query to display a listing of employee last names, title, and salary for employees with a title of either 'Building Custodian' or 'L.P.N.'.  If the employee is paid a wage, the salary will be NULL.  In this situation, display the value $0.00.  Provide appropriate headings.  Sort the result table by staff member last name. */
+SELECT LastName, Title, NVL(Salary, $0.00) "Salary" 
+FROM Employee
+WHERE Title LIKE '%Building Custodian%' OR Title LIKE '%L>P>N%'
+ORDER BY LastName;
+
+/*Q.No.14)Write a query to compare treatment charges to standard service charges.  Display the ServiceID and StandardCharge columns from the service table, and the ChargeAmount column from the treatment table.  Only display the value if the difference between the service and actual charge is more than $50.00 in difference (either high or low).  Also display a computed column that is the difference between the service and actual charge (as a positive number).  Use appropriate column sizes and headings.  Join the tables by use of the FROM clause.  */
+SELECT ServiceID, StandardCharge "Service Charge", ChargeAmount "Treatment Charge", ABS(StandardCharge - ChargeAmount) "Difference"
+FROM Service s JOIN Treatment t ON (s.serviceID=t.serviceID)
+WHERE ABS(StandardCharge - ChargeAmount)> 50;
+
+/*Q.No.15)Modify the query for question 14 to display any rows where there is any difference between the service and actual charge, but only where the actual charge is less than the service charge.  Order the output by differences from largest to smallest.*/
+SELECT ServiceID, StandardCharge "Service Charge", ChargeAmount "Treatment Charge", ABS(StandardCharge - ChargeAmount) "Difference"
+FROM Service s JOIN Treatment t ON (s.serviceID=t.serviceID)
+WHERE ChargeAmount<StandardCharge
+ORDER BY ABS(StandardCharge - ChargeAmount);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

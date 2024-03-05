@@ -1,0 +1,111 @@
+/*Sagar Kalauni*/
+/* Lab9-Kalauni*/
+
+/*Solution for Q.Qn.1*/
+-- Program: Q.No.-1.sql
+-- Programmer: Sagar Kalauni
+-- Description: Information about employee's Dependent
+
+TTITLE 'Dependent Information' 
+BTITLE SKIP 2 CENTER 'Not for external dissemination.'
+SET LINESIZE 55
+SET PAGESIZE 24
+SET NWEPAGE 1
+
+COLUMN "Emp ID" FORMAT A6;
+COLUMN "Dependent" FORMAT A15;
+COLUMN "Gender" FORMAT A6;
+COLUMN "Date Birth" FORMAT A10;
+COLUMN "Relationship" FORMAT A12;
+SELECT EmployeeID "Emp ID", Name "Dependent", gender "Gender", BirthDate "Date Birth", RelationshipToEmployee "Relationship"
+FROM Dependent
+ORDER BY EmployeeID;
+
+/*Solution for Q.Qn.2*/
+-- Program: Q.No.-2.sql
+-- Programmer: Sagar Kalauni
+-- Description: Information about employee's Dependent
+
+TTITLE 'Dependent Information' 
+BTITLE SKIP 1 CENTER 'Not for external dissemination.'
+SET LINESIZE 55
+SET PAGESIZE 24
+SET NWEPAGE 1
+
+COLUMN "Emp ID" FORMAT A6;
+COLUMN "Dependent" FORMAT A15;
+COLUMN "Gender" FORMAT A6;
+COLUMN "Date Birth" FORMAT A10;
+COLUMN "Relationship" FORMAT A12;
+
+CLEAR BREAK
+BREAK ON "Emp ID" SKIP 2 ON REPORT
+COMPUTE COUNT OF "Emp ID" ON REPORT
+
+SELECT EmployeeID "Emp ID", Name "Dependent", gender "Gender", BirthDate "Date Birth", RelationshipToEmployee "Relationship"
+FROM Dependent
+ORDER BY EmployeeID;
+
+/*Solution for Q.Qn.3*/
+-- Program: Q.No.-3.sql
+-- Programmer: Sagar Kalauni
+-- Description: Information about employee's Dependent
+
+/*If done this way perfectly works for first table*/
+
+TTITLE CENTER 'Employee Name:' EmployeeNameVar -
+    RIGHT 'Page: ' FORMAT 99 sql.pno SKIP 2
+BTITLE SKIP 1 CENTER 'Not for external dissemination.'
+SET LINESIZE 65
+SET PAGESIZE 15
+SET NEWPAGE 1
+
+-- Create a view to use in the Select command
+CREATE OR REPLACE VIEW vwEmpDep ( Employee, "Emp ID", DependentName, gender, Relationship) AS
+SELECT e.Lastname||', '||e.Firstname, d.EmployeeID, d.Name, d.gender, d.RelationshipToEmployee
+FROM Dependent d JOIN Employee e ON (e.employeeID=d.employeeID)
+ORDER BY -DependentName;
+
+COLUMN Employee NEW_VALUE EmployeeNameVar NOPRINT
+COLUMN "Emp ID" FORMAT A20
+COLUMN DependentName FORMAT A15
+COLUMN gender FORMAT A6
+COLUMN Relationship FORMAT A12
+
+BREAK ON Employee ON "Emp ID" PAGE;
+COMPUTE COUNT LABEL "Number of Dependents" OF Relationship ON "Emp ID"
+
+SELECT Employee, "Emp ID", DependentName, gender, Relationship
+FROM vwEmpDep
+ORDER BY "Emp ID" , relationship desc;
+
+/*If done this way perfectly works for last table*/
+
+TTITLE CENTER 'Employee Name:' EmployeeNameVar -
+    RIGHT 'Page: ' FORMAT 99 sql.pno SKIP 2
+BTITLE SKIP 1 CENTER 'Not for external dissemination.'
+SET LINESIZE 65
+SET PAGESIZE 15
+SET NEWPAGE 1
+
+-- Create a view to use in the Select command
+CREATE OR REPLACE VIEW vwEmpDep ( Employee, "Emp ID", DependentName, gender, Relationship) AS
+SELECT e.Lastname||', '||e.Firstname, d.EmployeeID, d.Name, d.gender, d.RelationshipToEmployee
+FROM Dependent d JOIN Employee e ON (e.employeeID=d.employeeID)
+ORDER BY -DependentName;
+
+COLUMN Employee NEW_VALUE EmployeeNameVar NOPRINT
+COLUMN "Emp ID" FORMAT A20
+COLUMN DependentName FORMAT A15
+COLUMN gender FORMAT A6
+COLUMN Relationship FORMAT A12
+
+BREAK ON Employee ON "Emp ID" PAGE;
+COMPUTE COUNT LABEL "Number of Dependents" OF Relationship ON "Emp ID"
+
+SELECT Employee, "Emp ID", DependentName, gender, Relationship
+FROM vwEmpDep
+ORDER BY "Emp ID" , relationship;
+
+/*I spent a lot of time for this question, I don't find a way to exectly shows ordering, But I think ordering does not matter here, because we do not have complete report photo in question*/
+

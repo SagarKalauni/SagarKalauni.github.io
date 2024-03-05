@@ -1,0 +1,27 @@
+SQL> /*SAGAR KALAUNI*/
+SQL> /*Lab1-kalauni*/
+SQL> /*Q.No.-1*/
+SQL> SELECT *
+  2  FROM ROOM
+  3  WHERE RoomNumber LIKE 'RA%';
+
+ROOMNU DESCRIPTION                                                              
+------ ------------------------------                                           
+RA0075 Radiology Ward                                                           
+RA0076 Radiology Ward                                                           
+RA0077 Radiology Ward                                                           
+RA0078 Radiology Ward                                                           
+
+SQL> 
+SQL> /*Q.No.-2*/
+SQL> SELECT TreatmentNumber, DateTreated, EmployeeID
+  2  FROM Treatment
+  3  WHERE EmployeeID IN ('88202', '23244') AND TreatmentNumber < 3;
+
+TREATMENTNUMBER DATETREAT EMPLO                                                 
+--------------- --------- -----                                                 
+              1 26-AUG-23 88202                                                 
+              2 27-AUG-23 23244                                                 
+
+SQL> /*THE END*/
+SQL> SPOOL OFF

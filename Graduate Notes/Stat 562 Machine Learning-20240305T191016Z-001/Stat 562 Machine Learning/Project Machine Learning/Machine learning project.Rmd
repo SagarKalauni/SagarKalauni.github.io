@@ -1,0 +1,1494 @@
+---
+title: "ML Project STAT 562"
+author: "Sagar Kalauni"
+date: "2023-11-18"
+output: word_document
+always_allow_html: true
+toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Overview
+This project involves the analysis of data that is related to a travel insurance package that a tour and travels company is offering to its customers which also includes COVID — 19 coverage as a new insurance package. The company wants to know which of its customers would be interested in buying the insurance package which was(i.e insurance package) initially offered to some of its customers in 2019.
+
+The dataset consists of several predictor variables that are related to its customers and one target variable, TravelInsurance, which represents whether or not the customer will buy travel insurance package. Predictor variables includes: Age- Age of the customer, Employment Type - The sector in which customer is employed, GraduateOrNot - Whether the customer is college graduate or not, AnnualIncome - The yearly income of the customer, FamilyMembers - Number of members in customer's family, ChronicDiseases - Whether the customer suffers from any major disease, FrequentFlyer - Derived data based on customer's history of booking air tickets on at least 4 different instances in the last 2 years And EverTravelledAbroad - Has the customer ever travelled to a foreign country. The data we have for the analysis is of almost 2000 of its customer, extracted from the performance and sales figures of the insurance package during the year 2019.
+
+This project was the part of my academic course STAT 562 (Machine learning and classification Methods). The primary language for the analysis will be R programming as per the course requirement and since R is purely for statistics and data analysis, with graphs are nicer and more customizable in R compared to python. For this analysis purpose we are assuming data were unbiased while collection but only needing some cleaning before analysis i.e we will not question on the biasedness of the data.
+
+# Objective
+The objective of this project is to predict whether or not the customer will buy travel insurance package, based on factors included in the dataset that pertain to customer Age, Employment Type,GraduateOrNot, AnnualIncome, FamilyMembers, ChronicDiseases, FrequentFlyer and EverTravelledAbroad.
+
+By predicting whether or not the customer will buy a travel insurance package, management at the tour and travels company can optimize their or may be focus on specific advertising campaigns. Clear explination is not given future use of this analysis but we can easily assume that this analysis will be helpful for the company's future growth and development.
+
+# Review of the data source
+The data that was used for this assignment (TravelInsuranceData.csv and TravelInsuranceTest.csv) was provided by Professor Dr. Bidi Qiang for the project purpose. The dataset contain 10 columns and 1,887 rows. The dataset does not contain any null values in any columns. Unnecessary columns were dropped (Column 1 was just a indicies column) so we are remained with 9 variables in the dataset among which 8 are Predictor variable and 1 target variable.
+
+It is always a good idea to spend good amount of time knowing more about your data because study of metadata of the data makes the data analysis process smooth and fine. In our dataset we have GraduateOrNot, FrequentFlyer, EverTravelledAbroad, EmploymentType as categorical variables and remaining as Numerical variable. We can also perform necessary datatype transformation if needed.
+
+
+```{r}
+library(readxl)
+data= read.csv('TravelInsuranceData.csv')
+dim(data)
+```
+```{r}
+Insurance_data= data[,-1] # Removing very first column as it was not necessary in the data analysis.
+```
+
+```{r}
+Insurance_data$ChronicDiseases=as.factor(Insurance_data$ChronicDiseases)
+Insurance_data$Employment.Type= as.factor(Insurance_data$Employment.Type)
+Insurance_data$GraduateOrNot= as.factor(Insurance_data$GraduateOrNot)
+Insurance_data$FrequentFlyer= as.factor(Insurance_data$FrequentFlyer)
+Insurance_data$EverTravelledAbroad= as.factor(Insurance_data$EverTravelledAbroad)
+Insurance_data$TravelInsurance= as.factor(Insurance_data$TravelInsurance)
+```
+
+```{r}
+# getting familier with my data set
+str(Insurance_data)
+colnames(Insurance_data)
+```
+
+
+```{r}
+sum(is.na(Insurance_data)) # This clearly shows that there is no any null value in the data set.
+```
+#########################################################################################################Necessary library and packages
+#########################################################################################################
+
+```{r message=FALSE, warning=FALSE , results="hide"}
+
+### Import data 
+
+library(data.table)
+library(tidyverse)
+
+### Presentation Enhance
+
+library(knitr) # I need the kable() function to make 
+library(flextable)
+#install.packages("flextable")
+### Visualization purposes 
+
+library(ggplot2) # powerful R package to create graphs
+library(ggrepel) 
+library(GGally)
+
+### Frequency tables 
+#install.packages("summarytools")
+library(summarytools)
+
+### Other libraries
+
+library(kableExtra)
+library(knitr)
+#install.packages("naniar")
+library(naniar) 
+library(caret)
+options(warn=-1)
+```
+
+## Preview data 
+
+```{r}
+preview = head(Insurance_data,5)
+
+preview %>%
+   kbl(caption = "Table 0.1 Preview First lines of my dataset") %>%
+    kable_styling(position = "center", full_width = F)
+```
+
+
+
+If anyone likes those confusion matrices on the end of my notebook can see the code [there](https://stackoverflow.com/questions/23891140/r-how-to-visualize-confusion-matrix-using-the-caret-package).
+Literally,one of the best posts I have ever seen on Stackoverflow.
+```{r}
+draw_confusion_matrix <- function(cm) {
+
+  layout(matrix(c(1,1,2)))
+  par(mar=c(2,2,2,2))
+  plot(c(100, 345), c(300, 450), type = "n", xlab="", ylab="", xaxt='n', yaxt='n')
+  title('CONFUSION MATRIX', cex.main=2)
+
+  # create the matrix 
+  rect(150, 430, 240, 370, col='green')
+  text(195, 435, 'Class1', cex=1.2)
+  rect(250, 430, 340, 370, col='Red')
+  text(295, 435, 'Class2', cex=1.2)
+  text(125, 370, 'Predicted', cex=1.3, srt=90, font=2)
+  text(245, 450, 'Actual', cex=1.3, font=2)
+  rect(150, 305, 240, 365, col='Red')
+  rect(250, 305, 340, 365, col='green')
+  text(140, 400, 'Class1', cex=1.2, srt=90)
+  text(140, 335, 'Class2', cex=1.2, srt=90)
+
+  # add in the cm results 
+  res <- as.numeric(cm$table)
+  text(195, 400, res[1], cex=1.6, font=2, col='white')
+  text(195, 335, res[2], cex=1.6, font=2, col='white')
+  text(295, 400, res[3], cex=1.6, font=2, col='white')
+  text(295, 335, res[4], cex=1.6, font=2, col='white')
+
+  # add in the specifics 
+  plot(c(100, 0), c(100, 0), type = "n", xlab="", ylab="", main = "DETAILS", xaxt='n', yaxt='n')
+  text(10, 85, names(cm$byClass[1]), cex=1.2, font=2)
+  text(10, 70, round(as.numeric(cm$byClass[1]), 3), cex=1.2)
+  text(30, 85, names(cm$byClass[2]), cex=1.2, font=2)
+  text(30, 70, round(as.numeric(cm$byClass[2]), 3), cex=1.2)
+  text(50, 85, names(cm$byClass[5]), cex=1.2, font=2)
+  text(50, 70, round(as.numeric(cm$byClass[5]), 3), cex=1.2)
+  text(70, 85, names(cm$byClass[6]), cex=1.2, font=2)
+  text(70, 70, round(as.numeric(cm$byClass[6]), 3), cex=1.2)
+  text(90, 85, names(cm$byClass[7]), cex=1.2, font=2)
+  text(90, 70, round(as.numeric(cm$byClass[7]), 3), cex=1.2)
+
+  # add in the accuracy information 
+  text(30, 35, names(cm$overall[1]), cex=1.5, font=2)
+  text(30, 20, round(as.numeric(cm$overall[1]), 3), cex=1.4)
+  text(70, 35, names(cm$overall[2]), cex=1.5, font=2)
+  text(70, 20, round(as.numeric(cm$overall[2]), 3), cex=1.4)
+} 
+```
+
+
+
+# Exploratory Data Analysis (EDA)
+Exploratory Data Analysis (EDA) is a critical step in the data analysis process. It involves examining and visualizing the dataset to summarize its main characteristics, often with the help of statistical graphics and other data visualization methods. Some common steps and techniques involved in Exploratory Data Analysis are:
+
+1) Summary Statistics
+2) Data Visualization
+3) Outlier Detection
+4) Correlation Analysis etc and more.
+
+Looking at the summary statistics of the dataset we get the following observation
+- Minimum and maximum age of the customer is 25 and 35 respectively and average age is around 30 (i.e 29.64)
+- Minimum and maximum annual income of the customer is 300,000 and 1,800,000 respectively and average salary is around 900,000
+-Minimum and maximum number of family members in the customer's family is 2 and 9 respectively with average of around 5 (i.e 4.749)
+
+```{r}
+summary(Insurance_data)
+```
+
+
+### For Categorical variables
+
+```{r}
+par(mfrow=c(1,2))
+no_count=table(Insurance_data$Employment.Type)
+barplot(no_count, main = "Barplot for Employment \n Type distribution", col = c("white", "cyan"))
+pie(no_count, main = "Pie chart for Employment \n Type distribution", col = c("white", "cyan"))
+no_count
+par(mfrow=c(1,1))
+```
+Observation:
+- Number of customer working in the Governmental sector are quite less as comaired to customer working for the private sector or so called self employed.
+_ About only 535 customer work for government but 1352 for the privete sector among all the customer's.
+
+```{r}
+par(mfrow=c(1,2))
+grad_no=table(Insurance_data$GraduateOrNot)
+pie(grad_no, main = "Pie chart for Whether the customer \n is college graduate or not", col = c("white", "green3"))
+barplot(grad_no, main = "Barplot for Whether the customer \n is college graduate or not", col = c("white", "green3"))
+grad_no
+par(mfrow=c(1,1))
+```
+Observation:
+-Most of the customers were college graduate.
+-Out of total 1887 customers, only 282 were customer with out college degree
+
+```{r}
+par(mfrow=c(1,2))
+dise_cum_no=table(Insurance_data$ChronicDiseases)
+dise_cum_no
+x=c("0","1")
+names(x)=c("No","Yes")
+pie(dise_cum_no, main = "Pie chart for Whether the \n customer suffers from any major disease", labels = names(x))
+barplot(dise_cum_no, main = "Barplot for Whether the \n customer suffers from any major disease")
+par(mfrow=c(1,1))
+```
+Observation:-
+-Majority of the customer does not suffer from any major disease.
+-Out of total customers only 528 customer are suffering from major disease but 1359 of the customers were not suffering from any major diseases.
+
+```{r}
+par(mfrow=c(1,2))
+cum_no=table(Insurance_data$FrequentFlyer)
+cum_no
+pie(cum_no, main = "Pie chart for Whether the \n customer is frequent flyer or not", col = c("white", "violetred1"))
+barplot(cum_no, main = "Barplot for Whether the \n customer is frequent flyer or not", col = c("white", "violetred1"))
+par(mfrow=c(1,1))
+```
+Observation
+-Most of the customers are not the frequent flyers, only 392 customer out of total customer are frequent flyer.
+
+```{r}
+par(mfrow=c(1,2))
+trav_cum_no=table(Insurance_data$TravelInsurance)
+trav_cum_no
+x=c("0","1")
+names(x)=c("No","Yes")
+pie(trav_cum_no, main = "Pie chart for did customer \n purchase travel insurance in 2019", col = c("white", "violet"), labels = names(x) )
+barplot(trav_cum_no, main = "Barplot forfor did customer \n purchase travel insurance in 2019", col = c("white", "violet"))
+par(mfrow=c(1,1))
+```
+Observation:
+-Looking at the given data of 2019, Most of the customers did not buy a travel insurance package. Only around 36% of the customer did purchase the travel insurance package back in 2019.
+
+### Looking side by side box plot
+
+```{r}
+library(ggplot2)
+g = ggplot(data=Insurance_data,aes(x=Employment.Type))
+g+ geom_bar(aes(fill=GraduateOrNot)) +
+labs(y = "Frequency", x= "Customer employment Type")
+```
+Observation:
+-Graduate customer are not solely in any sector neither in governmental nor in private. we can see graduate students in both sectors. 
+
+
+```{r}
+barplot(table(Insurance_data$Employment.Type, Insurance_data$TravelInsurance),
+beside = T,
+legend.text = T,
+xlab = "Travel insurance purchase status",
+ylab = "Frequency",
+main = "Employment type vs insurance purchased ", col = c("#00abff", "cyan"))
+
+```
+Observation:
+-Among the customer who are in the private sectors, customer not purchasing the the travel insurance are more then customer purchasing the travel insurance. Same is the case for customer who are in the governmental sector, which completely makes sense because total number of customer purchasing the travel insurance was also quite low compared to not purchasing the travel insurance
+
+```{r}
+barplot(table(Insurance_data$GraduateOrNot, Insurance_data$TravelInsurance),
+beside = T,
+legend.text = T,
+xlab = "Travel insurance purchase status",
+ylab = "Frequency",
+main = "Was Customer graduated vs insurance purchased ", col = c("green", "cyan"))
+```
+Observation:
+-Customer who are not graduated and not purchasing the travel insurance are more then customer who are  graduated and purchasing insurance. i.e customer with no graduation degree are more likely not to purchase the travel insurance.
+
+
+```{r}
+barplot(table(Insurance_data$ChronicDiseases, Insurance_data$TravelInsurance),
+beside = T,
+legend.text = T,
+xlab = "Travel insurance purchase status",
+ylab = "Frequency",
+main = "Customer having major diseases vs insurance purchased ", col = c("violet", "#00abff"))
+```
+Observation:
+-Interestingly customer having some major disease and not purchasing the travel insurance(484) is more then customer having major disease and purchasing travel insurance(197).
+
+```{r}
+barplot(table(Insurance_data$FrequentFlyer, Insurance_data$TravelInsurance),
+beside = T,
+legend.text = T,
+xlab = "Travel insurance purchase status",
+ylab = "Frequency",
+main = "Was Customer Frequent flyer vs insurance purchased ")
+```
+Observation
+-Customer who purchase travel insurance and are frequent flyer(226) are more then customer who did not purchase travel insurance but are frequent flyer(166).
+
+```{r}
+barplot(table(Insurance_data$EverTravelledAbroad, Insurance_data$TravelInsurance),
+beside = T,
+legend.text = T,
+xlab = "Travel insurance purchase status",
+ylab = "Frequency",
+main = "Has Customer ever travelled abroad vs insurance purchased ")
+```
+
+Observation:
+-Customer who has purchased travel insurance and has traveled abroad(286) are more than customer who did not purchase travel insurance but traveled abroad(81).
+
+### For numerical variable
+
+```{r}
+par(mfrow=c(1,2))
+hist(Insurance_data$Age,
+xlab = "Age",
+main = "histogram of Age", breaks=10)
+
+boxplot(Insurance_data$Age,ylim=c(20,40),ylab="Age")
+par(mfrow=c(1,1))
+```
+Observation:
+-One big peak can be seen at age 27, indicating highest number of people having age 27.
+
+```{r}
+par(mfrow=c(1,2))
+hist(Insurance_data$AnnualIncome,
+xlab = "Annual income",
+main = "histogram of Annual income", breaks=25)
+
+boxplot(Insurance_data$AnnualIncome,ylim=c(200000,2000000),ylab="Annual Income")
+par(mfrow=c(1,1))
+```
+Observation:
+-distribution of data looks modified normal.
+
+
+
+```{r}
+par(mfrow=c(1,2))
+hist(Insurance_data$FamilyMembers,
+xlab = "Annual income",
+main = "histogram of Family members", breaks=5)
+
+boxplot(Insurance_data$FamilyMembers,ylim=c(1,10),ylab="Annual Income")
+par(mfrow=c(1,1))
+```
+
+### Mixed numerical and categorical data
+```{r}
+boxplot(Insurance_data$AnnualIncome~Insurance_data$TravelInsurance,ylab="Annual income of customer",xlab="Travel insurance purchase status")
+```
+Observation
+-The median income of the people who purchase travel insurance is more then the median income of those who did not purchase the travel insurance in 2019.  
+
+```{r}
+boxplot(Insurance_data$FamilyMembers~Insurance_data$TravelInsurance,ylab="No. of family members of customer",xlab="Travel insurance purchase status")
+```
+Observation
+-The median number of the family member in the family for customer who purchase travel insurance is more then  those who did not purchase the travel insurance in 2019.
+
+```{r}
+boxplot(Insurance_data$Age~Insurance_data$TravelInsurance,ylab="Age of customer",xlab="Travel insurance purchase status")
+```
+### Mixed
+
+```{r}
+barplot(table(Insurance_data$TravelInsurance, Insurance_data$Age),
+beside = T,
+legend.text = T,
+xlab = "Age of the customer",
+ylab = "Frequency",
+main = "Customers age vs insurance purchased status")
+```
+Observation
+-Customer of the age 34 has the highest number of travel insurance purchased.
+-Customer at the age of 25 has more proportion of purchasing the travel insurance
+
+```{r}
+barplot(table(Insurance_data$TravelInsurance, Insurance_data$FamilyMembers),
+beside = T,
+legend.text = T,
+xlab = "Number of family member of customer",
+ylab = "Frequency",
+main = "Number of family member of customer vs insurance purchased status")
+```
+Observation
+-Customer with number of family member 4 are the one that has the heighest number of travel insurance purchased.
+
+```{r}
+barplot(table(Insurance_data$TravelInsurance, Insurance_data$AnnualIncome),
+beside = T,
+legend.text = T,
+xlab = "Annual income of customer",
+ylab = "Frequency",
+main = "Annual income of customer vs insurance purchased status")
+```
+Observation
+-This is kind of good observation that customer with annual salary more then 1350000 are highly purchasing the travel insurance.
+
+
+### Categorical vs categorical
+
+```{r}
+mosaicplot(table(Insurance_data$Employment.Type,Insurance_data$TravelInsurance),xlab = "Customer employment type", ylab = "Travel insurance purchase status")
+```
+Observation
+-Looks like if the customer is working in the private sector, chances of taking travel insurance is little high compared to customer working for the government sector. The reason behind this may be any like government job has less pay, or government job has their own insurance and does not need travel insurance.
+-At the same time graph again verify that more number of customer are working in the private sector.
+
+```{r}
+mosaicplot(table(Insurance_data$GraduateOrNot,Insurance_data$TravelInsurance), xlab = "College graduate or not",ylab ="Travle insurance purchase status")
+```
+Observation
+-A lot of customers are college graduate and being graduate does not high huge impact in purchasing the travel insurance, but a little as seen in graph
+
+```{r}
+mosaicplot(table(Insurance_data$ChronicDiseases,Insurance_data$TravelInsurance), xlab = "Customer has any major disease",ylab ="Travle insurance purchase status")
+```
+
+```{r}
+mosaicplot(table(Insurance_data$FrequentFlyer,Insurance_data$TravelInsurance), xlab = "Was Customer a frequent flyer",ylab ="Travle insurance purchase status")
+```
+
+```{r}
+mosaicplot(table(Insurance_data$EverTravelledAbroad,Insurance_data$TravelInsurance), xlab = "Has Customer ever travelled abroad",ylab ="Travle insurance purchase status")
+```
+Observation
+-Customers who travel abroad seems to take travel insurance a lot compared to the one who did not travel a lot.
+
+```{r}
+cor(Insurance_data[,1],Insurance_data[,4])
+```
+Observation
+-since the correlation between income and age is -0.03247259,which indicate very weak negative correlation between two variables
+
+```{r}
+cor(Insurance_data[,4],Insurance_data[,5])
+```
+Observation
+-Income and family members are also almost not correlated.
+
+```{r}
+library(ggplot2)
+library(GGally)
+ggpairs(Insurance_data[,-c(2,3,6,7,8,9)])
+```
+
+# Machine Learning Models
+
+#########################################################################################################
+1) Logistic Model
+#########################################################################################################
+
+## Without feature selection
+```{r}
+set.seed(123)
+
+# Step 1: Split the data into training and testing sets
+sample_index= sample(1:nrow(Insurance_data), 0.7 * nrow(Insurance_data))
+train_data=Insurance_data[sample_index, ]
+test_data=Insurance_data[-sample_index, ]
+```
+
+
+```{r}
+# All the variable as the predictor
+# Step 2: Train the logistic regression model
+model= glm(TravelInsurance ~ Age + Employment.Type + GraduateOrNot + AnnualIncome + FamilyMembers +
+              ChronicDiseases + FrequentFlyer + EverTravelledAbroad, 
+              family = binomial, data = train_data)
+summary(model)
+```
+observation
+-looking at the logistic model when trained on the training data, still statically significant variables and statically insignificant variables are the same.
+
+Observation
+-Here Age, AnnualIncome, FamilyMembers, FrequentFlyerYes,EverTravelledAbroadYes are statically significant in determining weather the customer will purchase a travel insurance or not.
+
+-likewise ChronicDiseases1, GraduateOrNotYes, Employment.TypePrivate Sector/Self Employed are not statically significant indicating that they are not important for customer in purchasing the travel insurance.
+
+-for every one unit change in customers age, the log odd of purchasing travel insurance is increased by 6.942e-02 units
+
+-for every one unit change in customers Annual income, the log odd of purchasing travel insurance is increased by 1.503e-06 units
+
+-for every one unit change in customers number of family members in the family, the log odd of purchasing travel insurance is increased by 1.415e-01 units
+
+```{r}
+set.seed(123)
+# Step 3: Make predictions on the testing set
+predictions= predict(model, newdata = test_data, type = "response")
+predictions[1:10] #let's look at the first 10 predictions by the logistic model on the test data
+```
+
+
+```{r}
+set.seed(123)
+# let's give the predicted model a good name of labels
+# Convert predicted probabilities to binary predictions (0 or 1)
+predicted_labels= ifelse(predictions > 0.5, 1, 0)
+predicted_labels[1:10]  # looking at the predictive level of first 10 observation by logistic regration 
+```
+let's see the confusion matrix 
+
+```{r}
+set.seed(123)
+cm_glm=table(predicted_labels,test_data$TravelInsurance)
+cm_glm
+```
+# Conclusion
+Therefore the test accuracy of the logistic model is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (336+109)/567= 0.7848325 i.e 78.48%
+$Precision= \frac{TP}{TP+FP}$ = 109/(109+98)=0.52657 i.e 52.657%
+$Recall= \frac{TP}{TP+FN}$= 109/(109+24)=0.8195489 i.e 81.95489%
+
+```{r}
+# Assuming predicted_labels.fselected is a factor
+predicted_labels <- as.factor(predicted_labels)
+
+# Assuming test_data$TravelInsurance is a factor
+test_data$TravelInsurance <- as.factor(test_data$TravelInsurance)
+
+# Now, create the confusion matrix
+cm1 <- confusionMatrix(predicted_labels, test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm1)
+```
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------With Selected Feature------------------------------------------------------------------
+
+# Feature Selection using Logistic model
+Here Age, AnnualIncome, FamilyMembers, FrequentFlyerYes,EverTravelledAbroadYes are statically significant in determining weather the customer will purchase a travel insurance or not. Since these are the most important features tod predict the travel insurance so we did a feature selection and prefome our model with these features only.
+
+## Logistic model on the basis of selected features
+```{r}
+
+model.fselcted= glm(TravelInsurance ~ Age +AnnualIncome + FamilyMembers +
+              FrequentFlyer + EverTravelledAbroad, 
+              family = binomial, data = train_data)
+summary(model.fselcted)
+```
+
+```{r}
+set.seed(123)
+# Step 3: Make predictions on the testing set
+predictions.fselected= predict(model.fselcted, newdata = test_data, type = "response")
+predictions.fselected[1:10] #let's look at the first 10 predictions by the logistic model on the test data
+```
+
+```{r}
+set.seed(123)
+# Convert predicted probabilities to binary predictions (0 or 1)
+predicted_labels.fselected= ifelse(predictions.fselected > 0.5, 1, 0)
+predicted_labels.fselected[1:10]  # looking at the predictive level of first 10 observation by logistic regration
+```
+
+```{r}
+set.seed(123)
+cm_glm.fselected=table(predicted_labels.fselected,test_data$TravelInsurance)
+cm_glm.fselected
+```
+Therefore the test accuracy of the logistic modelwith selected feature is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (337+109)/567= 0.7865961 i.e 78.65%
+$Precision= \frac{TP}{TP+FP}$ = 109/(109+98)=0.52657 i.e 52.657%
+$Recall= \frac{TP}{TP+FN}$= 109/(109+23)=0.8257576 i.e 82.57576%
+
+
+
+```{r}
+# Assuming predicted_labels.fselected is a factor
+predicted_labels.fselected <- as.factor(predicted_labels.fselected)
+
+# Assuming test_data$TravelInsurance is a factor
+test_data$TravelInsurance <- as.factor(test_data$TravelInsurance)
+
+# Now, create the confusion matrix
+cm2 <- confusionMatrix(predicted_labels.fselected,test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm2)
+```
+
+
+
+
+#########################################################################################################
+3)Linear Discriminant Analysis
+#########################################################################################################
+
+```{r}
+set.seed(123)
+#install.packages("MASS")
+library(MASS)
+
+lda.out=lda(TravelInsurance ~ Age + Employment.Type + GraduateOrNot + AnnualIncome + FamilyMembers +
+              ChronicDiseases + FrequentFlyer + EverTravelledAbroad, data = train_data)
+lda.out
+```
+Observation 
+-The LDA output indicates that 64.09% of the training observation corresponds to customer not taking the travel insurance and 35.90% of the training observation corresponds to the customer taking the travel insurance
+
+
+```{r}
+set.seed(123)
+lda.pred=predict(lda.out , test_data)
+names(lda.pred)
+lda.pred$class[1:10] # What LDA predict for first 10 observation
+```
+
+```{r}
+set.seed(123)
+lda.class=lda.pred$class
+table(lda.class, test_data$TravelInsurance)
+```
+
+Therefore the test accuracy of the LDA model is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (104+335)/567= 0.7742504 i.e 77.42504%
+$Precision= \frac{TP}{TP+FP}$ = 104/(104+103)=0.5024155 i.e 50.24155%
+$Recall= \frac{TP}{TP+FN}$= 104/(104+103)=0.8062016 i.e 80.62016%
+
+```{r}
+
+# create the confusion matrix
+cm3 <- confusionMatrix(lda.class, test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm3)
+```
+
+
+
+
+---------------------------------------------------------------------------------------------------------
+-------------------Performing LDA model with selected features-------------------------------------------
+
+
+```{r}
+
+lda.fselected=lda(TravelInsurance ~ Age + AnnualIncome + FamilyMembers                    
+                  + FrequentFlyer + EverTravelledAbroad, data = train_data)
+lda.fselected
+```
+
+```{r}
+set.seed(123)
+lda.pred.fselected=predict(lda.fselected , test_data)
+names(lda.pred.fselected)
+lda.pred.fselected$class[1:10] # What LDA predict for first 10 observation
+```
+
+```{r}
+set.seed(123)
+lda.class.fselected=lda.pred.fselected$class
+table(lda.class.fselected, test_data$TravelInsurance)
+```
+
+```{r}
+# create the confusion matrix
+cm4 <- confusionMatrix(lda.class.fselected, test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm4)
+```
+
+
+Therefore the test accuracy of the LDA model with selected model is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (107+336)/567= 0.7813051 i.e 78.13051%
+$Precision= \frac{TP}{TP+FP}$ = 107/(107+100)=0.5169082 i.e 51.69082%
+$Recall= \frac{TP}{TP+FN}$= 107/(107+24)=0.8167939 i.e 81.67939%
+
+
+
+
+
+
+
+#########################################################################################################
+4) Quadratic Discriminant Analysis
+#########################################################################################################
+
+
+```{r}
+qda.out=qda(TravelInsurance ~ Age + Employment.Type + GraduateOrNot + AnnualIncome + FamilyMembers +
+              ChronicDiseases + FrequentFlyer + EverTravelledAbroad, data = train_data)
+qda.out
+```
+Observation 
+-The QDA output indicates that 64.09% of the training observation corresponds to customer not taking the travel insurance and 35.90% of the training observation corresponds to the customer taking the travel insurance
+
+```{r}
+qda.pred <- predict(qda.out , test_data)
+names(qda.pred)
+qda.pred$class[1:10] # What QDA predict for first 10 observation
+```
+
+```{r}
+set.seed(123)
+qda.class <- qda.pred$class
+table(qda.class, test_data$TravelInsurance)
+```
+Therefore the test accuracy of the QDA model is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (119+322)/567= 0.7777778 i.e 77.77778%
+$Precision= \frac{TP}{TP+FP}$ = 119/(119+88)=0.5748792 i.e 57.48792%
+$Recall= \frac{TP}{TP+FN}$= 119/(119+38)=0.7579618 i.e 0.7579618%
+
+
+---------------------------------------------------------------------------------------------------------
+-------------------Performing QDA model with selected features-------------------------------------------
+
+
+```{r}
+qda.fselected=qda(TravelInsurance ~ Age + AnnualIncome + FamilyMembers +
+               FrequentFlyer + EverTravelledAbroad, data = train_data)
+qda.fselected
+```
+
+
+```{r}
+qda.pred.fselected <- predict(qda.fselected , test_data)
+names(qda.pred.fselected)
+qda.pred.fselected$class[1:10] # What QDA predict for first 10 observation
+```
+
+```{r}
+set.seed(123)
+qda.fselected.class <- qda.pred.fselected$class
+table(qda.fselected.class, test_data$TravelInsurance)
+```
+
+Therefore the test accuracy of the QDA model with selected feature is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (119+316)/567= 0.7671958 i.e 76.71958%
+$Precision= \frac{TP}{TP+FP}$ = 119/(119+88)=0.5748792 i.e 57.48792%
+$Recall= \frac{TP}{TP+FN}$= 119/(119+44)=0.7300613 i.e 73.00613%
+
+```{r}
+# create the confusion matrix
+cm5 <- confusionMatrix(qda.fselected.class, test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm5)
+```
+
+
+
+
+
+
+
+
+#########################################################################################################
+1) KNN- classifier
+#########################################################################################################
+
+## KNN- Classifier with all predictor variables
+
+```{r}
+set.seed(123)
+# cagtegorical variable as factor
+Insurance_data$ChronicDiseases=as.factor(Insurance_data$ChronicDiseases)
+Insurance_data$Employment.Type= as.factor(Insurance_data$Employment.Type)
+Insurance_data$GraduateOrNot= as.factor(Insurance_data$GraduateOrNot)
+Insurance_data$FrequentFlyer= as.factor(Insurance_data$FrequentFlyer)
+Insurance_data$EverTravelledAbroad= as.factor(Insurance_data$EverTravelledAbroad)
+Insurance_data$TravelInsurance= as.factor(Insurance_data$TravelInsurance)
+```
+
+
+```{r}
+set.seed(123)
+# converting all my dataset to numeric for the model setting
+Insurance_data_num <- as.data.frame(lapply(Insurance_data[,1:8], as.numeric))
+```
+
+Here we would like to do a cross validation to decide which might be the best to choose for K in the KNN procedure
+
+```{r}
+library(caret)
+set.seed(123)
+knn_model = train(
+  TravelInsurance ~ .,
+  data = train_data,
+  method = "knn",
+  tuneLength=10,
+  trControl = trainControl(method = "cv", number = 10),
+  preProcess = c("center", "scale")
+)
+knn_model
+```
+
+confusion matrix
+```{r}
+set.seed(123)
+Knn_pred=predict(knn_model, test_data)
+Knn_pred[1:10]
+```
+
+```{r}
+set.seed(123)
+table(Knn_pred, test_data$TravelInsurance)
+```
+
+
+Therefore the test accuracy of the Knn model (used cv and figure out that k=5 gives the best accuracy) is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (115+324)/567= 0.7742504 i.e 77.42504%
+$Precision= \frac{TP}{TP+FP}$ = 115/(115+92)=0.5555556 i.e 55.55556%
+$Recall= \frac{TP}{TP+FN}$= 115/(115+36)=0.7615894 i.e 76.15894%
+
+```{r}
+# create the confusion matrix
+cm6 <- confusionMatrix(Knn_pred, test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm6)
+```
+
+
+---------------------------------------------------------------------------------------------------------
+------------------------Knn-Classifier with the selected features----------------------------------------
+
+
+
+
+```{r}
+set.seed(123)
+knn_model_fselected = train(
+  TravelInsurance ~ Age + AnnualIncome + FamilyMembers + FrequentFlyer + 
+    EverTravelledAbroad,
+  data = train_data,
+  method = "knn",
+  tuneLength=10,
+  trControl = trainControl(method = "cv", number = 10),
+  preProcess = c("center", "scale")
+)
+knn_model_fselected
+```
+
+```{r}
+set.seed(123)
+Knn_pred_fselected=predict(knn_model_fselected, test_data)
+Knn_pred_fselected[1:10]
+```
+
+```{r}
+set.seed(123)
+table(Knn_pred_fselected, test_data$TravelInsurance)
+```
+
+Therefore the test accuracy of the Knn model (used cv and figure out that k=5 gives the best accuracy) is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (123+337)/567= 0.8112875 i.e 81.12875%
+$Precision= \frac{TP}{TP+FP}$ = 123/(123+84)=0.5942029 i.e 59.42029%
+$Recall= \frac{TP}{TP+FN}$= 123/(123+23)=0.8424658 i.e 0.8424658%
+
+```{r}
+# create the confusion matrix
+cm7 <- confusionMatrix(Knn_pred_fselected, test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm7)
+```
+
+
+
+
+
+
+
+
+
+
+
+##########################################################################################################
+5) Decision Tree
+##########################################################################################################
+
+```{r}
+#install.packages("tree")
+set.seed(12312) 
+library(tree)
+
+
+train=sample(1:nrow(Insurance_data),1320) # We take 1320 (70% of total) for training and 567 for test
+test=Insurance_data[-train,]
+tree.d=tree(TravelInsurance~.,Insurance_data,split="gini",subset=train) # except TravelInsurance all other variables in the data set are be considered as predictors.
+
+```
+
+```{r}
+summary(tree.d)
+```
+Interpretation: This is a classification tree, we have a total number of terminal node of 144, so it’s a big tree. we have mean deviance: 0.7478 , which is calculated deviance divided by total number of training observation minus the number of terminal nodes. We also have Misclassification error rate: 0.1614, which is calculated as Number of Misclassification divided by total training set. (from video) we see that the training error rate is 16.14%. The residual mean deviance reported is simply the deviance divided by 𝑛−|𝑇0|, which in this case is 1320-144= 1176
+
+```{r}
+plot(tree.d)
+```
+
+```{r}
+set.seed(12312) 
+pred.d=predict(tree.d, test, type="class") 
+pred.d[1:10] # Looking at the predicted lables for first 10 observation by this decision tree
+```
+
+```{r}
+set.seed(12312) 
+table(pred.d, test$TravelInsurance)
+```
+Observation[Without cross validatiaon]
+Therefore the test accuracy of the Decision Tree model (With out cross validation and with all features) is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (118+332)/567= 0.7936508 i.e 79.36508%
+$Precision= \frac{TP}{TP+FP}$ = 118/(118+75)=0.611399 i.e 61.1399%
+$Recall= \frac{TP}{TP+FN}$= 118/(118+42)=0.7375 i.e 73.75%
+
+```{r}
+# create the confusion matrix
+cm8 <- confusionMatrix(pred.d, test$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm8)
+```
+
+
+## Decision Tree with feature selection
+
+```{r}
+tree.fselected=tree(TravelInsurance~Age + AnnualIncome + FamilyMembers +
+               FrequentFlyer + EverTravelledAbroad,Insurance_data,split="gini",subset=train) # except TravelInsurance all other variables in the data set are be considered as predictors.
+```
+
+```{r}
+summary(tree.fselected)
+```
+Interpretation: This is a classification tree, we have a total number of terminal node of 125, so it’s a big tree. we have mean deviance: 0.7816 , which is calculated deviance divided by total number of training observation minus the number of terminal nodes. We also have Misclassification error rate: 0.1667, which is calculated as Number of Misclassification divided by total training set. (from video) we see that the training error rate is 16.67%. The residual mean deviance reported is simply the deviance divided by 𝑛−|𝑇0|, which in this case is 1320-125= 1195
+
+```{r}
+set.seed(12312) 
+tree.pred.fselected=predict(tree.fselected, test, type="class") 
+tree.pred.fselected[1:10] # Looking at the predicted lables for first 10 observation by this decision tree
+```
+
+```{r}
+set.seed(12312) 
+table(tree.pred.fselected, test$TravelInsurance)
+```
+
+Observation[Without cross validatiaon]
+Therefore the test accuracy of the Decision Tree model (With out cross validation and with selected features) is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (117+334)/567= 0.7954145 i.e 79.54145%
+$Precision= \frac{TP}{TP+FP}$ = 117/(117+76)=0.6062176 i.e 60.62176%
+$Recall= \frac{TP}{TP+FN}$= 117/(117+40)=0.7452229 i.e 74.52229%
+
+```{r}
+# create the confusion matrix
+cm9 <- confusionMatrix(tree.pred.fselected, test$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm9)
+```
+
+
+## Decision tree with cross- validation
+[With all the features]
+
+```{r}
+set.seed(12312) 
+cv.d=cv.tree(tree.d) # using deviance as a criteria for the cross-validation
+plot(cv.d$size, cv.d$dev, type = "b") # Since we have used deviance as our criteria for the cross-validation,
+```
+From the graph we can clearly see that as the size of the tree increases the deviance gooes decreasing and we want a tree with minimum deviance and less complex.
+```{r}
+set.seed(12312)
+names(cv.d)
+cv.d
+```
+
+```{r}
+set.seed(12312) 
+prune.d=prune.tree(tree.d, best =6)
+```
+
+```{r}
+prune.d
+```
+
+```{r}
+set.seed(12312)
+plot(prune.d) 
+text(prune.d)
+```
+
+SO annual income is the key factor that will decide weather the person will buy the travel insurance or not.
+
+```{r}
+set.seed(12312) 
+summary(prune.d) 
+```
+
+Talking about pruned Tree:
+From the summary statistics we can see that the Misclassification error rate(i.e Training error rate): 0.175 (or 17.5% ). After the pruneing the misclassification of our training data went up a litle, perviously it was 16.14% and now it is 17.5% (Increased)
+
+```{r}
+set.seed(12312) #Predict class on test data
+pred.d.prune=predict(prune.d,test, type = "class") 
+pred.d.prune[1:10]  # Looking at the prediction by this pruned tree for the first 10 observations
+```
+```{r}
+set.seed(12312) 
+table(pred.d.prune, test$TravelInsurance)
+```
+Interpretation: From the confusion matrix, we can see that the True-0 value is 365 and True-1 value is 113. False-0 value is 80 and False-1 value is 9. Misclassification rate= (80+9)/567. This is the misclassification rate in my test set so the test error rate is (80+9)/567 = 0.1569665. so my test error rate is 15.69% for the pruned tree. Also accuracy in the test data: (365+113)/567 = 0.8430335 i.e 84.30%
+
+Talking about the compression, test error rate for the unpruned tree was 20.63% and test error rate for the pruned data is 15.69%, so kind a say It performs well in the test data after pruning, which makes sense. Taking about accuracy point of view: Unpruned tree has a accuracy of 79.36% in the test data but pruned tree has accuracy of 84.30%, so accuracy also increases in the test data after pruning.
+
+Observation[With cross validatiaon and all features]
+Therefore the test accuracy of the Decision Tree model (With out cross validation and with selected features) is: $Accuracy= \frac{TP + TN}{TP +TN+FP+FN}$ = (113+365)/567=0.8430335 i.e 84.30335%
+$Precision= \frac{TP}{TP+FP}$ = 113/(113+80)=0.5854922 i.e 58.54922%
+$Recall= \frac{TP}{TP+FN}$= 113/(113+9)=0.9262295 i.e 92.62295%
+
+```{r}
+# create the confusion matrix
+cm9 <- confusionMatrix(pred.d.prune, test$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm9)
+```
+
+----------------------------------------------------------------------------------------------------------------------Decision tree with cross- validation and selected features----------------------------------
+
+
+
+
+
+
+
+
+
+
+#########################################################################################################
+6) Random Forest
+#########################################################################################################
+i) Bagging (no.of variable = mtry)
+```{r, warning=FALSE}
+set.seed(12312) 
+#install.packages("randomForest") 
+library(randomForest)
+```
+
+```{r}
+set.seed(12312) 
+# let's first do begging which means talking all the feature variable for mtry 
+beg.Insurance_data=randomForest(TravelInsurance~., data=Insurance_data, subset= train, mtry=8, importance=TRUE) 
+beg.Insurance_data # lets take a look at the output
+```
+```{r}
+yhat.bag=predict(beg.Insurance_data, newdata = test)
+yhat.bag[1:10] #Looking at the prediction made by this bagging algorithm for my first 10 observation in the test data
+```
+```{r}
+table(yhat.bag, test$TravelInsurance)
+```
+The test error rate for the bagging algorithm is (71+60)/567=0.2310406 i.e 23.10%  and the accuracy of the bagging algorithm is (314+122)/567=0.7689594 i.e 76.89%
+
+```{r}
+# create the confusion matrix
+cm10 <- confusionMatrix(yhat.bag, test$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm10)
+```
+
+## Bagging with selected features
+
+```{r}
+set.seed(12312) 
+# let's first do begging which means talking all the feature variable for mtry 
+beg.fselected=randomForest(TravelInsurance~Age + AnnualIncome + FamilyMembers + FrequentFlyer + 
+    EverTravelledAbroad, data=Insurance_data, subset= train, mtry=5, importance=TRUE) 
+beg.fselected # lets take a look at the output
+```
+
+```{r}
+yhat.bag.fselected=predict(beg.fselected, newdata = test)
+yhat.bag.fselected[1:10] #Looking at the prediction made by this bagging algorithm for my first 10 observation in the test data
+```
+```{r}
+table(yhat.bag.fselected, test$TravelInsurance)
+```
+
+```{r}
+# create the confusion matrix
+cm11 <- confusionMatrix(yhat.bag.fselected, test$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm11)
+```
+
+
+
+
+#########################################################################################################
+# Random Forest
+#########################################################################################################
+As a rule of thumb we will try m=sqrt(8) as our m-value to do random forest
+
+```{r}
+set.seed(12312) 
+# trying m=3 
+rf.Insurance_data_3=randomForest(TravelInsurance~., data=Insurance_data, subset=train, mtry=3, importance=TRUE) 
+rf.Insurance_data_3 # lets take a look at the output
+```
+Trying different value of m
+
+```{r}
+set.seed(12312) 
+# trying m=1 
+rf.Insurance_data_1=randomForest(TravelInsurance~., data=Insurance_data, subset=train, mtry=1, importance=TRUE) 
+rf.Insurance_data_1 # lets take a look at the output
+```
+```{r}
+set.seed(12312) 
+# trying m=2 
+rf.Insurance_data_2=randomForest(TravelInsurance~., data=Insurance_data, subset=train, mtry=2, importance=TRUE) 
+rf.Insurance_data_2 # lets take a look at the output
+```
+```{r}
+set.seed(12312) 
+# trying m=4 
+rf.Insurance_data_4=randomForest(TravelInsurance~., data=Insurance_data, subset=train, mtry=4, importance=TRUE) 
+rf.Insurance_data_4 # lets take a look at the output
+```
+```{r}
+set.seed(12312) 
+# trying m=5 
+rf.Insurance_data_5=randomForest(TravelInsurance~., data=Insurance_data, subset=train, mtry=5, importance=TRUE) 
+rf.Insurance_data_5 # lets take a look at the output
+```
+```{r}
+set.seed(12312) 
+# trying m=6 
+rf.Insurance_data_6=randomForest(TravelInsurance~., data=Insurance_data, subset=train, mtry=6, importance=TRUE) 
+rf.Insurance_data_6 # lets take a look at the output
+```
+```{r}
+set.seed(12312) 
+# trying m=7 
+rf.Insurance_data_7=randomForest(TravelInsurance~., data=Insurance_data, subset=train, mtry=7, importance=TRUE) 
+rf.Insurance_data_7 # lets take a look at the output
+```
+It seems that the Random Forest with mtry=2 gives us the lowest OOB error(17.88%) from your ouput.
+
+```{r}
+yhat.rf=predict(rf.Insurance_data_2, newdata = test)
+yhat.rf[1:10] #Looking at the prediction made by this Random forest algorithm for my first 10 observation in the test data
+```
+
+```{r}
+table(yhat.rf, test$TravelInsurance)
+```
+So the accuracy of the Random forest model is (364+117)/567 i.e 84.83% with the error rate of (10+76)/567= 0.1516755 i.e 15.16%
+
+```{r}
+# create the confusion matrix
+cm12 <- confusionMatrix(yhat.rf, test$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm12)
+```
+
+
+
+
+
+
+#########################################################################################################
+Boosting (with shallow decision tree)
+#########################################################################################################
+
+```{r}
+set.seed(100)
+#install.packages("adabag")
+library(adabag)
+boosting.model= boosting(TravelInsurance~., data = train_data, mfinal = 50)
+```
+
+
+```{r}
+boosting.pred=predict(boosting.model, test_data)$class
+```
+
+```{r}
+table(boosting.pred, test_data$TravelInsurance)
+```
+
+```{r}
+# Assuming predicted_labels.fselected is a factor
+boosting.pred<- as.factor(boosting.pred)
+
+# Assuming test_data$TravelInsurance is a factor
+test_data$TravelInsurance <- as.factor(test_data$TravelInsurance)
+
+
+# create the confusion matrix
+cm13 <- confusionMatrix(boosting.pred, test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm13)
+```
+
+
+
+
+
+#########################################################################################################
+Support Vector Machine
+#########################################################################################################
+1) For radial kernal
+
+
+```{r}
+set.seed(100)
+library(e1071)
+
+
+set.seed(100)
+# perform cross-validation
+svm.tune.L.out <- tune(
+  svm,                   # SVM function
+  TravelInsurance~.,                 # Formula for the model
+  data = train_data,            # my training data frame
+  kernel = "linear",     # Linear kernel
+  ranges = list(cost = seq(0.01, 10, length.out = 20), scale=T)  # Range of cost values(she did not mention in particular which value to take so I am taking of my wish)
+)
+svm.tune.L.out
+```
+
+Tried different values cost: seq(0.01, 10, length.out = 20), getting my model is performing best when cost=0.01, and I have standardized my data set also
+
+```{r}
+summary(svm.tune.L.out)
+```
+
+
+```{r}
+svm.L.best.mod=svm(TravelInsurance~., data = train_data, kernel = "linear", cost =0.01, scale = T )
+summary(svm.L.best.mod)
+```
+Observation:
+Summary tells us that, the linear kernel was used with cost=0.01 and that there were 901 support vectors, out of which 450 belongs to one class and 451 belongs to the other class. Number of classes are two with levels 0 and 1
+
+
+```{r}
+set.seed(100)
+svm.L.pred_test=predict(svm.L.best.mod, test_data)
+svm.L.pred_test[1:10]   # Looking at the first 10 prediction made by our model in the Test dataset
+```
+
+```{r}
+set.seed(100)
+table(svm.L.pred_test, test_data$TravelInsurance)
+```
+
+```{r}
+# create the confusion matrix
+cm14 <- confusionMatrix(svm.L.pred_test, test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm14)
+```
+
+
+## SVM model with Radial kernal
+Tried different values of gamma: gamma=c(0.5,1,2,3,4) and cost: cost = seq(0.01, 10, length.out = 20) and try to find the best model for us and data are standardized 
+```{r}
+set.seed(100)
+# perform cross-validation
+svm.tune.R.out <- tune(
+  svm,                   # SVM function
+  TravelInsurance~.,                 # Formula for the model
+  data = train_data,            # my training data frame
+  kernel = "radial",     # Linear kernel
+  ranges = list(cost = seq(0.01, 10, length.out = 20),gamma=c(0.5,1,2,3,4), scale=T)  # Range of cost values(she did not mention in particular which value to take so I am taking of my wish)
+)
+svm.tune.R.out
+```
+
+so we will get best model with radial for cost=1.061579 and gamma=0.05
+
+```{r}
+svm.R.best.mod=svm(TravelInsurance~., data = train_data, kernel = "radial", cost =1.061579, gamma=0.5, scale = T )
+summary(svm.R.best.mod)
+```
+
+predicting test data set with this model
+```{r}
+set.seed(100)
+svm.R.pred_test=predict(svm.R.best.mod, test_data)
+svm.R.pred_test[1:10]   # Looking at the first 10 prediction made by our model in the Test dataset
+```
+
+
+```{r}
+set.seed(100)
+table(svm.R.pred_test, test_data$TravelInsurance)
+```
+
+```{r}
+# create the confusion matrix
+cm15 <- confusionMatrix(svm.R.pred_test, test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm15)
+```
+
+## SVM model with Polynomial kernal
+
+```{r}
+set.seed(100)
+# perform cross-validation
+svm.tune.P.out <- tune(
+  svm,                   # SVM function
+  TravelInsurance~.,                 # Formula for the model
+  data = train_data,            # my training data frame
+  kernel = "polynomial",     # Linear kernel
+  ranges = list(cost=seq(0.01, 10, length.out = 20),degree=c(0.25,0.33,0.5,1,2,3,4), scale=T)  # Range of cost values(she did not mention in particular which value to take so I am taking of my wish)
+)
+svm.tune.P.out
+```
+
+so we will get best model with polynomial model for cost=50 and degree=4
+
+```{r}
+svm.P.best.mod=svm(TravelInsurance~., data = train_data, kernel = "polynomial", cost =6.845263, degree=4, scale = T )
+summary(svm.P.best.mod)
+```
+
+```{r}
+set.seed(100)
+svm.P.pred_test=predict(svm.P.best.mod, test_data)
+svm.P.pred_test[1:10]   # Looking at the first 10 prediction made by our model in the Test dataset
+```
+
+```{r}
+set.seed(100)
+table(svm.P.pred_test, test_data$TravelInsurance)
+```
+
+```{r}
+# create the confusion matrix
+cm16 <- confusionMatrix(svm.P.pred_test, test_data$TravelInsurance)
+
+# Display the confusion matrix
+draw_confusion_matrix(cm16)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#########################################################################################################
+Gradient Boosting
+#########################################################################################################
+
+Just Run for one time only
+```{r}
+set.seed(100) 
+library(gbm)
+
+# Converting my data to numeric
+train_data$TravelInsurance= as.numeric(train_data$TravelInsurance)
+train_data$TravelInsurance = as.integer(train_data$TravelInsurance)-1
+
+test_data$TravelInsurance= as.numeric(test_data$TravelInsurance)
+test_data$TravelInsurance = as.integer(test_data$TravelInsurance)-1
+```
+
+
+```{r}
+library(gbm)
+#Trying learning rate of 0.001(shrinkage paremeter) 
+boost.model_0.1 = gbm(TravelInsurance~., data=train_data, distribution="bernoulli", n.trees=100, interaction.depth=4, shrinkage=0.1) 
+summary(boost.model_0.1 )
+```
+
+
+```{r}
+#Trying learning rate of 0.001(shrinkage paremeter) 
+boost.model_0.001 = gbm(TravelInsurance~., data=train_data, distribution="bernoulli", n.trees=100, interaction.depth=4, shrinkage=0.001 ) 
+summary(boost.model_0.001)
+```
+
+
+
+
+
+

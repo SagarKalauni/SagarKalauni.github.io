@@ -1,0 +1,264 @@
+SQL> /*Sagar Kalauni*/
+SQL> /* Lab8-Kalauni*/
+SQL> 
+SQL> /*Q.NO.1)The ProjectAssignment table stores data about the hours that employees are working on specific projects.  A senior project manager needs a listing of employee names (first and last concatenated) who have not worked on projects 1, 2, 7 or 8. Use a subquery approach and sort the rows of the result table by employee last name.*/
+SQL> COLUMN "Employee" FORMAT A20;
+SQL> SELECT LastName||', '||FirstName "Employee"
+  2  FROM Employee
+  3  WHERE EmployeeID NOT IN ( SELECT EmployeeID
+  4                               FROM ProjectAssignment
+  5  							 WHERE ProjectNumber IN (1, 2, 7, 8))
+  6  ORDER BY lastName;
+
+Employee                                                                        
+--------------------                                                            
+Barlow, William                                                                 
+Becker, Roberta                                                                 
+Becker, Robert                                                                  
+Bock, Douglas                                                                   
+Boudreaux, Beverly                                                              
+Boudreaux, Betty                                                                
+Clinton, William                                                                
+Jones, Quincey                                                                  
+Klepper, Robert                                                                 
+Quattromani, Toni                                                               
+Schultheis, Robert                                                              
+
+Employee                                                                        
+--------------------                                                            
+Simmons, Leslie                                                                 
+Smith, Susan                                                                    
+Smith, Alyssa                                                                   
+Sumner, Elizabeth                                                               
+Thornton, Billy                                                                 
+Webber, Eugene                                                                  
+Young, Yvonne                                                                   
+Zumwalt, Mary                                                                   
+
+19 rows selected.
+
+SQL> 
+SQL> 
+SQL> /*Q.NO.2)Management would like a report on all employees with a salary GREATER than the MINIMUM salary of the employees in Department 3.  Use a subquery approach and include the employee first name, last name (concatenated), department number, and salary.  Sort the rows by departmentnumber. */
+SQL> COLUMN "Employee" FORMAT A20;
+SQL> COLUMN Salary FORMAT $99,999.99;
+SQL> SELECT LastName||', '||FirstName "Employee", DepartmentNumber, Salary
+  2  FROM Employee
+  3  WHERE Salary > (SELECT MIN(Salary)
+  4                       FROM Employee
+  5  					 WHERE DepartmentNumber=3)
+  6  ORDER BY DepartmentNumber;
+
+Employee             DEPARTMENTNUMBER      SALARY                               
+-------------------- ---------------- -----------                               
+Bordoloi, Bijoy                     2  $17,850.00                               
+Webber, Eugene                      2  $17,500.00                               
+Jones, Quincey                      3  $30,550.00                               
+Smith, Susan                        3  $32,500.00                               
+Barlow, William                     3  $27,500.00                               
+Becker, Robert                      3  $23,545.00                               
+Quattromani, Toni                   5  $22,325.00                               
+Becker, Roberta                     6  $23,000.00                               
+Simmons, Lester                     8  $22,000.00                               
+Boudreaux, Beverly                  8  $17,520.00                               
+Schultheis, Robert                  9  $17,525.00                               
+
+11 rows selected.
+
+SQL> 
+SQL> /*Q.NO.3)Management is concerned that some employees are not putting in sufficient work hours on assigned projects 1, 2, and 3.  List the names of employees (last and first concatenated) for those employees who worked on one of these three projects, but worked fewer hours than the average number of hours worked on these three projects combined.  This is a nested subquery. Order the report by last name.*/
+SQL> COLUMN "Employee Name" FORMAT A20;
+SQL> SELECT LastName||', '||FirstName "Employee Name"
+  2  FROM Employee
+  3  WHERE EmployeeID IN ( SELECT EmployeeID
+  4                        FROM ProjectAssignment
+  5  					  WHERE ProjectNumber IN (1,2,3) AND HoursWorked < (SELECT SUM(AVG(HoursWorked))
+  6                                                                          FROM ProjectAssignment
+  7                                                                          WHERE ProjectNumber IN (1,2,3)
+  8                                                                          GROUP BY ProjectNumber))
+  9  ORDER BY LastName;
+
+Employee Name                                                                   
+--------------------                                                            
+Bock, Douglas                                                                   
+Eakin, Maxwell                                                                  
+Klepper, Robert                                                                 
+Smith, Alyssa                                                                   
+
+SQL> 
+SQL> /*Q.NO.4)The previous report has piqued the project manager’s curiosity. He would now like a report that lists all employees who have worked fewer hours than the average for all projects combined.  Computer the average hours worked on a project in a subquery.  In the report, list the employee’s first and last name. */
+SQL> COLUMN "Employee Name" FORMAT A20;
+SQL> SELECT LastName||', '||FirstName "Employee Name"
+  2  FROM Employee
+  3  WHERE EmployeeID IN ( SELECT EmployeeID
+  4                        FROM ProjectAssignment
+  5  					  WHERE HoursWorked < (SELECT SUM(AVG(HoursWorked))
+  6                                             FROM ProjectAssignment
+  7                                             GROUP BY ProjectNumber));
+
+Employee Name                                                                   
+--------------------                                                            
+Simmons, Lester                                                                 
+Adams, Adam                                                                     
+Thornton, Billy                                                                 
+Eakin, Maxwell                                                                  
+Bock, Douglas                                                                   
+Bordoloi, Bijoy                                                                 
+Smith, Alyssa                                                                   
+Smith, Susan                                                                    
+Klepper, Robert                                                                 
+Brockwell, Mary Elle                                                            
+n                                                                               
+
+Employee Name                                                                   
+--------------------                                                            
+                                                                                
+
+10 rows selected.
+
+SQL> 
+SQL> /*Q.NO.5)The Chief Nurse would like a list of all room numbers that have a bed with a description that has Surgical anywhere in the field and are available.  The result field should list the room */
+SQL> COLUMN "Room Number" FORMAT A12;
+SQL> SELECT RoomNumber "Room Number"
+  2  FROM Bed
+  3  WHERE Availability='Y' AND BedType IN (SELECT BedType
+  4                                           FROM BedClassification
+  5  										 WHERE Description LIKE '%Surgical%');
+
+Room Number                                                                     
+------------                                                                    
+MSN214                                                                          
+MSS001                                                                          
+MSS004                                                                          
+MSS006                                                                          
+SW3007                                                                          
+SW3005                                                                          
+SW3001                                                                          
+RE0032                                                                          
+MSS010                                                                          
+MSS012                                                                          
+MSS013                                                                          
+
+Room Number                                                                     
+------------                                                                    
+MSS014                                                                          
+MSS014                                                                          
+MSN202                                                                          
+MSN215                                                                          
+RE0023                                                                          
+CC1031                                                                          
+MSN205                                                                          
+CC1001                                                                          
+CC1011                                                                          
+MSN213                                                                          
+CC1031                                                                          
+
+Room Number                                                                     
+------------                                                                    
+RE0001                                                                          
+SW3006                                                                          
+SW3006                                                                          
+MSN211                                                                          
+RE0032                                                                          
+RE0032                                                                          
+CC1051                                                                          
+SW3003                                                                          
+MSN210                                                                          
+MSN212                                                                          
+RE0031                                                                          
+
+Room Number                                                                     
+------------                                                                    
+SW3008                                                                          
+SW3008                                                                          
+MSS015                                                                          
+
+36 rows selected.
+
+SQL> 
+SQL> /*Q.NO.6)The project manager needs to know all available employees who can work on a new project. He wants a report that lists the employee last name, first name, and department name.  But, he only wants the employees who are in the departments that are currently working on projects 3 or 5. This query will require both a JOIN (in the outer query) and a subquery.  */
+SQL> COLUMN "Last Name"  FORMAT   A12;
+SQL> COLUMN "First Name"  FORMAT   A15;
+SQL> SELECT LastName "Last Name", FirstName "First Name", d.DepartmentName "Department Name"
+  2  FROM Employee e LEFT OUTER JOIN Department d ON (e.DepartmentNumber=d.departmentnumber)
+  3  WHERE d.DepartmentNumber IN (SELECT DepartmentNumber
+  4                              FROM Project
+  5                              WHERE ProjectNumber IN (3,5));
+
+Last Name    First Name      Department Name                                    
+------------ --------------- -------------------------                          
+Simmons      Lester          Admin/Labs                                         
+Boudreaux    Beverly         Admin/Labs                                         
+Adams        Adam            Admin/Labs                                         
+Thornton     Billy           Admin/Labs                                         
+Clinton      William         Admin/Labs                                         
+Webber       Eugene          Radiology                                          
+Bordoloi     Bijoy           Radiology                                          
+Smith        Alyssa          Radiology                                          
+
+8 rows selected.
+
+SQL> 
+SQL> /*Q.NO.7)The head of Pediatrics would like a list of all current patients in Pediatrics beds.  Pediatric beds will always have PED somewhere in the roomnumber field.  The hospital may add more pediatric beds in the future.  Create the list by using a subquery.  Format patient names with one heading.*/
+SQL> COLUMN "Patient Name" FORMAT A20;
+SQL> SELECT LastName||', '||FirstName "Patient Name"
+  2  FROM Patient
+  3  WHERE Bedno IN (SELECT BedNumber
+  4                  FROM Bed
+  5  				WHERE RoomNumber LIKE '%PED%');
+
+Patient Name                                                                    
+--------------------                                                            
+Able, Andrew                                                                    
+Algebra, Albert                                                                 
+Beaufort, Bradley                                                               
+Crawford, Clyde                                                                 
+Dunland, Danny                                                                  
+Ezzra, Ertha                                                                    
+Funk, Filbert                                                                   
+Greathouse, Gretchen                                                            
+
+8 rows selected.
+
+SQL> 
+SQL> /*Q.NO.8)Provide the treatment number, patientId, and employeeID of all treatments with a service Category description of ‘Surgery’ and have a standardCharge greater than $5,000.  This is a nested subquery.   Order the report by treatment number. */
+SQL> COLUMN "Patient ID" FORMAT A10;
+SQL> COLUMN "Employee ID" FORMAT A12;
+SQL> SELECT treatmentNumber "Treatment Number", PatientID "Patient ID", EmployeeID "Employee ID"
+  2  FROM Treatment
+  3  WHERE ServiceID IN (SELECT ServiceID
+  4                      FROM Service
+  5                      Where StandardCharge>5000 AND CategoryID IN (SELECT CategoryID
+  6  					                                             FROM ServiceCategory
+  7  																 WHERE Description LIKE '%Surgery%'))
+  8  ORDER BY treatmentNumber;
+
+Treatment Number Patient ID Employee ID                                         
+---------------- ---------- ------------                                        
+               3 100304     88101                                               
+               3 100424     88404                                               
+              10 100306     10044                                               
+              13 100500     88101                                               
+              14 222001     88202                                               
+              26 666121     88202                                               
+
+6 rows selected.
+
+SQL> 
+SQL> /*Q.NO.9)The Hospital Chief has requested a list of employees whose salary is less than all employee salaries in Department 2.  The result should not include any employee who has a wagerate rather than a salary (i.e. salary should not be null).  Use a subquery approach and the ALL function.*/
+SQL> COLUMN "Employee" FORMAT A20;
+SQL> COLUMN Salary FORMAT $999,999.99;
+SQL> SELECT LastName||', '||FirstName "Employee", Salary, DepartmentNumber
+  2  FROM employee
+  3  WHERE salary < ALL (SELECT Salary
+  4                      FROM employee
+  5                      WHERE DepartmentNumber = 2 AND salary IS NOT NULL);
+
+Employee                   SALARY DEPARTMENTNUMBER                              
+-------------------- ------------ ----------------                              
+Simmons, Leslie         $2,200.00                6                              
+Young, Yvonne           $2,200.00                6                              
+
+SQL> 
+SQL> 
+SQL> /*                                        THE END                                                                    */Spool off;

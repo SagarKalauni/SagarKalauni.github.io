@@ -1,0 +1,330 @@
+SQL> /*Sagar Kalauni*/
+SQL> /* Lab9-Kalauni*/
+SQL> 
+SQL> /*Solution for Q.Qn.1*/
+SQL> -- Program: Q.No.-1.sql
+SQL> -- Programmer: Sagar Kalauni
+SQL> -- Description: Information about employee's Dependent
+SQL> 
+SQL> TTITLE 'Dependent Information'
+SQL> BTITLE SKIP 2 CENTER 'Not for external dissemination.'
+SQL> SET LINESIZE 55
+SQL> SET PAGESIZE 24
+SQL> SET NWEPAGE 1
+SP2-0158: unknown SET option "NWEPAGE"
+SQL> 
+SQL> COLUMN "Emp ID" FORMAT A6;
+SQL> COLUMN "Dependent" FORMAT A15;
+SQL> COLUMN "Gender" FORMAT A6;
+SQL> COLUMN "Date Birth" FORMAT A10;
+SQL> COLUMN "Relationship" FORMAT A12;
+SQL> SELECT EmployeeID "Emp ID", Name "Dependent", gender "Gender", BirthDate "Date Birth", RelationshipToEmployee "Relationship"
+  2  FROM Dependent
+  3  ORDER BY EmployeeID;
+
+Fri Oct 13                                    page    1
+                 Dependent Information
+
+Emp ID Dependent       Gender Date Birth Relationship  
+------ --------------- ------ ---------- ------------  
+01885  Deanna          F      31-DEC-09  DAUGHTER      
+01885  Jeffery         M      01-JAN-08  SON           
+01885  Mary Ellen      F      05-MAY-76  SPOUSE        
+01885  Michelle        F      17-MAR-04  DAUGHTER      
+01885  Rachael         F      04-OCT-15  DAUGHTER      
+23100  Anita           F      06-JUL-14  DAUGHTER      
+23100  Mita            F      04-JUN-76  SPOUSE        
+23100  Monica          F      30-DEC-16  DAUGHTER      
+23100  Rita            F      11-MAY-18  DAUGHTER      
+33355  Allen           M      29-FEB-88  SPOUSE        
+67555  Andrew          M      25-OCT-18  SON           
+67555  Jo Ellen        F      05-APR-16  DAUGHTER      
+67555  Susan           F      03-MAY-95  SPOUSE        
+
+
+                                                       
+                                                       
+            Not for external dissemination.            
+
+13 rows selected.
+
+SQL> /*Solution for Q.Qn.2*/
+SQL> -- Program: Q.No.-2.sql
+SQL> -- Programmer: Sagar Kalauni
+SQL> -- Description: Information about employee's Dependent
+SQL> 
+SQL> TTITLE 'Dependent Information'
+SQL> BTITLE SKIP 1 CENTER 'Not for external dissemination.'
+SQL> SET LINESIZE 55
+SQL> SET PAGESIZE 24
+SQL> SET NWEPAGE 1
+SP2-0158: unknown SET option "NWEPAGE"
+SQL> 
+SQL> COLUMN "Emp ID" FORMAT A6;
+SQL> COLUMN "Dependent" FORMAT A15;
+SQL> COLUMN "Gender" FORMAT A6;
+SQL> COLUMN "Date Birth" FORMAT A10;
+SQL> COLUMN "Relationship" FORMAT A12;
+SQL> 
+SQL> CLEAR BREAK
+breaks cleared
+SQL> BREAK ON "Emp ID" SKIP 2 ON REPORT
+SQL> COMPUTE COUNT OF "Emp ID" ON REPORT
+SQL> 
+SQL> SELECT EmployeeID "Emp ID", Name "Dependent", gender "Gender", BirthDate "Date Birth", RelationshipToEmployee "Relationship"
+  2  FROM Dependent
+  3  ORDER BY EmployeeID;
+
+Fri Oct 13                                    page    1
+                 Dependent Information
+
+Emp ID Dependent       Gender Date Birth Relationship  
+------ --------------- ------ ---------- ------------  
+01885  Deanna          F      31-DEC-09  DAUGHTER      
+       Jeffery         M      01-JAN-08  SON           
+       Mary Ellen      F      05-MAY-76  SPOUSE        
+       Michelle        F      17-MAR-04  DAUGHTER      
+       Rachael         F      04-OCT-15  DAUGHTER      
+                                                       
+                                                       
+23100  Anita           F      06-JUL-14  DAUGHTER      
+       Mita            F      04-JUN-76  SPOUSE        
+       Monica          F      30-DEC-16  DAUGHTER      
+       Rita            F      11-MAY-18  DAUGHTER      
+                                                       
+                                                       
+33355  Allen           M      29-FEB-88  SPOUSE        
+                                                       
+                                                       
+                                                       
+            Not for external dissemination.            
+
+Fri Oct 13                                    page    2
+                 Dependent Information
+
+Emp ID Dependent       Gender Date Birth Relationship  
+------ --------------- ------ ---------- ------------  
+67555  Andrew          M      25-OCT-18  SON           
+       Jo Ellen        F      05-APR-16  DAUGHTER      
+       Susan           F      03-MAY-95  SPOUSE        
+                                                       
+                                                       
+------                                                 
+    13                                                 
+
+
+
+
+
+
+
+
+
+                                                       
+            Not for external dissemination.            
+
+13 rows selected.
+
+SQL> 
+SQL> /*Solution for Q.Qn.3*/
+SQL> -- Program: Q.No.-3.sql
+SQL> -- Programmer: Sagar Kalauni
+SQL> -- Description: Information about employee's Dependent
+SQL> 
+SQL> /*If done this way perfectly works for first table*/
+SQL> 
+SQL> TTITLE CENTER 'Employee Name:' EmployeeNameVar -
+>     RIGHT 'Page: ' FORMAT 99 sql.pno SKIP 2
+SQL> BTITLE SKIP 1 CENTER 'Not for external dissemination.'
+SQL> SET LINESIZE 65
+SQL> SET PAGESIZE 15
+SQL> SET NEWPAGE 1
+SQL> 
+SQL> -- Create a view to use in the Select command
+SQL> CREATE OR REPLACE VIEW vwEmpDep ( Employee, "Emp ID", DependentName, gender, Relationship) AS
+  2  SELECT e.Lastname||', '||e.Firstname, d.EmployeeID, d.Name, d.gender, d.RelationshipToEmployee
+  3  FROM Dependent d JOIN Employee e ON (e.employeeID=d.employeeID)
+  4  ORDER BY -DependentName;
+ORDER BY -DependentName
+          *
+ERROR at line 4:
+ORA-00904: "DEPENDENTNAME": invalid identifier 
+
+
+SQL> 
+SQL> COLUMN Employee NEW_VALUE EmployeeNameVar NOPRINT
+SQL> COLUMN "Emp ID" FORMAT A20
+SQL> COLUMN DependentName FORMAT A15
+SQL> COLUMN gender FORMAT A6
+SQL> COLUMN Relationship FORMAT A12
+SQL> 
+SQL> BREAK ON Employee ON "Emp ID" PAGE;
+SQL> COMPUTE COUNT LABEL "Number of Dependents" OF Relationship ON "Emp ID"
+SQL> 
+SQL> SELECT Employee, "Emp ID", DependentName, gender, Relationship
+  2  FROM vwEmpDep
+  3  ORDER BY "Emp ID" , relationship desc;
+
+                   Employee Name:Bock, Douglas          Page:   1
+                                                                 
+Emp ID               DEPENDENTNAME   GENDER RELATIONSHIP         
+-------------------- --------------- ------ ------------         
+01885                Mary Ellen      F      SPOUSE               
+                     Jeffery         M      SON                  
+                     Rachael         F      DAUGHTER             
+                     Michelle        F      DAUGHTER             
+                     Deanna          F      DAUGHTER             
+********************                        ------------         
+Number of Dependents                                   5         
+
+                                                                 
+                 Not for external dissemination.                 
+
+                  Employee Name:Bordoloi, Bijoy         Page:   2
+                                                                 
+Emp ID               DEPENDENTNAME   GENDER RELATIONSHIP         
+-------------------- --------------- ------ ------------         
+23100                Mita            F      SPOUSE               
+                     Rita            F      DAUGHTER             
+                     Monica          F      DAUGHTER             
+                     Anita           F      DAUGHTER             
+********************                        ------------         
+Number of Dependents                                   4         
+
+
+                                                                 
+                 Not for external dissemination.                 
+
+                 Employee Name:Boudreaux, Beverly       Page:   3
+                                                                 
+Emp ID               DEPENDENTNAME   GENDER RELATIONSHIP         
+-------------------- --------------- ------ ------------         
+33355                Allen           M      SPOUSE               
+********************                        ------------         
+Number of Dependents                                   1         
+
+
+
+
+
+                                                                 
+                 Not for external dissemination.                 
+
+                  Employee Name:Simmons, Lester         Page:   4
+                                                                 
+Emp ID               DEPENDENTNAME   GENDER RELATIONSHIP         
+-------------------- --------------- ------ ------------         
+67555                Susan           F      SPOUSE               
+                     Andrew          M      SON                  
+                     Jo Ellen        F      DAUGHTER             
+********************                        ------------         
+Number of Dependents                                   3         
+
+
+
+                                                                 
+                 Not for external dissemination.                 
+
+13 rows selected.
+
+SQL> 
+SQL> /*If done this way perfectly works for last table*/
+SQL> 
+SQL> TTITLE CENTER 'Employee Name:' EmployeeNameVar -
+>     RIGHT 'Page: ' FORMAT 99 sql.pno SKIP 2
+SQL> BTITLE SKIP 1 CENTER 'Not for external dissemination.'
+SQL> SET LINESIZE 65
+SQL> SET PAGESIZE 15
+SQL> SET NEWPAGE 1
+SQL> 
+SQL> -- Create a view to use in the Select command
+SQL> CREATE OR REPLACE VIEW vwEmpDep ( Employee, "Emp ID", DependentName, gender, Relationship) AS
+  2  SELECT e.Lastname||', '||e.Firstname, d.EmployeeID, d.Name, d.gender, d.RelationshipToEmployee
+  3  FROM Dependent d JOIN Employee e ON (e.employeeID=d.employeeID)
+  4  ORDER BY -DependentName;
+ORDER BY -DependentName
+          *
+ERROR at line 4:
+ORA-00904: "DEPENDENTNAME": invalid identifier 
+
+
+SQL> 
+SQL> COLUMN Employee NEW_VALUE EmployeeNameVar NOPRINT
+SQL> COLUMN "Emp ID" FORMAT A20
+SQL> COLUMN DependentName FORMAT A15
+SQL> COLUMN gender FORMAT A6
+SQL> COLUMN Relationship FORMAT A12
+SQL> 
+SQL> BREAK ON Employee ON "Emp ID" PAGE;
+SQL> COMPUTE COUNT LABEL "Number of Dependents" OF Relationship ON "Emp ID"
+SQL> 
+SQL> SELECT Employee, "Emp ID", DependentName, gender, Relationship
+  2  FROM vwEmpDep
+  3  ORDER BY "Emp ID" , relationship;
+
+                   Employee Name:Bock, Douglas          Page:   1
+                                                                 
+Emp ID               DEPENDENTNAME   GENDER RELATIONSHIP         
+-------------------- --------------- ------ ------------         
+01885                Rachael         F      DAUGHTER             
+                     Michelle        F      DAUGHTER             
+                     Deanna          F      DAUGHTER             
+                     Jeffery         M      SON                  
+                     Mary Ellen      F      SPOUSE               
+********************                        ------------         
+Number of Dependents                                   5         
+
+                                                                 
+                 Not for external dissemination.                 
+
+                  Employee Name:Bordoloi, Bijoy         Page:   2
+                                                                 
+Emp ID               DEPENDENTNAME   GENDER RELATIONSHIP         
+-------------------- --------------- ------ ------------         
+23100                Rita            F      DAUGHTER             
+                     Monica          F      DAUGHTER             
+                     Anita           F      DAUGHTER             
+                     Mita            F      SPOUSE               
+********************                        ------------         
+Number of Dependents                                   4         
+
+
+                                                                 
+                 Not for external dissemination.                 
+
+                 Employee Name:Boudreaux, Beverly       Page:   3
+                                                                 
+Emp ID               DEPENDENTNAME   GENDER RELATIONSHIP         
+-------------------- --------------- ------ ------------         
+33355                Allen           M      SPOUSE               
+********************                        ------------         
+Number of Dependents                                   1         
+
+
+
+
+
+                                                                 
+                 Not for external dissemination.                 
+
+                  Employee Name:Simmons, Lester         Page:   4
+                                                                 
+Emp ID               DEPENDENTNAME   GENDER RELATIONSHIP         
+-------------------- --------------- ------ ------------         
+67555                Jo Ellen        F      DAUGHTER             
+                     Andrew          M      SON                  
+                     Susan           F      SPOUSE               
+********************                        ------------         
+Number of Dependents                                   3         
+
+
+
+                                                                 
+                 Not for external dissemination.                 
+
+13 rows selected.
+
+SQL> 
+SQL> /*I spent a lot of time for this question, I don't find a way to exectly shows ordering, But I think ordering does not matter here, because we do not have complete report photo in question*/
+SQL> 
+SQL> spool off;

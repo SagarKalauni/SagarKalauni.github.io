@@ -1,0 +1,12 @@
+/*SAGAR KALAUNI*/
+/*Lab1-kalauni*/
+/*Q.No.-1*/
+SELECT * 
+FROM ROOM
+WHERE RoomNumber LIKE 'RA%';
+
+/*Q.No.-2*/
+SELECT TreatmentNumber, DateTreated, EmployeeID
+FROM Treatment
+WHERE EmployeeID IN ('88202', '23244') AND TreatmentNumber < 3;
+/*THE END*/

@@ -1,0 +1,187 @@
+SQL> 
+SQL> /*Sagar Kalauni*/
+SQL> /* Lab6-Kalauni*/
+SQL> 
+SQL> /*Q.NO. 1)A manager from the human resources department needs you to write a query to count the number of employees of the company that are nurses (either Title = ‘R.N.’ OR Title = ‘L.P.N.’.  Label the output column Number of Nurses. */
+SQL> /*OBSERVATION:- There are 2 Nurses*/
+SQL> SELECT count(*) "Number of Nurses"
+  2  FROM Employee
+  3  WHERE Title in ('R.N', 'L.P.N.');
+
+Number of Nurses                                                                
+----------------                                                                
+               2                                                                
+
+SQL> 
+SQL> /*Q.NO.2)Accountants working on the company’s annual budgeting process need to know the average cost of the equipment being used on projects (originalCost) and the sum of all equipment costs. The information is stored in the Equipment table. The result table should have two columns based on a single query. Label the columns Average Equipment Cost and Total Equipment Cost. Format the output as $99,999.99. */
+SQL> /*OBSERVATION:- Average Cost is $2,019.85 and Total cost is $18,178.67*/
+SQL> COLUMN "Average Equipment Cost" FORMAT $99,999.99;
+SQL> COLUMN "Total Equipment Cost" FORMAT $99,999.99;
+SQL> SELECT AVG(OriginalCost) "Average Equipment Cost", SUM(OriginalCost) "Total Equipment Cost"
+  2  FROM Equipment;
+
+Average Equipment Cost Total Equipment Cost                                     
+---------------------- --------------------                                     
+             $2,019.85           $18,178.67                                     
+
+SQL> 
+SQL> /*Q>NO.3)The BirthDate column in the dependent table stores date of birth information for dependents of employees of the company. Write a query to display the date of birth of the oldest dependent listed in the table.  No special output column label is required.*/
+SQL> /*Used Minimum to find the oldest dependent*/
+SQL> SELECT MIN(BirthDate)
+  2  FROM Dependent;
+
+MIN(BIRTH                                                                       
+---------                                                                       
+05-MAY-76                                                                       
+
+SQL> 
+SQL> /*Q.NO.4)Write a query to provide the Executive Director with the total hours worked per project. Use the ProjectNumber and HoursWorked columns from the ProjectAssiginment table to obtain the project numbers and hours worked, respectively. Label the two columns Project Number and Total Hours respectively.  Sort by project number. Format the output for the Total Hours column as 999.99.*/
+SQL> /*OBSERVATION:- Nice table showing Project Number and Total hours as output*/
+SQL> COLUMN "Total Hours" FORMAT 999.99;
+SQL> SELECT ProjectNumber "Project Number" ,SUM(HoursWorked) "Total Hours"
+  2  FROM ProjectAssignment
+  3  GROUP BY ProjectNumber
+  4  ORDER BY ProjectNumber;
+
+Project Number Total Hours                                                      
+-------------- -----------                                                      
+             1       14.20                                                      
+             2       10.60                                                      
+             3       52.80                                                      
+             4       69.10                                                      
+             5       86.10                                                      
+             6                                                                  
+             7       27.00                                                      
+             8       47.10                                                      
+
+8 rows selected.
+
+SQL> 
+SQL> /*Q.NO.5)The government reporting regulation also requires a report of the count of all employees who are NOT M.D.s. M.D. could appear anywhere in the title. Write a query that will produce a result table with two columns labeled Title and Non M.D. Employees. Format the Title column so it is 20 characters.*/
+SQL> /*Where clause has eliminated any who has something title like M.D*/
+SQL> /*OBSERVATION:- So there are total of 11 non M.D Employees*/
+SQL> COLUMN "Title" FORMAT A20;
+SP2-0158: unknown COLUMN option "FORMAT�"
+SQL> SELECT Title "Title", COUNT(Title) "NON M.D Employees"
+  2  FROM Employee
+  3  WHERE Title NOT LIKE '%M.D%'
+  4  GROUP BY Title;
+
+Title                                              NON M.D Employees            
+-------------------------------------------------- -----------------            
+Hospital Chief                                                     1            
+Pharmacist                                                         1            
+Records Clerk                                                      1            
+Rad. Tech.                                                         1            
+R.N.                                                               2            
+V.P. Admin                                                         1            
+Building Custodian                                                 2            
+L.P.N.                                                             2            
+
+8 rows selected.
+
+SQL> 
+SQL> /*Q.NO.6)The CEO would like a report with PatientIDs and the total amount of treatment charges they have had. The resulting report should have two columns: Patient and Total Charges. The report should be listed in Total Charges order with the patients with the lowest Total Charges at the top. The CEO wants to see only those patients whose total charges are less than $350. */
+SQL> /*OBSERVATION:- Output is table with patient and their total charge*/
+SQL> SELECT PatientID "Patient", SUM(ChargeAmount) "Total Charges"
+  2  FROM Treatment
+  3  GROUP BY PatientID
+  4  HAVING SUM(ChargeAmount)< 350
+  5  ORDER BY SUM(ChargeAmount);
+
+Patien Total Charges                                                            
+------ -------------                                                            
+100001          15.4                                                            
+555005            30                                                            
+100024         55.95                                                            
+421224         60.55                                                            
+100002            65                                                            
+100051            75                                                            
+100028            75                                                            
+222002            75                                                            
+333115            95                                                            
+333110           110                                                            
+421227           115                                                            
+
+Patien Total Charges                                                            
+------ -------------                                                            
+100029           125                                                            
+100026           130                                                            
+421223           145                                                            
+100025           150                                                            
+100423           155                                                            
+333113           165                                                            
+100506           170                                                            
+666120           185                                                            
+333111        185.55                                                            
+333114        190.55                                                            
+100305           195                                                            
+
+Patien Total Charges                                                            
+------ -------------                                                            
+421226        210.55                                                            
+421225           215                                                            
+100030        215.55                                                            
+666118           225                                                            
+100301           230                                                            
+100503           240                                                            
+100502        245.55                                                            
+100425           250                                                            
+222006           258                                                            
+100505           300                                                            
+333116        310.55                                                            
+
+Patien Total Charges                                                            
+------ -------------                                                            
+421228           325                                                            
+421222           325                                                            
+100302        325.55                                                            
+100501        331.55                                                            
+
+37 rows selected.
+
+SQL> 
+SQL> /*Q.NO.7)Modify the query written for question 6.  Now the CEO would like to see average charges for treatments each patient is responsible for.  But, he does not want treatment charges of under $500 considered in the average.  After averaging, the report should show only those patients whose average treatment charges are greater than $500. */
+SQL> /*Where condition eliminates rows having chargeamount less then or equal 500*/
+SQL> /*OBSERVATION:- Output is table with patient and their average charge*/
+SQL> SELECT PatientID "Patient", AVG(ChargeAmount) "average charges"
+  2  FROM Treatment
+  3  WHERE ChargeAmount>=500
+  4  GROUP BY PatientID
+  5  HAVING AVG(ChargeAmount)>500
+  6  ORDER BY SUM(ChargeAmount);
+
+Patien average charges                                                          
+------ ---------------                                                          
+100003             555                                                          
+100031             600                                                          
+421221            1480                                                          
+100306            6200                                                          
+100500            6500                                                          
+666121            6500                                                          
+222001            7800                                                          
+100424            8500                                                          
+
+8 rows selected.
+
+SQL> 
+SQL> /*                            THE END                                */
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> SPOOL OFF;

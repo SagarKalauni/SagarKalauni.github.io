@@ -1,0 +1,690 @@
+---
+title: "Homework-3 ML 562"
+author: "Sagar Kalauni"
+date: "2023-11-28"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+1. Let's explore the maximal margin classifier on a toy data set. We are given n = 7 observations in p = 2 dimensions. For each observation, there is an associated class label Y .
+```{r}
+set.seed(12321)
+X1 <- c(3,2,4,1,2,4,4)
+X2 <- c(4,2,4,4,1,3,1)
+Y  <- c(rep("Red", 4),rep("Blue", 3))
+mydf <- data.frame(X1, X2, Y)
+
+mydf
+```
+
+```{r, warning=FALSE}
+set.seed(12321)
+#install.packages("tidyverse")
+library(ggplot2)
+#install.packages("e1071")
+library(e1071)
+```
+
+
+
+(a) Sketch the observations.
+```{r}
+set.seed(12321)
+# Creating the scatter plot
+plot(mydf$X1, mydf$X2, col=Y, pch=19, xlab = "X1", ylab = "X2")
+```
+Observation:
+From the above plot we can say that they are linearly seperable.
+
+(b) Sketch the optimal separating hyperplane.
+
+```{r}
+set.seed(12321)
+library(e1071)
+mydf$Y=as.factor(mydf$Y)
+
+# Fitting our model with some random cost
+fit.svm = svm(Y ~ ., data = mydf, kernel = "linear", cost = 10, scale = FALSE)
+fit.svm$index
+```
+
+-I believe to sketch the optimal separating hyperplane, my model should also have to be the one with the best fit(among the tested cost values), So I will first find the best fitting model and then draw Optimal separating hyperplane with the help of that.
+
+- The optimal separating hyperplane refers to the decision boundary that maximally separates different classes in the feature space.
+
+-Here I want to do cross-validation to find the best model but tune function by default take 10-fold cross validation and my sample size was not enough to do that so I need to do the tunecontrol and preform cross-validation. 
+
+# Cross-validation to find the best fit model
+```{r}
+set.seed(12321)
+# perform cross-validation
+tune.out <- tune(
+  svm,                   # SVM function
+  Y ~ .,                 # Formula for the model
+  data = mydf,            # my data frame
+  kernel = "linear",     # Linear kernel
+  ranges = list(cost = c(0.001, 0.01, 0.1, 1, 5, 10, 100)),  # Range of cost values(she did not mention in particular which value to take so I am taking of my wish)
+  tunecontrol = tune.control(sampling = "cross", cross = 2)  # 2-fold cross-validation
+)
+
+summary(tune.out)
+```
+
+Observation:
+-Here 5e+00 means $5×10^0=5$, so we can see the error is minimum when cost is 5. So our model will be best when cost=5 (amoung the given cost values)
+
+
+Now we have clear idea which cost will give us our best model, so let's find our best model
+
+```{r}
+best.mod=svm(Y ~ ., data = mydf, kernel = "linear", cost = 5, scale = FALSE, )
+best.mod
+```
+
+```{r}
+set.seed(12321)
+summary(tune.out$best.model)
+```
+
+Now using this best model to sketch the optimal separating hyperplane.
+
+```{r, warning=FALSE}
+set.seed(12321)
+# Extract beta_0 and beta_1
+beta0 = best.mod$rho
+beta = drop(t(best.mod$coefs) %*% as.matrix(mydf[best.mod$index,1:2]))
+
+# Replot, this time with the solid line representing the optimal(maximal) margin plane.
+plot(X1, X2, col=Y, pch=19, data=mydf)
+abline(beta0/beta[2], -beta[1]/beta[2])
+```
+Here we got our optimal seperating hyperplane
+In code the a, b arguments above in abline() represent the intercept and slope, single values in the plot functions.
+
+
+
+(c) Provide the equation for this hyperplane. Describe the classification rule. It should be something along the lines of ?Classify to Red if \(\beta_0 + \beta_1 X_1 + \beta_2 X_2 > 0\)
+ANSWER:
+   The equation of the given hyperplane is: \(\beta_0 + \beta_1 X_1 + \beta_2 X_2 = 0\), 
+ where 
+ $\beta_0 = -1.00041, \beta_1=-1.999846,\beta_2=1.999693 $
+
+ Hence the exect equation of the hyperplane is: $-1.00041 + -1.999846 X_1 + 1.999693 X_2 = 0$
+   which on simplification became: $X_2 = -1.000077 X_1 + (-0.500281)$
+   
+```{r}
+set.seed(12321)
+paste("Intercept: ", round(beta0/beta[2],1), ", Slope: ", round(-beta[1]/beta[2],1), sep="")
+```   
+If the Values were rounded then the equation becomes: $X_2 = 1 X_1 + (-0.5)$
+   
+-The Classification Rule is any point that lies below hyperplane(lower half space) will be classified as blue and any point that lies above the hyperplane(upper half space) will be classified as Red.
+
+Mathematically, any point lies in \(\beta_0 + \beta_1 X_1 + \beta_2 X_2 > 0\) classified as RED otherwise BLUE
+
+```{r}
+set.seed(12321)
+# Making better plot
+make.grid = function(x, n = 75) {
+	grange = apply(x, 2, range)
+	x1 = seq(from = grange[1,1], to = grange[2,1], length = n)
+	x2 = seq(from = grange[1,2], to = grange[2,2], length = n)
+	expand.grid(X1 = x1, X2 = x2)
+ }
+xgrid = make.grid(mydf)
+ygrid = predict(best.mod, xgrid)
+
+plot(xgrid, col = c("blue","Red")[as.numeric(ygrid)], pch = 20, cex = .2)
+points(mydf, col =mydf$Y, pch = 19)
+#points(mydf[best.mod$index,1:2], pch = 5, cex = 2)
+
+
+### Add the margins
+## you have to do some work to get back the linear coefficients
+beta = t(best.mod$coefs)%*%as.matrix(mydf[best.mod$index,1:2])
+beta0 = best.mod$rho
+
+abline(beta0 / beta[2], -beta[1] / beta[2])
+#abline((beta0 - 1) / beta[2], -beta[1] / beta[2], lty = 2)
+#abline((beta0 + 1) / beta[2], -beta[1] / beta[2], lty = 2)
+```
+
+
+(d) On your sketch, indicate the margin for the maximal margin hyperplane.
+```{r}
+set.seed(12321)
+# Making better plot
+make.grid = function(x, n = 75) {
+	grange = apply(x, 2, range)
+	x1 = seq(from = grange[1,1], to = grange[2,1], length = n)
+	x2 = seq(from = grange[1,2], to = grange[2,2], length = n)
+	expand.grid(X1 = x1, X2 = x2)
+ }
+xgrid = make.grid(mydf)
+ygrid = predict(best.mod, xgrid)
+
+plot(xgrid, col = c("blue","Red")[as.numeric(ygrid)], pch = 20, cex = .2)
+points(mydf, col =mydf$Y, pch = 19)
+#points(mydf[best.mod$index,1:2], pch = 5, cex = 2)
+
+
+### Add the margins
+## you have to do some work to get back the linear coefficients
+beta = t(best.mod$coefs)%*%as.matrix(mydf[best.mod$index,1:2])
+beta0 = best.mod$rho
+
+abline(beta0 / beta[2], -beta[1] / beta[2])
+abline((beta0 - 1) / beta[2], -beta[1] / beta[2], lty = 2)
+abline((beta0 + 1) / beta[2], -beta[1] / beta[2], lty = 2)
+```
+Observation:
+-To find the margin length we compute the smallest distance from any training observation to the given separating hyperplane. This is the same as computing the distance from the dashed margin line to the solid hyperplane.The margin width is from the solid line to either of the dashed lines
+
+
+(e) Indicate the support vectors for the maximal margin classifier.
+```{r}
+set.seed(12321)
+# Making better plot
+make.grid = function(x, n = 75) {
+	grange = apply(x, 2, range)
+	x1 = seq(from = grange[1,1], to = grange[2,1], length = n)
+	x2 = seq(from = grange[1,2], to = grange[2,2], length = n)
+	expand.grid(X1 = x1, X2 = x2)
+ }
+xgrid = make.grid(mydf)
+ygrid = predict(best.mod, xgrid)
+
+plot(xgrid, col = c("blue","Red")[as.numeric(ygrid)], pch = 20, cex = .2)
+points(mydf, col =mydf$Y, pch = 19)
+points(mydf[best.mod$index,1:2], pch = 5, cex = 2)
+
+
+### Add the margins
+## you have to do some work to get back the linear coefficients
+beta = t(best.mod$coefs)%*%as.matrix(mydf[best.mod$index,1:2])
+beta0 = best.mod$rho
+
+abline(beta0 / beta[2], -beta[1] / beta[2])
+abline((beta0 - 1) / beta[2], -beta[1] / beta[2], lty = 2)
+abline((beta0 + 1) / beta[2], -beta[1] / beta[2], lty = 2)
+```
+Observation:
+-Support vectors are indicated by the square box around them.
+
+
+(f) Draw an additional observation on the plot so that the two classes are no longer separable by a hyperplane.
+Answer:
+So In order to make data no longer separable by a hyperplane, I just need to add one point (at least, I can add more also) in the opposite side of the halfspace determined by our hyperplane. If our hyperplane classify all point to be blue in the lower halfspace \(\beta_0 + \beta_1 X_1 + \beta_2 X_2 < 0\), I will add one Red point over there, then hyperplane can not seperate them. I need to keep in mind that, newly added point should be outside of the margin also
+```{r, warning=FALSE}
+set.seed(12321)
+plot(mydf$X1, mydf$X2, col=Y, pch=19)
+points(3, 1.5, col="Red", pch=19)
+points(3, 1.5, col="red", pch=5, cex=2)
+```
+
+Observation:
+This newly added data point which is red point with red squre around make the data point linearly inseperable that means we can not seperate our two classes using linear classifier like hyperplane. 
+
+-------------------------------------------------------------------------------------------------------
+
+2. In this problem, you will use support vector approaches in order to predict Purchase based on the OJ data set.
+
+
+(a) Create a training set containing a random sample of 800 observations, and a test set containing the remaining observations.
+```{r}
+set.seed(100)
+library(ISLR2) #Loading the ISLR2 library in the R working environment
+```
+
+```{r}
+set.seed(100)
+# Load the OJ dataset
+data(OJ)
+dim(OJ)
+```
+
+```{r}
+# Spliting the data into training and testing set
+set.seed(100) 
+Index=sample(1:nrow(OJ), 800) # we take 800 data for training set 
+train=OJ[Index,]
+test=OJ[-Index,]
+```
+
+
+(b) Fit a linear SVM to the training data using cost=0.01, with Purchase as the response and the other variables as predictors. Describe the results obtained.
+```{r}
+set.seed(100)
+library(e1071)
+
+# Fitting a linear model with cost=0.01
+OJ.fit.svm = svm(Purchase ~ ., data =train, kernel = "linear", cost = 0.01, scale = FALSE)
+OJ.fit.svm
+```
+
+```{r}
+set.seed(100)
+summary(OJ.fit.svm)
+```
+Observation:
+Summary tells us that, the linear kernel was used with cost=0.01 and that there were 623 support vectors, out of which 312 belongs to one class and 311 belongs to the other class. Number of classes are two with levels CH and MM
+
+
+
+(c) What are the training and test error rates?
+```{r}
+set.seed(100)
+# Prediciting the class for our training dataset
+pred_train=predict(OJ.fit.svm, train)
+pred_train[1:10] # Looking at the first 10 prediction made by our model in the training dataset
+```
+
+```{r}
+set.seed(100)
+# Confusion matrix
+table(pred_train, train$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the training error rate is: (177+22)/800= 0.24875 i.e 24.875%
+
+Now predicting the class for our test data set using our model
+```{r}
+set.seed(100)
+pred_test=predict(OJ.fit.svm, test)
+pred_test[1:10]   # Looking at the first 10 prediction made by our model in the Test dataset
+```
+
+```{r}
+set.seed(100)
+# Confusion Matrix
+table(pred_test, test$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the test error rate is: (63+8)/270= 0.262963 i.e 26.2963%
+
+
+(d) Tune the linear SVM with various values of cost. Report the cross-validation errors associated with different values of this parameter. Select an optimal cost. Compute the training and test error rates using this new cost value. Comment on your findings.
+```{r}
+set.seed(100)
+# perform cross-validation
+OJ.tune.out <- tune(
+  svm,                   # SVM function
+  Purchase~.,                 # Formula for the model
+  data = train,            # my training data frame
+  kernel = "linear",     # Linear kernel
+  ranges = list(cost = seq(0.01, 10, length.out = 20),scale=T)  # Range of cost values(she did not mention in particular which value to take so I am taking of my wish)
+)
+OJ.tune.out
+```
+
+```{r}
+summary(OJ.tune.out)
+```
+
+Observation:
+-Here we can see the error is minimum when cost is 6.845263. So our model will be best when cost=6.845263
+So the best performance model can be obtained using cost=0.01(depending upon the cost which we have tried on , can not say in general)
+```{r}
+OJ.best.mod=svm(Purchase~ ., data = train, kernel = "linear", cost = 6.845263, scale = FALSE)
+OJ.best.mod
+```
+
+```{r}
+set.seed(100)
+# Prediciting the class for our training dataset using this new best model after cross-validation
+B_pred_train=predict(OJ.best.mod, train)
+B_pred_train[1:10] # Looking at the first 10 prediction made by our new best model in the training dataset
+```
+
+```{r}
+set.seed(100)
+# Confusion matrix
+table(B_pred_train, train$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the training error rate is: (65+59)/800= 0.155 i.e 15.5% for this new best fit model.
+
+
+Now predicting the class for our test data set using this new best model
+```{r}
+set.seed(100)
+B_pred_test=predict(OJ.best.mod, test)
+B_pred_test[1:10]   # Looking at the first 10 prediction made by new best model in the Test dataset
+```
+
+```{r}
+# Confusion matrix
+table(B_pred_test, test$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the test error rate is: (28+21)/270= 0.1814815 i.e 18.14815% for this new best fit model.
+
+Conclusion:
+This is kind of interesting observation, the training error rate goes down from 24.875% (i) to 15.5% (ii) when using the best model and test error rate goes down from 26.2963% (i) to 18.14815%. So we can say that by doing model tuning we make our model really nice compared the original one.
+
+
+
+(e) Now repeat (d), with radial basis kernels, with different values of gamma and cost. Comment on your results. Which approach seems to give the better results on this data?
+
+# Radial
+```{r}
+set.seed(100)
+library(e1071)
+
+# Fitting a linear model with cost=0.01
+Radial.OJ.svm = svm(Purchase ~ ., data =train, kernel = "radial", gamma=0.5, cost = 5, scale = FALSE)
+summary(Radial.OJ.svm)
+```
+Summary tells us that, the radial kernel was used with cost=5, gamma=0.5 and that there were 451 support vectors, out of which 245 belongs to one class and 206 belongs to the other class. Number of classes are two with levels CH and MM
+
+```{r}
+set.seed(100)
+# Prediciting the class for our training dataset with radial kernel
+R_pred_train=predict(Radial.OJ.svm, train)
+R_pred_train[1:10] # Looking at the first 10 prediction made by our model in the training dataset with radial kernel
+```
+
+```{r}
+set.seed(100)
+# Confusion matrix
+table(R_pred_train, train$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the training error rate is: (46+29)/800= 0.09375 i.e 9.375%
+
+now predicting for the test data
+```{r}
+set.seed(100)
+R_pred_test=predict(Radial.OJ.svm, test)
+R_pred_test[1:10]   # Looking at the first 10 prediction made by our model in the Test dataset
+```
+
+```{r}
+set.seed(100)
+# Confusion Matrix
+table(R_pred_test, test$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the test error rate is: (38+32)/270= 0.2592593 i.e 25.92593% with radial kernel.
+
+Now lets try to find the best model with radial kernel by trying different values of cost and gamma
+```{r}
+set.seed(100)
+# perform cross-validation
+R.OJ.tune <- tune(
+  svm,                   # SVM function
+  Purchase~.,                 # Formula for the model
+  data = train,            # my training data frame
+  kernel = "radial",     # radial kernel is used
+  ranges=list(cost=c(0.001, 0.01, 0.1, 1,5,10,100),gamma=c(0.5,1,2,3,4))  # Range of cost values and gamma values
+)
+summary(R.OJ.tune)
+```
+Observation:
+-Here we can see the error is minimum when cost is 1 and gamma=0.5. So our model will be best when cost=1 and gamma=0.5(depending upon the cost which we have tried on , can not say in general)
+
+```{r}
+R.OJ.best.mod=svm(Purchase~ ., data = train, kernel = "radial", cost = 1, gamma=0.5, scale = FALSE, )
+summary(R.OJ.best.mod)
+```
+
+```{r}
+set.seed(100)
+# Prediciting the class for our training dataset with radial kernel and best model
+tune_R_pred_train=predict(R.OJ.best.mod, train)
+tune_R_pred_train[1:10] # Looking at the first 10 prediction made by our model in the training dataset with radial kernel and best model
+```
+
+```{r}
+set.seed(100)
+# Confusion matrix
+table(tune_R_pred_train, train$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the training error rate is: (88+39)/800= 0.15875 i.e 15.875% with radial kernel and best model.
+
+Now predicting the test data set using this new best model with radial kernel
+```{r}
+set.seed(100)
+tune_R_pred_test=predict(R.OJ.best.mod, test)
+tune_R_pred_test[1:10]   # Looking at the first 10 prediction made by our model in the Test dataset
+```
+
+```{r}
+set.seed(100)
+# Confusion matrix
+table(tune_R_pred_test, test$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the test error rate is: (47+28)/270= 0.2777778 i.e 27.77778% with radial kernel and best model.
+
+Conclusion:
+From above we see that the training error rate went up from 9.375% (i)to 15.875% (ii) when using the best model and test error rate went up from 25.92593% (i)to 27.77778%. So we can say that by doing model tuning we did not get our new model as good model for predicting the test set compared to original.
+
+# Comprasion 
+comparing the best linear and best radial model, we conclude that best linear model was more nicer then best radial for predicting this test dataset because best linear model has test error rate: 18.14815% only but the  best radial model has the test error rate of  27.77778%
+
+
+
+(f) Now repeat again, with polynomial basis kernels, with different values of degree and cost. Comment on your results. Which approach (kernel) seems to give the best results on this data?
+
+# Polynomial
+```{r}
+set.seed(100)
+library(e1071)
+
+# Fitting a polynomial model with cost=5 and degree=3
+Poly.OJ.svm = svm(Purchase ~ ., data =train, kernel = "polynomial", degree=3, cost = 5, scale = FALSE)
+summary(Poly.OJ.svm)
+```
+Summary tells us that, the polynomial kernel was used with cost=5, degree=3 and that there were 226 support vectors, out of which 115 belongs to one class and 111 belongs to the other class. Number of classes are two with levels CH and MM
+
+```{r}
+set.seed(100)
+# Prediciting the class for our training dataset with polynomial kernel
+poly_pred_train=predict(Poly.OJ.svm, train)
+poly_pred_train[1:10] # Looking at the first 10 prediction made by our model in the training dataset with polynomial kernel
+```
+
+```{r}
+set.seed(100)
+# Confusion matrix
+table(poly_pred_train, train$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the training error rate is: (71+59)/800= 0.1625 i.e 16.25%
+
+now predicting for the test data
+```{r}
+set.seed(100)
+poly_pred_test=predict(Poly.OJ.svm, test)
+poly_pred_test[1:10]   # Looking at the first 10 prediction made by our model in the Test dataset
+```
+
+```{r}
+set.seed(100)
+# Confusion Matrix
+table(poly_pred_test, test$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the test error rate is: (26+22)/270= 0.1777778 i.e 17.77778% with radial kernel.
+
+Now lets try to find the best model with polynomial kernel by trying different values of cost and degree
+```{r}
+set.seed(100)
+# perform cross-validation
+poly.OJ.tune <- tune(
+  svm,                   # SVM function
+  Purchase~.,                 # Formula for the model
+  data = train,            # my training data frame
+  kernel = "polynomial",     # polynomial kernel is used
+  ranges=list(cost=c(0.001, 0.01, 0.1, 1,5,10,50,100),degree=c(0.25,0.33,0.5,1,2,3,4))  # Range of cost values and degree values
+)
+summary(poly.OJ.tune)
+```
+(Funny event, I have to wait approx 3 min to run this code)
+Observation:
+-Here we can see the error is minimum when cost is 1 and degree=1. So our model will be best when cost=1 and gamma=0.5(depending upon the cost which we have tried on , can not say in general)
+
+```{r}
+poly.OJ.best.mod=svm(Purchase~ ., data = train, kernel = "polynomial", cost = 1, degree=1, scale = FALSE, )
+summary(poly.OJ.best.mod)
+```
+
+```{r}
+set.seed(100)
+# Prediciting the class for our training dataset with polynomial kernel and best model
+tune_poly_pred_train=predict(poly.OJ.best.mod, train)
+tune_poly_pred_train[1:10] # Looking at the first 10 prediction made by our model in the training dataset with polynomial kernel and best model
+```
+
+```{r}
+set.seed(100)
+# Confusion matrix
+table(tune_poly_pred_train, train$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the training error rate is: (87+59)/800= 0.1825 i.e 18.25% with polynomial kernel and best model.
+
+Now predicting the test data set using this new best model with polynomial kernel
+```{r}
+set.seed(100)
+tune_poly_pred_test=predict(poly.OJ.best.mod, test)
+tune_poly_pred_test[1:10]   # Looking at the first 10 prediction made by our model in the Test dataset
+```
+
+```{r}
+set.seed(100)
+# Confusion matrix
+table(tune_poly_pred_test, test$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the test error rate is: (23+18)/270= 0.1518519 i.e 15.18519% with polynomial kernel and best model.
+
+Conclusion:
+From above we see that the training error rate went up from 16.25% (i)to 18.25% (ii) when using the best model and test error rate went down from 17.77778% (i)to 15.18519%. So we can say that by doing model tuning we did get our new model as good model for predicting the test set.
+
+# Comprasion 
+comparing the best linear and best radial model and best polynomial mode, we conclude that best linear model was more nicer then best radial for predicting this test dataset because  only but the  
+
+-best linear model has test error rate: 18.14815%
+-best radial model has the test error rate of  27.77778%
+-best polynomial model has the test error rate of 15.18519%
+
+(among my given values of cost, gamma, degree)We can say polonomial kernel is best, linear is second best and radial goes last for predicting our test data.
+
+
+
+(g) Perform gradient boost (using gbm function in R) on the training set with 1,000 trees for a chosen values of the shrinkage parameter. You may experiment with a range of values of the shrinkage parameter.
+Answer:
+Before applying gradient boost, we will first convert data type of our purchase variable[The reference for this is book page no. 174, chapter 4(for exam)]
+```{r}
+contrasts(OJ$Purchase)
+```
+
+```{r}
+library(gbm)
+
+# Converted all my training data set to binary response
+OJ.train = train
+OJ.train$Purchase = factor(OJ.train$Purchase, levels=c("CH","MM"), labels=c(0,1))
+OJ.train$Purchase = as.integer(OJ.train$Purchase)-1
+
+# Converted all my Testing data set to binary response
+OJ.test = test
+OJ.test$Purchase = factor(OJ.test$Purchase, levels=c("CH","MM"), labels=c(0,1))
+OJ.test$Purchase = as.integer(OJ.test$Purchase)-1
+
+# What I did here is that I first convert the Purchase variable to factor 0,1 from factor CH, MM.
+# After that I changed Purchase to numeric so it become 1,2 but I need 0,1 so subtracted 1 from both
+```
+
+```{r}
+set.seed(100)
+#Trying learning rate of 0.001(shrinkage paremeter)
+boost.OJ_1 = gbm(Purchase ~ ., data=OJ.train, distribution="bernoulli",
+               n.trees=1000, interaction.depth=4, shrinkage=0.001)
+
+#boost.OJ.pred = predict(boost.OJ, newdata=OJ.boost[test.id, ], n.trees=5000, type="response")
+summary(boost.OJ_1)
+```
+
+Observation:
+We see that LoyalCH and PriceDiff are the most important variables.
+
+Trying different values of the learning rate(Shrinkage parameter)
+```{r, warning=FALSE}
+#Trying learning rate of 0.01(shrinkage paremeter)
+boost.OJ_2=gbm(Purchase~., data = OJ.train,  n.trees = 1000, distribution ="bernoulli",  interaction.depth =4, shrinkage = 0.01)
+
+summary(boost.OJ_2)
+```
+
+
+
+
+
+
+
+
+```{r}
+#Trying learning rate of 0.01(shrinkage paremeter)
+boost.OJ_3=gbm(Purchase~., data = OJ.train,  n.trees = 1000, distribution ="bernoulli",  interaction.depth =4, shrinkage = 0.1)
+
+summary(boost.OJ_3)
+```
+
+[Ask her: Can I say as the learning rate increase other variable then LoyalCH are also becoming more and more important each time?]
+
+
+
+
+(h) Which variables appear to be the most important predictors in the boost model?
+Answer:- LoyalCH variable appears to be the most important predictor from the boost model.
+
+
+
+(i) Use the boosting model to predict the response on the test data. Form a confusion matrix. How does this compare with the result SVM obtained?
+Answer:
+for predicting we use the modle with learning rate 0.1
+```{r}
+set.seed(100)
+glm.probs=predict(boost.OJ_3 , OJ.test, type = "response")
+glm.probs[1:10]
+```
+
+```{r}
+glm.pred <- rep("CH", 270)
+glm.pred[glm.probs > .5] = "MM"
+```
+
+```{r}
+table(glm.pred, OJ.test$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the test error rate is: (27+28)/270= 0.2037037 i.e 20.37037%
+
+# Comparing this boosting model to SVM model
+-The bosting model with learning rate 0.1 has thas the test error rate= 20.37037%
+-best linear model has test error rate: 18.14815%
+-best radial model has the test error rate of  27.77778%
+-best polynomial model has the test error rate of 15.18519%
+
+
+So this boosting model only did better as compared to svm model with radial kernal in our test dataset. With other kernal smv model did much better then 20.370.7%
+
+
+-----------------------------------------------THE END----------------------------------------------------
+
+
+
+
+
+
+
+
+

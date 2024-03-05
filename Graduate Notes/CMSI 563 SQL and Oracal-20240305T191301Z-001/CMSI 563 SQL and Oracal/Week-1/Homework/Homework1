@@ -1,0 +1,121 @@
+/*Sagar Kalauni*/
+/* Lab2-*/
+/*1.Create a table named prod_table.  This table should have two columns named prod_id and prod_description.  These columns should be defined to store the following type of data, respectively:  prod_id stores numeric data that is a maximum of 3 characters in size; prod_description stores variable character data that is a maximum of 25 characters in size.*/
+CREATE TABLE prod_table (
+    Prod_id             NUMBER (3),
+	prod_description    VARCHAR2 (25)
+);  
+/*Table has been created*/
+
+/*2.Insert two rows into the test_table*/
+INSERT INTO prod_table VALUES (1, 'Wheel');
+INSERT INTO prod_table VALUES (2, 'Nuts and Bolts');  
+/*Two records have been inserted into the 'prod_table'.*/
+
+
+/*3.Use the DESCRIBE command to describe the prod_table. */
+DESC prod_table;   
+/*The resulting output is displaying the 'prod_table' along with its columns and their respective data types.*/
+
+/*4.Use the following SELECT command to display the rows in the prod_table. */
+SELECT * FROM prod_table;
+/*The output encompass all columns of the 'prod_table.'*/
+
+/*5.Use the DROP command to drop the prod_table. */
+DROP TABLE prod_table;
+/*The table has been successfully dropped from our database.*/
+
+/*6.Create the deptBusiness table described below: */
+CREATE TABLE DeptBusiness (
+    DepartmentNumber               NUMBER (4)
+	    CONSTRAINT PK_DeptBusiness PRIMARY KEY,
+    DepartmentName                 VARCHAR2 (25)
+        CONSTRAINT NN_DepartmentNamee NOT NULL,       /* Creating unique constraint name*/
+    ManagerID                       CHAR (5)
+);	
+/*A new table named 'DeptBusiness' has been successfully created in our database.*/
+
+/*7.Add the data shown below to the deptBusiness table.  Do not define any foreign keys.  Leave the ManagerID column values as NULL.  */
+INSERT INTO DeptBusiness (DepartmentNumber, DepartmentName)
+VALUES (1106, 'CMIS');
+
+INSERT INTO DeptBusiness (DepartmentNumber, DepartmentName)
+VALUES (1105, 'Accounting');
+
+INSERT INTO DeptBusiness (DepartmentNumber, DepartmentName)
+VALUES (1100, 'Production');
+
+INSERT INTO DeptBusiness (DepartmentNumber, DepartmentName)
+VALUES (1102, 'Economic Finance');
+/*All the provided values have been successfully added to the 'DeptBusiness' table.*/
+
+/*8.a. COMMIT your row insertions in the deptBusiness table. b. Try to INSERT the data for department number 1106 again in the deptBusiness table. Did Oracle accept it? */
+COMMIT;
+/*Upon the completion of the commit operation, all changes have been successfully stored and applied.*/
+
+INSERT INTO DeptBusiness (DepartmentNumber, DepartmentName)
+VALUES (1106, 'CMIS');
+/*value is not accepted saying error: Unique constraint violated*/
+
+/*9.Use the following SELECT command to display the rows in the deptBusiness table...*/
+SELECT *
+FROM DeptBusiness;
+/*The output displays the 'DeptBusiness' table with all the provided data entries effectively populated within it.*/
+
+/*10.Delete the row for department number 1 from the deptBusiness table.    */
+DELETE FROM DeptBusiness
+    WHERE DepartmentNumber= 1106;
+/*A single record has been removed from our 'DeptBusiness' table.*/
+
+
+/*11.Repeat the SELECT statement in question #9 above to verify your record has been deleted*/
+SELECT *
+FROM DeptBusiness;
+/*Output clearly shows that in the DeptBusiness table now we have no longer the observation having department number 1106, which have been deleted in the last SQL command*/
+
+
+/*12.Assume that the deletion of your row was an error.  Execute the ROLLBACK command (SQL> ROLLBACK;) to undelete your row.  Use the SELECT * statement again to verify that your row has been restored to the table.  */
+ROLLBACK;
+/*This SQL command effectively reverses the impact of our previous SQL command, which involved deleting one row from the 'DeptBusiness' table.*/
+
+SELECT *
+FROM DeptBusiness;
+/*Output is clearly showing that the deleted row has been sucessfully retrived back*/
+
+/*13.The name for ‘Production’ department got changed to ‘Operations’. Update the DepartmentName column of this change accordingly. ALso Repeat the SELECT statement in question #9 above to verify your output.  */
+UPDATE DeptBusiness
+    SET DepartmentName = 'Operations'
+	WHERE DepartmentName= 'Production';
+/*The 'DepartmentName' has been updated from 'Production' to 'Operations'*/
+	
+SELECT *
+FROM DeptBusiness;
+/*The modified department name can be observed in the output.*/
+
+/*14.Alter the deptBusiness  table to add a column that will be used to store the department phone.  Name this column DepartmentPhone and use an appropriate NUMBER datatype specification.  You do not need to store any data to this column. Also Repeat the SELECT statement in question #9 above to verify your output. */
+ALTER TABLE DeptBusiness ADD (DepartmentPhone  NUMBER (10));
+/*A new column named 'DepartmentPhone' has been successfully added to the 'DeptBusiness' table.*/
+
+SELECT *
+FROM DeptBusiness;
+/*Output clearly shows newly added column 'DepartmentPhone' in the table DeptBusiness*/
+
+
+/*15.Use the DROP command to drop the DeptBusiness table. Use the SELECT statement given in question #9 above to display the deptBusiness table.   */
+DROP TABLE DeptBusiness;
+/*Table has been sucessfully droped out from out database*/
+
+SELECT *
+FROM DeptBusiness;
+/*yes,error message appears, Since Table was already droped out form the database so the output is: table does not exist*/
+/*THE END*/
+
+
+
+
+
+
+
+
+
+

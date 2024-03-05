@@ -1,0 +1,334 @@
+SQL> /*Sagar Kalauni*/
+SQL> /* Lab10-Kalauni*/
+SQL> 
+SQL> /*Q.No.1)Management requires a listing of employees by last name, first name, and middle initial for department number 8.  The last name should be displayed in all capital letters.  The entire name should be concatenated together so as to display in a single field with a column heading of "Employee Name."  The rows should be sorted by employee last name, then employee first name. */
+SQL> COLUMN "Employee Name" FORMAT A22;
+SQL> SELECT FirstName ||' '||  SUBSTR(MiddleName, 1,1) ||' '||  UPPER(LastName)  "Employee Name"
+  2  FROM Employee
+  3  WHERE DepartmentNumber=8
+  4  ORDER BY LastName, FirstName;
+
+Employee Name                                                                   
+----------------------                                                          
+Adam A ADAMS                                                                    
+Beverly B BOUDREAUX                                                             
+William W CLINTON                                                               
+Lester L SIMMONS                                                                
+Billy B THORNTON                                                                
+
+SQL> 
+SQL> /*Q.No.2)Write a query that displays the department name and the length in number of characters of each department's name.  Use the department table.  Label the column headings appropriately*/
+SQL> COLUMN "Dept. Name" FORMAT A26;
+SQL> COLUMN "Length" FORMAT 999999;
+SQL> SELECT DepartmentName "Dept. Name", LENGTH(DepartmentName) "Length"
+  2  FROM Department;
+
+Dept. Name                  Length                                              
+-------------------------- -------                                              
+Medical Surgical Ward 1         23                                              
+Radiology                        9                                              
+Emergency-Surgical              18                                              
+Oncology Ward                   13                                              
+Critical Care-Cardiology        24                                              
+Pediatrics-Gynecology           21                                              
+Pharmacy Department             19                                              
+Admin/Labs                      10                                              
+OutPatient Clinic               17                                              
+
+9 rows selected.
+
+SQL> 
+SQL> /*Q.No.3)Management wants a listing of department numbers and names (use the department table)—display the output as a single column with the heading "Department Information" – convert the DepartmentNumber column to character data as part of the query. */
+SQL> COLUMN "Department Information" FORMAT A32;
+SQL> SELECT To_CHAR(DepartmentNumber, '999')||'  '|| DepartmentName "Department Information"
+  2  FROM Department;
+
+Department Information                                                          
+--------------------------------                                                
+   1  Medical Surgical Ward 1                                                   
+   2  Radiology                                                                 
+   3  Emergency-Surgical                                                        
+   4  Oncology Ward                                                             
+   5  Critical Care-Cardiology                                                  
+   6  Pediatrics-Gynecology                                                     
+   7  Pharmacy Department                                                       
+   8  Admin/Labs                                                                
+   9  OutPatient Clinic                                                         
+
+9 rows selected.
+
+SQL> 
+SQL> /*Q.No.4)Write a query that displays the first four characters of each employee's last name and the last four digits of each employee's SSN for department 8.  Label the column headings "Name" and "SSN."  Order the result table rows by employee last name. */
+SQL> COLUMN "Name" FORMAT A5;
+SQL> COLUMN "SSN" FORMAT A5;
+SQL> SELECT SUBSTR(LastName, 1,4) "Name", SUBSTR(SSN,6) "SSN"
+  2  FROM Employee
+  3  WHERE DepartmentNumber=8
+  4  ORDER BY LastName;
+
+Name  SSN                                                                       
+----- -----                                                                     
+Adam  3287                                                                      
+Boud  6222                                                                      
+Clin  0233                                                                      
+Simm  9642                                                                      
+Thor  6129                                                                      
+
+SQL> 
+SQL> /*Q.No.5)Write a query that displays all employee names as well as their work phone.  Format their workphone to 999-999-9999.*/
+SQL> COLUMN "Employee Name" FORMAT A25;
+SQL> COLUMN "Phone No." FORMAT A18;
+SQL> SELECT LastName ||','|| FirstName "Employee Name", SUBSTR(WorkPhone,1,3)||'-'||SUBSTR(WorkPhone,4,3)||'-'||SUBSTR(WorkPhone,7,4) "Phone No."
+  2  FROM Employee;
+
+Employee Name             Phone No.                                             
+------------------------- ------------------                                    
+Simmons,Lester            100-555-9401                                          
+Boudreaux,Beverly         100-555-8287                                          
+Adams,Adam                100-555-8287                                          
+Thornton,Billy            100-555-8287                                          
+Clinton,William           100-555-8287                                          
+Eakin,Maxwell             100-555-9268                                          
+Bock,Douglas              100-555-9268                                          
+Webber,Eugene             100-555-9270                                          
+Bordoloi,Bijoy            100-555-9270                                          
+Smith,Alyssa              100-555-9267                                          
+Sumner,Elizabeth          100-555-9271                                          
+
+Employee Name             Phone No.                                             
+------------------------- ------------------                                    
+Becker,Robert             100-555-9284                                          
+Jones,Quincey             100-555-9284                                          
+Barlow,William            100-555-9284                                          
+Smith,Susan               100-555-9284                                          
+Klepper,Robert            100-555-9268                                          
+Zumwalt,Mary              100-555-9401                                          
+Quattromani,Toni          100-555-9280                                          
+Becker,Roberta            100-555-9284                                          
+Brockwell,Mary Ellen      100-555-9401                                          
+Simmons,Leslie            100-555-9401                                          
+Young,Yvonne              100-555-9401                                          
+
+Employee Name             Phone No.                                             
+------------------------- ------------------                                    
+Boudreaux,Betty           100-555-8287                                          
+Schultheis,Robert         100-555-9284                                          
+
+24 rows selected.
+
+SQL> 
+SQL> /*Q.No.6)Write a query to display a listing of employee last names and the EmployeeID of each employee's supervisor for the employees working in department 8.  If the employee has no supervisor, display the message "Top Supervisor."  Provide appropriate headings.  Sort the result table by employee last name. */
+SQL> COLUMN "Emp Last Name" FORMAT A14;
+SQL> COLUMN "EmployeeID" FORMAT A18;
+SQL> SELECT LastName "Emp Last Name", DECODE(SupervisorID, NULL, 'Top Supervisor' , EmployeeID) "EmployeeID"
+  2  FROM Employee
+  3  WHERE DepartmentNumber=8
+  4  ORDER BY LastName;
+
+Emp Last Name  EmployeeID                                                       
+-------------- ------------------                                               
+Adams          33344                                                            
+Boudreaux      33355                                                            
+Clinton        33359                                                            
+Simmons        Top Supervisor                                                   
+Thornton       33358                                                            
+
+SQL> 
+SQL> /*If there was typo in the question for supervisorid*/
+SQL> COLUMN "Emp Last Name" FORMAT A14;
+SQL> COLUMN "SupervisorID" FORMAT A18;
+SQL> SELECT LastName "Emp Last Name", NVL(SupervisorID, 'Top Supervisor') "SupervisorID"
+  2  FROM Employee
+  3  WHERE DepartmentNumber=8
+  4  ORDER BY LastName;
+
+Emp Last Name  SupervisorID                                                     
+-------------- ------------------                                               
+Adams          33355                                                            
+Boudreaux      67555                                                            
+Clinton        33355                                                            
+Simmons        Top Supervisor                                                   
+Thornton       33355                                                            
+
+SQL> 
+SQL> /*Q.No.7Develop a listing for the company's senior project manager that lists employees that reported working between 15 and 25 hours (inclusive) on assigned projects.  List the employee last name, project number, and hours worked.  Use the ABS function.  Do NOT use the BETWEEN operator or any logical operator.  Join the tables by use of the FROM clause.  Use meaningful column headings.  Sort the rows of the result table by employee last name.  HINT:  20 is the midpoint between 15 and 25 hours, the absolute value of the difference would be 5 hours. */
+SQL> COLUMN "Emp Last Name" FORMAT A14;
+SQL> COLUMN "Project No." FORMAT 99;
+SQL> COLUMN "Hours worked" FORMAT 99.9;
+SQL> SELECT LastName "Emp Last Name", ProjectNumber "Project No.", HoursWorked "Hours worked"
+  2  FROM Employee e JOIN ProjectAssignment pa ON (e.employeeId=pa.employeeId)
+  3  WHERE ABS(HoursWorked -20) <=5
+  4  ORDER By LastName;
+
+Emp Last Name  Project No. Hours worked                                         
+-------------- ----------- ------------                                         
+Adams                    8         23.0                                         
+Klepper                  4         19.2                                         
+Simmons                  8         24.1                                         
+
+SQL> 
+SQL> /*Q.No.8)The senior project manager needs a listing by employee last name, project number, and hours worked (HoursWorked column) rounded to the nearest integer value for projects 3 and 8.   Join the tables by use of the FROM clause.  Sort the result table by employee last name within project number.  Use meaningful column names. */
+SQL> COLUMN "Emp Last Name" FORMAT A14;
+SQL> COLUMN "Project No." FORMAT 99;
+SQL> SELECT LastName "Emp Last Name", ProjectNumber "Project No.", ROUND(HoursWorked,0)
+  2  FROM Employee e JOIN ProjectAssignment pa ON (e.employeeId=pa.employeeId)
+  3  WHERE ProjectNumber IN (3,8)
+  4  ORDER BY ProjectNumber, LastName;
+
+Emp Last Name  Project No. ROUND(HOURSWORKED,0)                                 
+-------------- ----------- --------------------                                 
+Bock                     3                   10                                 
+Klepper                  3                   12                                 
+Smith                    3                   31                                 
+Adams                    8                   23                                 
+Eakin                    8                                                      
+Simmons                  8                   24                                 
+
+6 rows selected.
+
+SQL> 
+SQL> /*Q.No.9)Write a query to display information about female dependents for the human resources manager.  Display each dependent's name, gender, and date of birth.  The date of birth should be displayed as:  Month Name (spelled out), two-digit day, and four-digit year (e.g., December 05, 1970).  Use the COLUMN commands shown here to format the first two columns of output. */
+SQL> COLUMN "Gender" Format A6;
+SQL> COLUMN "Dep Name" FORMAT A15;
+SQL> SELECT Name "Dep Name", Gender "Gender", TO_CHAR(BirthDate, 'Month DD, YYYY') "Date of Birth"
+  2  FROM Dependent
+  3  WHERE Gender= 'F';
+
+Dep Name        Gender Date of Birth                                            
+--------------- ------ ---------------------------------------------            
+Jo Ellen        F      April     05, 2016                                       
+Susan           F      May       03, 1995                                       
+Deanna          F      December  31, 2009                                       
+Rachael         F      October   04, 2015                                       
+Michelle        F      March     17, 2004                                       
+Mary Ellen      F      May       05, 1976                                       
+Mita            F      June      04, 1976                                       
+Anita           F      July      06, 2014                                       
+Monica          F      December  30, 2016                                       
+Rita            F      May       11, 2018                                       
+
+10 rows selected.
+
+SQL> 
+SQL> /*Q.No.10)Write a query to display each dependent's name, date of birth, and date on which the dependent turned or will turn 65 years of age, but only for dependents born after January 1, 1980.  Use meaningful column names.  Display each date using the DD-MON-YYYY format.  Use the ADD_MONTHS, TO_CHAR, and TO_DATE functions.  Hint: 65 years equals 780 months. */
+SQL> SELECT Name "Dep Name", TO_CHAR(BirthDate, 'DD-MON-YYYY') "Date of Birth", TO_CHAR(ADD_MONTHS(BirthDate, 780), 'DD-MON-YYYY') "65th Birthday"
+  2  FROM Dependent
+  3  WHERE BirthDate > TO_DATE('01-JAN-1980', 'DD-MON-YYYY');
+
+Dep Name        Date of Birth        65th Birthday                              
+--------------- -------------------- --------------------                       
+Jo Ellen        05-APR-2016          05-APR-2081                                
+Andrew          25-OCT-2018          25-OCT-2083                                
+Susan           03-MAY-1995          03-MAY-2060                                
+Allen           29-FEB-1988          28-FEB-2053                                
+Jeffery         01-JAN-2008          01-JAN-2073                                
+Deanna          31-DEC-2009          31-DEC-2074                                
+Rachael         04-OCT-2015          04-OCT-2080                                
+Michelle        17-MAR-2004          17-MAR-2069                                
+Anita           06-JUL-2014          06-JUL-2079                                
+Monica          30-DEC-2016          30-DEC-2081                                
+Rita            11-MAY-2018          11-MAY-2083                                
+
+11 rows selected.
+
+SQL> 
+SQL> /*Q.No.11)Write a short query to display the current day of the week spelled out, for example Monday or Wednesday.  The value should be obtained from the operating system internal date.*/
+SQL> SELECT TO_CHAR(SYSDATE, 'DAY') "Current Day"
+  2  FROM Dual;
+
+Current Day                                                                     
+------------------------------------                                            
+TUESDAY                                                                         
+
+SQL> 
+SQL> /*Q.No.12)The human resources manager needs a listing of dependents including their name and gender, but only for dependents that are spouses.  Instead of displaying the coded values for gender, the result table must display the terms "Male" and "Female," as appropriate.  Use meaningful column headings.  Sort the result table by dependent name. */
+SQL> SELECT Name "Dep Name", DECODE(Gender, 'M', 'Male', 'Female') "Gender"
+  2  FROM Dependent
+  3  WHERE RelationshipToEmployee= 'SPOUSE'
+  4  ORDER BY Name;
+
+Dep Name        Gender                                                          
+--------------- ------                                                          
+Allen           Male                                                            
+Mary Ellen      Female                                                          
+Mita            Female                                                          
+Susan           Female                                                          
+
+SQL> 
+SQL> /*Q.No.13)Write a query to display a listing of employee last names, title, and salary for employees with a title of either 'Building Custodian' or 'L.P.N.'.  If the employee is paid a wage, the salary will be NULL.  In this situation, display the value $0.00.  Provide appropriate headings.  Sort the result table by staff member last name. */
+SQL> COLUMN "Salary" FORMAT $999,990.99;  --by giving tailing term as zero
+SP2-0246: Illegal FORMAT string "$999,990.99;"
+SQL> COLUMN "Emp Last Name" FORMAT A15;
+SQL> SELECT LastName "Emp Last Name", Title, NVL(Salary, '0.00') "Salary"
+  2  FROM Employee
+  3  WHERE Title LIKE '%Building Custodian%' OR Title LIKE '%L.P.N%'
+  4  ORDER BY LastName;
+
+Emp Last Name   TITLE                     Salary                                
+--------------- -------------------- -----------                                
+Clinton         Building Custodian          $.00                                
+Simmons         L.P.N.                 $2,200.00                                
+Thornton        Building Custodian          $.00                                
+Young           L.P.N.                 $2,200.00                                
+
+SQL> 
+SQL> 
+SQL> /*This Can be done alternatively by this way */
+SQL> COLUMN "Emp Last Name" FORMAT A15;
+SQL> COLUMN "Salary" FORMAT $99,999.99;
+SQL> COLUMN "Title" FORMAT A20;
+SQL> SELECT LastName "Emp Last Name", Title "Title", DECODE(TO_CHAR(Salary, '$9,999'), NULL, ' $0.00', TO_CHAR(Salary, '$9,999.99')) "Salary"
+  2  FROM Employee
+  3  WHERE Title LIKE '%Building Custodian%' OR Title LIKE '%L.P.N%'
+  4  ORDER BY LastName;
+
+Emp Last Name   Title                Salary                                     
+--------------- -------------------- ----------                                 
+Clinton         Building Custodian    $0.00                                     
+Simmons         L.P.N.                $2,200.00                                 
+Thornton        Building Custodian    $0.00                                     
+Young           L.P.N.                $2,200.00                                 
+
+SQL> 
+SQL> /*Q.No.14)Write a query to compare treatment charges to standard service charges.  Display the ServiceID and StandardCharge columns from the service table, and the ChargeAmount column from the treatment table.  Only display the value if the difference between the service and actual charge is more than $50.00 in difference (either high or low).  Also display a computed column that is the difference between the service and actual charge (as a positive number).  Use appropriate column sizes and headings.  Join the tables by use of the FROM clause.  */
+SQL> COLUMN "Service ID"FORMAT A12;
+SQL> COLUMN "Service Charge" FORMAT $999,999.99;
+SQL> COLUMN "Treatment Charge" FORMAT $99,999.99;
+SQL> COLUMN "Difference" FORMAT $999,999.99;
+SQL> SELECT s.ServiceID "Service ID", s.StandardCharge "Service Charge", t.ChargeAmount "Treatment Charge", ABS(StandardCharge - ChargeAmount) "Difference"
+  2  FROM Service s JOIN Treatment t ON (s.serviceID=t.serviceID)
+  3  WHERE ABS(s.StandardCharge - t.ChargeAmount)> 50;
+
+Service ID   Service Charge Treatment Charge   Difference                       
+------------ -------------- ---------------- ------------                       
+12001             $6,200.00          $450.00    $5,750.00                       
+12007            $10,000.00        $8,500.00    $1,500.00                       
+12010             $3,500.00        $1,480.00    $2,020.00                       
+99058               $155.00          $435.00      $280.00                       
+
+SQL> 
+SQL> /*Q.No.15)Modify the query for question 14 to display any rows where there is any difference between the service and actual charge, but only where the actual charge is less than the service charge.  Order the output by differences from largest to smallest.*/
+SQL> COLUMN "Service ID"FORMAT A12;
+SQL> COLUMN "Service Charge" FORMAT $999,999.99;
+SQL> COLUMN "Actual Charge" FORMAT $999,999.99;
+SQL> COLUMN "Difference" FORMAT $999,999.99;
+SQL> SELECT s.ServiceID "Service ID", s.StandardCharge "Service Charge", t.ChargeAmount "Actual Charge", ABS(StandardCharge - ChargeAmount) "Difference"
+  2  FROM Service s JOIN Treatment t ON (s.serviceID=t.serviceID)
+  3  WHERE ChargeAmount<StandardCharge
+  4  ORDER BY ABS(StandardCharge - ChargeAmount) DESC;
+
+Service ID   Service Charge Actual Charge   Difference                          
+------------ -------------- ------------- ------------                          
+12001             $6,200.00       $450.00    $5,750.00                          
+12010             $3,500.00     $1,480.00    $2,020.00                          
+12007            $10,000.00     $8,500.00    $1,500.00                          
+99203                $95.00        $75.00       $20.00                          
+99203                $95.00        $75.00       $20.00                          
+99058               $155.00       $150.00        $5.00                          
+90782                $75.00        $70.00        $5.00                          
+
+7 rows selected.
+
+SQL> 
+SQL> /*                                      THE END                                                                  */
+SQL> SPOOL OFF;

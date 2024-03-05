@@ -1,0 +1,187 @@
+﻿SQL> /*Sagar Kalauni*/
+SQL> /*Lab5-Kalauni*/
+SQL> 
+SQL> /*Q No.1)The charge nurse wants to see the medications that have instructions for child dosages and have a quantity on hand of less than 1,000. Instructions indicating if the medicine is for children can be found in the dosage field of the Medicine table. The term child may appear anywhere in this field. Create a list that includes the common name and scientific name of the medication. Restrict common name to 15 characters and scientific names to 20 characters.*/
+SQL> COLUMN Commonname FORMAT A15;
+SQL> COLUMN ScientificName FORMAT A20;
+SQL> SELECT Commonname, ScientificName
+  2  FROM Medicine
+  3  WHERE Dosage LIKE '%child%' AND QuantityOnhand < 1000;
+
+COMMONNAME           SCIENTIFICNAME                                             
+-------------------- --------------------------------------------------         
+Atarax               Hydroxyzine                                                
+
+SQL> /*OBSERVATION:- So the required medication name is Atarax(commonname)*/
+SQL> 
+SQL> /*Q.NO2)The HR director of the hospital has learned that the average monthly salary of employees is about $15,000. She would like a report of all employee names who earn more than $10,000 a month and less than $20,000 monthly. Use the BETWEEN operator. Sort by salary. Include the first name and last name of the employee (restrict both names to 12 characters) as well as the salary.*/
+SQL> COLUMN "First Name" FORMAT A12;
+SQL> COLUMN "Last Name" FORMAT A12;
+SQL> COLUMN "moSalary" FORMAT $99,999;
+SQL> SELECT FirstName "First Name", LastName "Last Name", Salary "moSalary"
+  2  FROM Employee
+  3  WHERE Salary BETWEEN 10000 AND 20000
+  4  ORDER BY Salary;
+
+First Name   Last Name    moSalary                                              
+------------ ------------ --------                                              
+Maxwell      Eakin         $15,000                                              
+Robert       Klepper       $15,055                                              
+Douglas      Bock          $16,250                                              
+Elizabeth    Sumner        $16,500                                              
+Eugene       Webber        $17,500                                              
+Beverly      Boudreaux     $17,520                                              
+Robert       Schultheis    $17,525                                              
+Bijoy        Bordoloi      $17,850                                              
+
+8 rows selected.
+
+SQL> /*OBSERVATION:- So there are 8 employees whose salary is in between $10,000 to $20,000*/
+SQL> 
+SQL> /*Q NO.3)There has been a surge of parents requesting private rooms for their children who have been admitted for surgery. Provide a list of beds available in the following pediatric rooms: PED101 – PED105 inclusive. Use the IN command. The room number, bedtype, and availability should be shown in the report. Use meaningful column titles.*/
+SQL> /*To make output result more informative and clear, formating done*/
+SQL> COLUMN "Bed Number" FORMAT A12;
+SQL> COLUMN "Bed Type" FORMAT A10;
+SQL> COLUMN "Bed Availability" FORMAT A18;
+SQL> SELECT RoomNumber "Bed Number", BedType "Bed Type", Availability "Bed Availability"
+  2  FROM Bed
+  3  WHERE RoomNumber IN ('PED101', 'PED102', 'PED103', 'PED104', 'PED105');
+
+Bed Number   Bed Type   Bed Availability                                        
+------------ ---------- ------------------                                      
+PED101       P1         N                                                       
+PED102       P1         Y                                                       
+PED103       P1         N                                                       
+PED104       P2         Y                                                       
+PED105       P2         Y                                                       
+
+SQL> /*OBSERVATION:- All required information of Pediatric Rooms for 101 to 105*/
+SQL> 
+SQL> /*Q NO.4)The director of HR would like to implement a process of sending birthday cards to the children of employees. She is requesting a report that contains the first names and birthdates of all sons and daughters of employees. You must use the IN command.*/
+SQL> SELECT Name "First Name", BirthDate
+  2  FROM Dependent
+  3  WHERE RelationshipToEmployee IN ('SON', 'DAUGHTER');
+
+First Name   BIRTHDATE                                                          
+------------ ---------                                                          
+Jo Ellen     05-APR-16                                                          
+Andrew       25-OCT-18                                                          
+Jeffery      01-JAN-08                                                          
+Deanna       31-DEC-09                                                          
+Rachael      04-OCT-15                                                          
+Michelle     17-MAR-04                                                          
+Anita        06-JUL-14                                                          
+Monica       30-DEC-16                                                          
+Rita         11-MAY-18                                                          
+
+9 rows selected.
+
+SQL> /*OBSERVATION:- Table showing firstname and birthday of son's and daughter's of employees*/
+SQL> 
+SQL> /*Q NO.5)Execute a query that will display all employees whose last name contains the lower case letter 'o' except for the second character (i.e., the second character can be anything but ‘o’. List each employee's first and last name. Use meaningful column titles.*/
+SQL> SELECT FirstName "First Name", LastName "Last Name"
+  2  FROM Employee
+  3  WHERE LastName LIKE '%o%' AND LastName NOT LIKE '_o%';
+
+First Name   Last Name                                                          
+------------ ------------                                                       
+Lester       Simmons                                                            
+Billy        Thornton                                                           
+William      Clinton                                                            
+William      Barlow                                                             
+Toni         Quattromani                                                        
+Mary Ellen   Brockwell                                                          
+Leslie       Simmons                                                            
+
+7 rows selected.
+
+SQL> /*OBSERVATION:- So there are 7 employees who have o in their lastname but not in the second position*/
+SQL> 
+SQL> /*Q NO.6)Execute a query that lists all employee table rows that contain a null value in the salary column. List each employee’s last name and supervisor identifying number. Use meaningful column titles. Limit column width so a line fits on a single row.*/
+SQL> COLUMN "Last Name" FORMAT A10;
+SQL> COLUMN "Supervisor Identifying Number" FORMAT A30;
+SQL> SELECT LastName "Last Name", SupervisorID "Supervisor Identifying Number"
+  2  FROM Employee
+  3  WHERE Salary IS NULL;
+
+Last Name  Supervisor Identifying Number                                        
+---------- ------------------------------                                       
+Thornton   33355                                                                
+Clinton    33355                                                                
+
+SQL> /*OBSERVATION:- So there are 2 employees whose salary is null*/
+SQL> 
+SQL> /*Q NO.7)Execute a query that will display all patients whose first name begins with the same letter as your first name. List each patient’s first name and last name. Format the output so the full name appears on one line.  Provide meaningful column titles.  If your last name begins with the X, list patients whose first name begins with the same letter as your middle name. Use meaningful column titles.*/
+SQL> /*As my first name is Sagar*/
+SQL> COLUMN "First Name" FORMAT A12;
+SQL> COLUMN "Last Name" FORMAT A12;
+SQL> SELECT FirstName "First Name", LastName "Last Name"
+  2  FROM Patient
+  3  WHERE FirstName LIKE 'S%';
+
+First Name   Last Name                                                          
+------------ ------------                                                       
+Samuel       Santiago                                                           
+Sally        Surrey                                                             
+
+SQL> 
+SQL> /*As my lastname is Kalauni,and I do not have middle name, below I am searching for employee whose first name begin with first character of my last Name*/
+SQL> SELECT FirstName "First Name", LastName "Last Name"
+  2  FROM Patient
+  3  WHERE FirstName LIKE 'K%';
+
+First Name   Last Name                                                          
+------------ ------------                                                       
+Keith        Kraut                                                              
+Krakatoa     Khan                                                               
+
+SQL> 
+SQL> /*Q NO.8)Execute a query that will display each employee's last name, annual salary, monthly salary, and weekly salary.  The list should only include employees with a weekly salary that is less than $1,000.00. Label the column names for annual salary, monthly salary, and weekly salary as Annual, Monthly, and Weekly, respectively.  Sort the output by employee last name. Format the columns named Annual, Monthly, and Weekly as $999,999.99.  Be careful in how you compute the weekly salary! You may assume 4 weeks to a month.  You can assume the field Salary represents the monthly salaries of employees.  Use meaningful column titles*/
+SQL> COLUMN "Annual" FORMAT $999,999.99;
+SQL> COLUMN "Monthly" FORMAT $999,999.99;
+SQL> COLUMN "Weekly" FORMAT $999,999.99;
+SQL> SELECT LastName "Last Name", Salary*12 "Annual", Salary "Monthly", Salary/4 "Weekly"
+  2  FROM Employee
+  3  WHERE Salary/4 < 1000
+  4  ORDER By LastName;
+
+Last Name          Annual      Monthly       Weekly                             
+------------ ------------ ------------ ------------                             
+Simmons        $26,400.00    $2,200.00      $550.00                             
+Young          $26,400.00    $2,200.00      $550.00                             
+
+SQL> 
+SQL> /*The End*/
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> SPOOL OFF;
+

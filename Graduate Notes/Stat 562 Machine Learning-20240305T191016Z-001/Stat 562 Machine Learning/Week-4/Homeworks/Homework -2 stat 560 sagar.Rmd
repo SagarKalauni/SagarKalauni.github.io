@@ -1,0 +1,429 @@
+---
+title: "Stat 652 Homework"
+author: "Sagar Kalauni"
+date: "2023-11-07"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+2. This problem involves the OJ data set which is part of the ISLR2 package. The data set contains sales information for Citrus Hill and Minute Maid orange juice. You may see the detail description of the data using ?OJ in R.
+First create a training set containing a random sample of 800 observations, and a test set containing the remaining observations.
+
+```{r}
+library(ISLR2)  #Loading the ISLR2 library in the R working environment
+?OJ  # getting familier with the OJ (Orange Juice Data)
+```
+
+```{r}
+dim(OJ)
+```
+So there are 1070 observations and 18 variables
+
+creating a training set containing a random sample of 800 observations, and a test set containing the remaining observations
+```{r}
+set.seed(12312)
+train=sample(1:nrow(OJ), 800)  # we take 800 data for training set
+test=OJ[-train,]
+```
+
+Checking for the column names in our data set
+```{r}
+colnames(OJ)
+```
+
+
+(1) Fit a tree to the training data, with Purchase as the label and the other variables except as features. Use the summary() function to produce summary statistics about the tree, and describe the results obtained. What is the training error rate? How many terminal nodes does the tree have?
+```{r}
+set.seed(12312)
+library(tree)
+tree.d=tree(Purchase~., OJ, split = 'gini', subset =train ) # except Purchase all other variables in the data set are be considered as predictors.
+```
+
+Looking at the summary statistics of this tree.
+```{r}
+summary(tree.d)
+```
+Interpretation:
+This is a classification tree, we have a total number of terminal node of 80, so it's a big tree.
+we have mean deviance: 0.629 , which is calculated deviance divided by total number of training observation minus the number of terminal nodes. We also have Misclassification error rate: 0.15, which is calculated as Number of Misclassification divided by total training set. (from video)
+
+we see that the training error rate is 15%. The residual mean deviance reported is simply the deviance divided by $n-|T_0|$, which in this case is 800-80= 720.
+
+(2) Create a plot of the tree. Pick one of the terminal nodes, and interpret the information displayed.
+
+```{r}
+plot(tree.d)  # for Plotting the decision tree
+#text(tree.d, pretty= 0) #if you want to see labels also
+```
+
+To interpert the tree, lets look tree in deitals again
+```{r}
+set.seed(12312)
+tree.d
+```
+
+
+Interpertation:
+For interpertaion purpose I took the terminal node at the 256 position in the tree(internal node), Clearly it is a terminal node because it has * sign with it and its information are as follows: for this split cretrion is LoyalCH < 0.134076, n value is 7 with no deviance (i.e 0.000), yvalue: MM and yprob in ( 0.00000 1.00000 ).
+
+(3) Predict the labels on the test data, and produce a confusion matrix comparing the test labels to the predicted test labels. What is the test error rate?
+
+```{r}
+set.seed(12312)
+pred.d=predict(tree.d, test, type="class")
+pred.d  # Looking at the predicted lables
+```
+Creating a confusion matrix for comparing the test labels to the predicted test labels
+```{r}
+set.seed(12312)
+table(pred.d, test$Purchase)
+```
+Interpertation:
+From the confusion matrix, we can see that the True-CH value is 133 and True-MM value is 73. False-CH value is 42 and False-MM value is 22. Misclassification rate= (42+22)/270. This is the misclassification rate in my test set so the test error rate is (42+22)/270 = 0.237037. so my test error rate is 23.37% and my training error rate was 15%, which makes sense also that my test error rate> training error rate.
+
+Also accuracy in the test data: (133+73)/270 =0.762963 i.e 76.29%
+
+(note:- if you re-run the predict() function then you might get slightly different results, due to 'ties', by book)
+
+(4) Apply the cv.tree() function to the training set in order to determine the optimal tree size. Produce a plot with tree size on the x-axis and cross-validated classification error rate on the y-axis. Which tree size corresponds to the lowest cross-validated classification error rate?
+
+```{r}
+#set.seed(12312)
+#cv.d=cv.tree(tree.d)   # using deviance as a criteria for the cross-validation, right now not asked
+```
+
+```{r}
+#cv.d
+#plot(cv.d$size, cv.d$dev, type = "b") # Since we have used deviance as our criteria for the cross-validation, we will use the same for plotting also, not asked
+```
+we are going to look at tree with lowest possible deviance with small size because we perfer a tree which is less complex and produce a minimum deviance.
+
+Asked one:-let's also look for the plot when cross-validation is done on the basis of misclassification
+```{r}
+set.seed(12312)
+cv.d=cv.tree(tree.d, FUN= prune.misclass)
+names(cv.d)
+```
+
+```{r}
+set.seed(12312)
+cv.d
+```
+
+Clearly from above result we can see that the tree with either: 29,26 or 21 terminal nodes results in only 156 cross-validation error (which is minimum one) and same for all given three nodes.
+
+let's visualize this
+```{r}
+plot(cv.d$size, cv.d$dev, type = "b")
+```
+
+
+
+```{r}
+set.seed(12312)
+plot(cv.d$size, cv.d$misclass, type = "b")
+```
+Interpertation:
+From graph we can see that the tree with size 11 has the  lowest cross-validated classification error rate
+
+```{r}
+#Also not asked
+plot(cv.d$k, cv.d$misclass, type = "b")
+```
+(5) Produce a pruned tree corresponding to the optimal tree size obtained using cross-validation. If cross-validation does not lead to selection of a pruned tree, then create a pruned tree with five terminal nodes.
+ANSWER:
+choosing the smallest one 
+```{r}
+set.seed(12312)
+prune.d=prune.tree(tree.d, best =21)
+```
+
+Now we can take a look at this smaller tree
+```{r}
+#set.seed(12312)
+#summary(prune.d)
+```
+
+```{r}
+plot(prune.d)
+text(prune.d)
+```
+(6) Compare the training and test error rates between the pruned and unpruned trees. Which is higher?
+ANSWER:
+For Training error:
+```{r}
+set.seed(12312)
+summary(prune.d)
+```
+From the summary statistics we can see that the Misclassification error rate(i.e Training error rate): 0.1638 (or 16.38% ). After the pruneing the misclassification of our training data went up a litle, perviously it was 15% and now it is 16.38%
+
+```{r}
+set.seed(12312)
+#Predict class on test data
+pred.d.prune=predict(prune.d,test, type = "class")
+pred.d.prune
+```
+```{r}
+set.seed(12312)
+table(pred.d.prune, test$Purchase)
+```
+Interpretation:
+From the confusion matrix, we can see that the True-CH value is 123 and True-MM value is 86. False-CH value is 29 and False-MM value is 32. Misclassification rate= (29+32)/270. This is the misclassification rate in my test set so the test error rate is (29+32)/270 = 0.2259259. so my test error rate is 22.59% for the pruned tree. Also accuracy in the test data: (133+86)/270 = 0.8111111 i.e 81.11%
+
+Talking about the compression, test error rate for the unpruned tree was 23.37% and test error rate for the pruned data is 22.59%, so kind a say It performs little well in the test data after pruning, which makes sense. 
+
+Taking about accuracy point of view:
+Unpruned tree has a accuracy of 76.29% in the test day but pruned tree has accuracy of 81.11%, so accuracy increases by some percentage in the test data after pruning. 
+
+(7) Perform random forest on the training set with 1,000 trees for a chosen values of the ”mtry”. You
+may experiment with a range of values of the parameter.
+
+```{r}
+set.seed(12312)
+#install.packages("randomForest")
+library(randomForest)
+
+set.seed(12312)
+# Let first choose the value of m to be sqrt(17) i.e nearly 4 for this randomforest in classification problem
+rf.OJ=randomForest(Purchase~., data=OJ, subset= train, mtry=4, ntree=1000, importance=TRUE)
+rf.OJ  # lets take a look at the output
+```
+Its a classification problem and number of variable we tried at each split is 4. we have out-of-bag (OBB) error rate of 19.25%. We can also see the confusion matrix and class errors from the above output.
+
+Now, I am just trying different values of m's
+
+```{r}
+set.seed(12312)
+# Trying m=6
+rf.OJ=randomForest(Purchase~., data=OJ, subset= train, mtry=6, ntree=1000, importance=TRUE)
+rf.OJ  # lets take a look at the output
+```
+Its a classification problem and number of variable we tried at each split is 6. we have out-of-bag (OBB) error rate of 20.5%. We can also see the confusion matrix and class errors from the above output.
+
+```{r}
+set.seed(12312)
+# Trying m=8
+rf.OJ=randomForest(Purchase~., data=OJ, subset= train, mtry=8, ntree=1000, importance=TRUE)
+rf.OJ  # lets take a look at the output
+```
+Its a classification problem and number of variable we tried at each split is 8. we have out-of-bag (OBB) error rate of 21.12%. We can also see the confusion matrix and class errors from the above output.
+
+```{r}
+set.seed(12312)
+# Trying m=10
+rf.OJ=randomForest(Purchase~., data=OJ, subset= train, mtry=10, ntree=1000, importance=TRUE)
+rf.OJ  # lets take a look at the output
+```
+Its a classification problem and number of variable we tried at each split is 10. we have out-of-bag (OBB) error rate of 21%. We can also see the confusion matrix and class errors from the above output.
+
+```{r}
+set.seed(12312)
+# Trying m=12
+rf.OJ=randomForest(Purchase~., data=OJ, subset= train, mtry=12, ntree=1000, importance=TRUE)
+rf.OJ  # lets take a look at the output
+```
+Its a classification problem and number of variable we tried at each split is 12. we have out-of-bag (OBB) error rate of 21.38%. We can also see the confusion matrix and class errors from the above output.
+
+```{r}
+set.seed(12312)
+# Trying m=14
+rf.OJ=randomForest(Purchase~., data=OJ, subset= train, mtry=14, ntree=1000, importance=TRUE)
+rf.OJ  # lets take a look at the output
+```
+Its a classification problem and number of variable we tried at each split is 14. we have out-of-bag (OBB) error rate of 21.62%. We can also see the confusion matrix and class errors from the above output.
+
+```{r}
+set.seed(12312)
+# Trying m=16
+rf.OJ=randomForest(Purchase~., data=OJ, subset= train, mtry=16, ntree=1000, importance=TRUE)
+rf.OJ  # lets take a look at the output
+```
+Its a classification problem and number of variable we tried at each split is 16. we have out-of-bag (OBB) error rate of 21.12%. We can also see the confusion matrix and class errors from the above output.
+
+In addition to these, I can also try 3,5,7...15 for my m value and check the output. I will not try m=17, because that will be Bagging not random Forest.
+
+(8) Which variables appear to be the most important predictors in the RF model?
+
+```{r}
+# before running this code please run the last code for m=16 one, I used that one
+set.seed(12312)
+importance(rf.OJ)
+```
+From above output we can clearly see that the most important variable in predicting the Purchase is LoyalCH (i.e Customer brand Loyalty for CH)
+
+(9) Use the RF model to predict the response on the test data. Form a confusion matrix. How does this compare with the result obtained using a single tree?
+
+```{r}
+set.seed(12312)
+yhat.rf= predict(rf.OJ, newdata = test)   # random forest with m=16 one, last one
+yhat.rf  # looking at them
+```
+
+```{r}
+set.seed(12312)
+test.error=sum(yhat.rf!=test$Purchase)/270 # 270 is the total number of test data in my test set
+test.error
+```
+So the error rate for my test data is 0.1851852 (i.e 18.51%)
+
+```{r}
+set.seed(12312)
+# Creating a confusion matrix
+table(yhat.rf, truth=test$Purchase)
+```
+From the confusion matrix, we can see that the True-CH value is 129 and True-MM value is 91. False-CH value is 24 and False-MM value is 26. Misclassification rate= (24+26)/270. This is the misclassification rate in my test set so the test error rate is (24+26)/270 = 0.1851852. so my test error rate is 18.51%.
+
+Comparison between single tree and random forest
+1) First thing we can clearly see that our model does better in case of random forest as compared to single tree. The test error rate for single tree was 23.37% (for unpruned) and 22.59 for pruned, but for random forest test error rate reduce to 18.51% only. 
+
+2) talking about accuracy, single tree (unpruned) has the accuracy of 76.29% but the accuracy for the random forest become (129+91)/270= 81.48%
+
+So as expected, random forest predict the variable more accuractly then single tree, which makes sense also.
+
+--------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
+
+1. Consider the Boston housing data set, from the ISLR2 library.
+
+```{r}
+set.seed(12312)
+library(ISLR2)
+head(Boston)
+```
+
+
+(a) Based on this data set, provide an estimate for the population mean of ”medv”. Call this estimate $\hat{\mu}$.
+```{r}
+set.seed(12312)
+mean50=vector(length=1000)
+for(i in 1:1000){
+  samp = sample(Boston$medv, size = 50)
+  mean50[i] = mean(samp)
+}
+#mean50
+mu_hat=mean(mean50)
+mu_hat
+# my output is 22.56684
+
+# just checking how close it is
+mean(Boston$medv)
+# Actual value was 22.53281
+```
+(b) Provide an estimate of the standard error of $\hat{\mu}$. Recall, we can compute the standard error of the sample mean by dividing the sample standard deviation by the square root of the number of observations.
+
+```{r}
+set.seed(12312)
+#Estimation for the standard deviation
+est_stand_error= sd(Boston$medv)/sqrt(nrow(Boston))
+est_stand_error
+```
+(c) Now estimate the standard error of $\hat{\mu}$ using the bootstrap. How does this compare to your answer from (b)?
+ANSWER:
+```{r}
+set.seed(12312)
+#I need to instal and load the boot in the working environment before start using it
+#install.packages("boot")
+library(boot)
+# first let's create a function that I can use inside the boot() function which calculate my desired statistics mean for the booted sample
+
+mu_boot <- function(data, indices) {
+ mean(data[indices])
+}
+# bootstrapping with 100 replications
+boot_res_1000 <- boot(data=Boston$medv, statistic=mu_boot,
+   R=1000)
+boot_res_1000
+```
+Interpretation:-
+Standard error in my part b was 0.4088611 but the standard error by bootstrap sampling statistics is 0.404425 for the replication length of 1000. So they are close to each other .
+
+```{r}
+set.seed(12312)
+# bootstrapping with 100 replications
+boot_res_500 <- boot(data=Boston$medv, statistic=mu_boot,
+   R=500)
+boot_res_500
+```
+This is showing I need to increase the number of replication to match the standard error in part b. 
+
+(d) Based on your bootstrap estimate from (c), provide a 95 % normal confidence interval for the mean of ”medv”. Compare it to the results obtained using t.test(Boston$medv).
+
+```{r}
+set.seed(12312)
+# First let's check the given one
+t.test(Boston$medv)
+```
+So I found a 95% confidence interval (21.72953, 23.33608)
+
+
+```{r}
+set.seed(12312)
+# Now let's find bootstrap confidence interval
+# Since my above boot() output has only one index, so it will be by default the one of our interest
+# as she say, I need to use normal by question
+# since by default is always 95% so I will not write anything
+# Point to be noted, I have calculated the confidence interval Based on 1000 bootstrap replicates
+boot.ci(boot_res_1000, type = "norm")
+```
+So I found a 95% normal confidence interval (21.72, 23.31)
+
+Interpretation:
+They are almost close to each other, this may be because I have used high number of replication in bootstrap. with lower replication length you might get some difference but not big I guess.
+
+
+(e) Use sample median to estimate $\hat{m}$ for the median value of medv in the population.
+
+```{r}
+set.seed(12312)
+# Question is little unclear for the direction
+# our sample median is
+median(Boston$medv)
+```
+
+
+```{r}
+# 
+median50=vector(length=1000)
+for(i in 1:1000){
+  samp = sample(Boston$medv, size = 50)
+  mean50[i] = median(samp)
+}
+estimated_median=median(mean50)
+estimated_median
+# This is if you want this way, I think boot is best to do these stuffs
+```
+
+
+```{r}
+boot_med <- function(data, indices) {
+ median(data[indices])
+}
+
+est_boot.med=boot(data = Boston$medv, statistic = boot_med, R=1000)
+est_boot.med
+```
+(f) We now would like to estimate the standard error of ˆm. Unfortunately, there is no simple formula for computing the standard error of the median. Instead, estimate the standard error of the median using the bootstrap.
+```{r}
+boot_med <- function(data, indices) {
+ median(data[indices])
+}
+
+est_boot.med=boot(data = Boston$medv, statistic = boot_med, R=1000)
+est_boot.med
+```
+So the required standard error of sample median is 0.3789714
+
+-----------------------------------------------------------------------------------
+-------------------------THE END---------------------------------------------------
+
+
+
+
+
+
+

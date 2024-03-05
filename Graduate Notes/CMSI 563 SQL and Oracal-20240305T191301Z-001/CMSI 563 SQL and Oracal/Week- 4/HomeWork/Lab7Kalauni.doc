@@ -1,0 +1,476 @@
+SQL> /*Sagar Kalauni*/
+SQL> /* Lab7-Kalauni*/
+SQL> 
+SQL> /*Q.NO.1)The company’s vice president for project management needs a listing of employees who have received specialties. The result table should list the employee name (last name first, then first name) and their associated specialty title and the date they received the specialty.  Format the columns so output lines are on a single row.  The column header for the Specialty title should be ‘Specialty Name’. */
+SQL> /*OBSERVATION:- So 21 employees has recived Specialities */
+SQL> COLUMN "Employee Name" FORMAT A24;
+SQL> COLUMN "Specialty Name" FORMAT A27;
+SQL> COLUMN "Date Recived" FORMAT A12;
+SQL> SELECT LastName||', '||FirstName "Employee Name" , s.Title "Specialty Name", DateReceived "Date Recived"
+  2  FROM Employee e JOIN EmployeeSpecialty es ON (e.EmployeeID=es.EmployeeID) JOIN Specialty s ON (es.SpecialtyID=s.SpecialtyID);
+
+Employee Name            Specialty Name              Date Recived               
+------------------------ --------------------------- ------------               
+Simmons, Lester          Registered Nurse            04-FEB-12                  
+Eakin, Maxwell           General Practitioner        04-DEC-16                  
+Eakin, Maxwell           Surgeon-General             04-DEC-19                  
+Bock, Douglas            General Practitioner        12-FEB-07                  
+Webber, Eugene           Radiologist                 04-MAY-12                  
+Bordoloi, Bijoy          Radiologist                 11-AUG-07                  
+Smith, Alyssa            Radiology Technologist      04-DEC-08                  
+Sumner, Elizabeth        General Practitioner        05-DEC-14                  
+Sumner, Elizabeth        Surgeon-General             15-DEC-14                  
+Becker, Robert           Surgeon-Thoracic            02-NOV-00                  
+Jones, Quincey           Surgeon-General             15-DEC-09                  
+
+Employee Name            Specialty Name              Date Recived               
+------------------------ --------------------------- ------------               
+Barlow, William          Neurosurgeon                12-MAY-15                  
+Smith, Susan             Surgeon-General             22-AUG-16                  
+Klepper, Robert          Oncologist                  04-JAN-03                  
+Zumwalt, Mary            Registered Nurse            08-MAR-08                  
+Quattromani, Toni        Cardiologist                25-MAY-12                  
+Becker, Roberta          Surgeon-Abdominal Cavity    04-DEC-02                  
+Brockwell, Mary Ellen    Nurse-Practitioner          06-DEC-15                  
+Simmons, Leslie          Licensed Practicing Nurse   22-MAR-18                  
+Young, Yvonne            Licensed Practicing Nurse   15-DEC-15                  
+Schultheis, Robert       General Practitioner        10-DEC-99                  
+
+21 rows selected.
+
+SQL> 
+SQL> /*Q.NO.2)The hospital pharmacist would like a report listing patient first and last names (concatenated) who have been prescribed Valium.  The result table should have just two columns, Patient Name and CommonName. Use relevant column headers and format commonName so it is 10 or fewer characters.*/
+SQL> /*OBSERVATION:- Patient Name who are Prescribed Valium*/
+SQL> COLUMN "CommonName" FORMAT A10;
+SQL> SELECT LastName||', '||FirstName "Patient Name", CommonName "CommonName"
+  2  FROM patient p JOIN Prescription pr ON (p.PatientID=pr.PatientID) JOIN Medicine m ON (pr.MedicineCode=m.MedicineCode)
+  3  WHERE Commonname='Valium';
+
+Patient Name         CommonName                                                 
+-------------------- ----------                                                 
+Youngman, Yvonne     Valium                                                     
+Zebulon, Zeb         Valium                                                     
+Ridgeway, Ricardo    Valium                                                     
+
+SQL> 
+SQL> /*Q.NO.3)The company's vice president for project management needs a listing of employees assigned to projects.  The result table should list the LastName and FirstName column values (concatenated into one column) and their ProjectTitle and HoursWorked (from the projectAssignment table).  The result table should only list employees assigned to a project that have worked on the project more than 10 hours.  Sort results by employee last name and then by project number.  Use alias names for the table names.  Give each column an appropriate column name.  HoursWorked has a decimal.*/
+SQL> /*OBSERVATION:- Nicely formated table with employee name, their project title and hours worked*/
+SQL> COLUMN "Hours Worked" FORMAT 99.9;
+SQL> SELECT LastName||', '||FirstName "Employee Name", ProjectTitle "Project Title", HoursWorked "Hours Worked"
+  2  FROM Employee e JOIN ProjectAssignment pa ON (e.EmployeeID=pa.EmployeeID) JOIN Project p ON (pa.ProjectNumber=p.ProjectNumber)
+  3  WHERE HoursWorked >10
+  4  ORDER BY LastName, p.ProjectNumber;
+
+Employee Name            Project Title             Hours Worked                 
+------------------------ ------------------------- ------------                 
+Adams, Adam              Child Care Center                 23.0                 
+Bock, Douglas            New MRI Installation              10.2                 
+Bordoloi, Bijoy          Remodel ER Suite                  10.3                 
+Brockwell, Mary Ellen    New Pediatric Monitors            14.8                 
+Eakin, Maxwell           New Surgical Suite                14.2                 
+Eakin, Maxwell           Remodel Surgical Suite            10.6                 
+Klepper, Robert          New MRI Installation              11.8                 
+Klepper, Robert          Remodel ER Suite                  19.2                 
+Simmons, Lester          Personnel Records Update          35.4                 
+Simmons, Lester          New Pediatric Monitors            12.2                 
+Simmons, Lester          Child Care Center                 24.1                 
+
+Employee Name            Project Title             Hours Worked                 
+------------------------ ------------------------- ------------                 
+Smith, Alyssa            New MRI Installation              30.8                 
+Smith, Susan             Remodel ER Suite                  34.5                 
+Thornton, Billy          Personnel Records Update          41.2                 
+
+14 rows selected.
+
+SQL> 
+SQL> /*Q.NO4)Produce a query that will list all employee last names, employee gender, dependent names and dependent gender where the employee's have dependents of the same gender.  Also list the dependent relationship.  The columns needed in the result table are LastName, employee.Gender, dependent.Name, dependent.Gender, and RelationshipToEmployee.  Use the employee and dependent tables.  Use the FROM clause to join the tables.  Use the column names and formats shown below.  Sort the result table by LastName.
+SQL> COLUMN "Employee" FORMAT A10;
+SQL> COLUMN "Emp Gender" FORMAT A10;
+SQL> COLUMN "Dependent" FORMAT A10;
+SQL> COLUMN "Dep Gender" FORMAT A10;
+SQL> COLUMN "Relationship" FORMAT A12; */
+SQL> /*OBSERVATION:- Nicely formated table with infromation of employee, dependent their relation and gender */
+SQL> COLUMN "Employee" FORMAT A10;
+SQL> COLUMN "Emp Gender" FORMAT A10;
+SQL> COLUMN "Dependent" FORMAT A10;
+SQL> COLUMN "Dep Gender" FORMAT A10;
+SQL> COLUMN "Relationship" FORMAT A12;
+SQL> SELECT LastName "Employee", employee.Gender "Emp Gender", dependent.Name "Dependent", dependent.Gender "Dep Gender", RelationshipToEmployee "Relationship"
+  2  FROM employee JOIN dependent ON (employee.EmployeeID=dependent.EmployeeID)
+  3  WHERE employee.Gender=dependent.Gender
+  4  ORDER BY LastName;
+
+Employee   Emp Gender Dependent  Dep Gender Relationship                        
+---------- ---------- ---------- ---------- ------------                        
+Bock       M          Jeffery    M          SON                                 
+Simmons    M          Andrew     M          SON                                 
+
+SQL> 
+SQL> /*Q.NO.5)The director of Pediatric Nursing requires a report listing each patient name, their bedNumber and their roomNumber for pediatric patients only.  You will need to figure out how to determine which rooms are for pediatric patients and there is more than one way to do this. The result tale should display the patient’s first and last names concatenated, their bednumber, and roomnumber. Assign appropriate column headers and format so the columns fit on a single line.*/
+SQL> /*OBSERVATION:- Name and bed number and room no. of the patient in pediatric*/
+SQL> COLUMN "Patient Name" FORMAT A20;
+SQL> SELECT p.FirstName||' '||p.LastName "Patient Name", bedNumber "Bed Number",  roomNumber "Room Number"
+  2  FROM Patient p JOIN Bed b
+  3  ON (p.bedNo = b.bedNumber)JOIN Prescription pr
+  4  ON (pr.patientID = p.patientID) JOIN Employee e
+  5  ON (pr.employeeID = e.employeeID) JOIN Department d
+  6  ON (e.departmentNumber = d.departmentNumber)
+  7  WHERE departmentName = 'Pediatrics-Gynecology';
+
+Patient Name         Bed Number Room Number                                     
+-------------------- ---------- ------------                                    
+Freddy Fender                70 RE0001                                          
+Zeb Zebulon                  52 ER0001                                          
+Arthur Ashcroft              53 ER0001                                          
+
+SQL> 
+SQL> /*Q.NO.6)Management is expecting to start several new projects in the near future.  A list of employees who are not currently assigned to a project is needed.  This will provide management with a list of employees who are potentially available to be assigned to projects. The result table should list the LastName and FirstName column values (concatenated into one column) from the employee table.  Sort the output by LastName and FirstName.  Hint: You will need an OUTER join.*/
+SQL> /*OBSERVATION:- So there are 13 employee who are not assigned to any project currently*/
+SQL> SELECT LastName||', '||FirstName "Employee Name"
+  2  FROM Employee e LEFT OUTER JOIN ProjectAssignment pa ON (e.EmployeeID=pa.EmployeeID) LEFT OUTER JOIN Project p ON (pa.ProjectNumber=p.ProjectNumber)
+  3  WHERE pa.Projectnumber IS NULL
+  4  ORDER BY e.LastName, e.FirstName;
+
+Employee Name                                                                   
+------------------------                                                        
+Barlow, William                                                                 
+Becker, Robert                                                                  
+Becker, Roberta                                                                 
+Boudreaux, Betty                                                                
+Boudreaux, Beverly                                                              
+Clinton, William                                                                
+Jones, Quincey                                                                  
+Schultheis, Robert                                                              
+Simmons, Leslie                                                                 
+Sumner, Elizabeth                                                               
+Webber, Eugene                                                                  
+
+Employee Name                                                                   
+------------------------                                                        
+Young, Yvonne                                                                   
+Zumwalt, Mary                                                                   
+
+13 rows selected.
+
+SQL> 
+SQL> /*Q.NO.7)The head of Facilities Management needs a list of all roomnumbers and the patients currently in each room.  The result table should include ALL room numbers in the hospital.  If a patient is currently in the room, their name should be shown in firstName lastName order and should be concatenated in a single column.  This will allow the Facilities Management team to clean rooms that are currently unoccupied.*/
+SQL> /*OBSERVATION:- Nicely formated table showing bed number and the patient name if occupied*/
+SQL> SELECT RoomNumber "Room Number", FirstName||' '||LastName "Patient Name"
+  2  FROM Bed b LEFT OUTER JOIN Patient p ON (p.Bedno=b.BedNumber);
+
+Room Number  Patient Name                                                       
+------------ --------------------                                               
+MSS001       Barbara Benton                                                     
+MSS002                                                                          
+MSS003                                                                          
+MSS004       Rue Chen                                                           
+MSS005                                                                          
+MSS006       David Davis                                                        
+MSS010       Earnest Earnhardt                                                  
+MSS010                                                                          
+MSS011                                                                          
+MSS011                                                                          
+MSS012       Frank Franken                                                      
+
+Room Number  Patient Name                                                       
+------------ --------------------                                               
+MSS012                                                                          
+MSS013                                                                          
+MSS013       Gregory Grant                                                      
+MSS014       Harold Harnett                                                     
+MSS014       Ivy Iona                                                           
+MSS015                                                                          
+MSS015       Juliet Juneau                                                      
+MSN201                                                                          
+MSN202       Keith Kraut                                                        
+MSN203       Mandy Monday                                                       
+MSN204                                                                          
+
+Room Number  Patient Name                                                       
+------------ --------------------                                               
+MSN205       Linda Lima                                                         
+MSN210                                                                          
+MSN210       Nancy Nunn                                                         
+MSN211                                                                          
+MSN211       Opal Ophelia                                                       
+MSN212                                                                          
+MSN212       Paul Pauley                                                        
+MSN213       Quincy Quentin                                                     
+MSN213                                                                          
+MSN214                                                                          
+MSN214       Ricardo Ridgeway                                                   
+
+Room Number  Patient Name                                                       
+------------ --------------------                                               
+MSN215                                                                          
+MSN215       Samuel Santiago                                                    
+ER0001       Yancey Young                                                       
+ER0001                                                                          
+ER0001       Zeb Zebulon                                                        
+ER0001       Arthur Ashcroft                                                    
+ER0002                                                                          
+ER0002       Charlie Chang                                                      
+ER0002       Darlene Davidson                                                   
+ER0002                                                                          
+ER0002       Earlene Earnhardt                                                  
+
+Room Number  Patient Name                                                       
+------------ --------------------                                               
+ER0001       Billy Boudreaux                                                    
+RE0001       Freddy Fender                                                      
+RE0023                                                                          
+RE0023       Gina Gentry                                                        
+RE0024                                                                          
+RE0031       Hank Henderson                                                     
+RE0032       Ilama Ilama                                                        
+RE0032       James Jupiter                                                      
+RE0032       Krakatoa Khan                                                      
+RA0075       Teresa Tempest                                                     
+RA0075                                                                          
+
+Room Number  Patient Name                                                       
+------------ --------------------                                               
+RA0076       Ulysses Unicorn                                                    
+RA0077       Victor Victory                                                     
+RA0077                                                                          
+RA0077       William Williams                                                   
+RA0078                                                                          
+RA0078                                                                          
+SUR001                                                                          
+SUR002                                                                          
+SUR003                                                                          
+SUR004                                                                          
+SW3001       Mickey Mousseau                                                    
+
+Room Number  Patient Name                                                       
+------------ --------------------                                               
+SW3002                                                                          
+SW3003       Lillian Lakeside                                                   
+SW3004                                                                          
+SW3005       Oliver Overstreet                                                  
+SW3005                                                                          
+SW3006       Norman November                                                    
+SW3006       Rudolph Pappa                                                      
+SW3007                                                                          
+SW3007       Renny Reinhardt                                                    
+SW3008       Quentin Queen                                                      
+SW3008       Sally Surrey                                                       
+
+Room Number  Patient Name                                                       
+------------ --------------------                                               
+CC1001       Thomas Teal                                                        
+CC1011       Vanna Vanquish                                                     
+CC1021                                                                          
+CC1031       Uley Uniform                                                       
+CC1031       Yvonne Youngman                                                    
+CC1051       Zina Zenna                                                         
+CC1061                                                                          
+PED101       Andrew Able                                                        
+PED102       Albert Algebra                                                     
+PED103                                                                          
+PED104       Bradley Beaufort                                                   
+
+Room Number  Patient Name                                                       
+------------ --------------------                                               
+PED105       Clyde Crawford                                                     
+PED111                                                                          
+PED111                                                                          
+PED112       Danny Dunland                                                      
+PED112       Ertha Ezzra                                                        
+PED113                                                                          
+PED113       Filbert Funk                                                       
+PED114                                                                          
+PED114       Gretchen Greathouse                                                
+
+97 rows selected.
+
+SQL> 
+SQL> /*Q.NO.8)Produce a listing of number of employees who have earned each specialty.  The result table should list the Specialty Name and number of employees who have earned the specialty. Give each column an appropriate column name and format Specialty Title to 30 characters.*/
+SQL> /*OBSERVATION:- Nicely formated table showing count of employee have particular type of specialty */
+SQL> COLUMN "Specialty Name" FORMAT A30;
+SQL> SELECT s.Title "Specialty Name", Count(e.employeeID) "No. of Employees"
+  2  FROM Employee e JOIN EmployeeSpecialty es ON (e.EmployeeID=es.EmployeeID) JOIN Specialty s ON (es.SpecialtyID=s.SpecialtyID)
+  3  GROUP BY s.Title;
+
+Specialty Name                 No. of Employees                                 
+------------------------------ ----------------                                 
+Cardiologist                                  1                                 
+General Practitioner                          4                                 
+Nurse-Practitioner                            1                                 
+Radiologist                                   2                                 
+Surgeon-Thoracic                              1                                 
+Surgeon-Abdominal Cavity                      1                                 
+Licensed Practicing Nurse                     2                                 
+Radiology Technologist                        1                                 
+Registered Nurse                              2                                 
+Neurosurgeon                                  1                                 
+Oncologist                                    1                                 
+
+Specialty Name                 No. of Employees                                 
+------------------------------ ----------------                                 
+Surgeon-General                               4                                 
+
+12 rows selected.
+
+SQL> 
+SQL> /*Q.NO.9)Produce a listing with the number (count) of employees assigned to each project within each department. The result table should list the DepartmentName, ProjectTitle and number of employees. Give each column an appropriate column name. Use either the WHERE or the FROM clause to join the tables. This query is a little tricky – because you have two attributes on the SELECT line along with the aggregate, your GROUP BY statement will also need  attributes.*/
+SQL> /*OBSERVATION:- Nicely formated table showing no. of employee assigned to each project within each department*/
+SQL> SELECT DepartmentName "Department Name", ProjectTitle "Project Title", count(e.employeeID) "No. of Employees"
+  2  FROM Employee e JOIN  Department d ON (e.DepartmentNumber=d.DepartmentNumber) JOIN Project p ON (d.DepartmentNumber=p.DepartmentNumber)
+  3  GROUP BY p.ProjectTitle, d.DepartmentName;
+
+Department Name           Project Title             No. of Employees            
+------------------------- ------------------------- ----------------            
+Admin/Labs                Personnel Records Update                 5            
+Emergency-Surgical        Remodel ER Suite                         5            
+Pediatrics-Gynecology     New Pediatric Monitors                   4            
+Pediatrics-Gynecology     Child Care Center                        4            
+Medical Surgical Ward 1   New Surgical Suite                       2            
+Medical Surgical Ward 1   Remodel Surgical Suite                   2            
+Radiology                 New MRI Installation                     3            
+Emergency-Surgical        Add Crash Cart Equipment                 5            
+
+8 rows selected.
+
+SQL> 
+SQL> /*Q.NO.10)Produce a listing of the number of patients treated and the total service charges ChargeAmount) received by each doctor (Title includes ‘M.D.’). The result table should have three columns:  the LastName and FirstName concatenated into one column, number of patients, and the total service charges.  Give each column an appropriate column name. Use either the WHERE or the FROM clause to join the tables.  You must determine on your own which tables and columns are required to produce the result table.*/
+SQL> /*OBSERVATION:- Nicely formated table showing doctor's name, number of patient he treated and service charege*/
+SQL> COLUMN "Doctor Name" FORMAT A20;
+SQL> COLUMN "Total Service Charge" FORMAT $99,999.99;
+SQL> SELECT LastName||', '||FirstName "Doctor Name", Count(t.PatientID) "Number of Patient", SUM(t.ChargeAmount) "Total Service Charge"
+  2  FROM Employee e JOIN Treatment t on (e.EmployeeID=t.EmployeeID)
+  3  WHERE Title LIKE '%M.D.%'
+  4  GROUP BY e.LastName, e.FirstName;
+
+Doctor Name          Number of Patient Total Service Charge                     
+-------------------- ----------------- --------------------                     
+Becker, Robert                       3            $7,075.00                     
+Becker, Roberta                      4           $15,455.00                     
+Sumner, Elizabeth                    8            $7,495.40                     
+Schultheis, Robert                  12            $1,295.55                     
+Bock, Douglas                       14            $1,575.40                     
+Eakin, Maxwell                      13            $1,668.00                     
+Barlow, William                      1            $8,500.00                     
+Webber, Eugene                       2              $650.00                     
+Quattromani, Toni                    2              $195.00                     
+Bordoloi, Bijoy                      8            $3,165.00                     
+Klepper, Robert                     11            $1,110.00                     
+
+11 rows selected.
+
+SQL> 
+SQL> /*Q.NO.11)The payroll department needs to regularly access information about employee salary information.  The DBA of the company has directed you to create a view based on the employee table named vwSalary.  This view should include the employee identifying number, employee last and first names (LastName and FirstName), and the salary for each employee.  Name the columns of the view as follows:  EmpID, EmpLastName, EmpFirstName, and EmpSalary. Write the SQL code needed to create this view.  Write a SELECT statement to display rows from the view for employees with salaries at or above $20,000.  Format all output appropriately.*/
+SQL> /*Creating a view named vwSalary*/
+SQL> COLUMN "EmpID" FORMAT A8;
+SQL> COLUMN "EmpLastName" FORMAT A15;
+SQL> COLUMN "EmpFirstName" FORMAT A15;
+SQL> COLUMN "EmpSalary" FORMAT $999,999,999.99;
+SQL> CREATE VIEW vwSalary
+  2  (EmpID, EmpLastName, EmpFirstName, EmpSalary) AS
+  3  SELECT EmployeeID, LastName, FirstName, Salary
+  4  FROM Employee;
+
+View created.
+
+SQL> 
+SQL> /*accessing vwSalary*/
+SQL> SELECT *
+  2  FROM vwSalary
+  3  WHERE EmpSalary>=20000;
+
+EMPID    EMPLASTNAME     EMPFIRSTNAME           EMPSALARY                       
+-------- --------------- --------------- ----------------                       
+67555    Simmons         Lester                $22,000.00                       
+88101    Becker          Robert                $23,545.00                       
+88303    Jones           Quincey               $30,550.00                       
+88404    Barlow          William               $27,500.00                       
+88505    Smith           Susan                 $32,500.00                       
+66425    Quattromani     Toni                  $22,325.00                       
+88202    Becker          Roberta               $23,000.00                       
+
+7 rows selected.
+
+SQL> 
+SQL> /*Q.No.12)The Company's senior project manager needs to access information about departments that manage projects for a specific set of projects, namely those located in either Maryville or Edwardsville. Create a view named vwDepartmentProjects that includes the DepartmentNumber and DepartmentName columns from the department table and the ProjectTitle and Location columns from the project table.  The view should only reference rows for projects that are located in either Maryville or Edwardsville. The columns in the view should be named DeptNo, Department, Project, and Location, respectively.  Write a SELECT statement to display all of the rows that are accessible through the view.  Format the output columns of the SELECT statement as A25 for Project and Department, and A15 for Location.*/
+SQL> /*Creating a view named vwDepartmentProjects*/
+SQL> COLUMN "Project" FORMAT A25;
+SQL> COLUMN "Department" FORMAT A25;
+SQL> COLUMN "Location" FORMAT A15;
+SQL> CREATE VIEW vwDepartmentProjects
+  2  (DeptNo, Department, Project, Location) AS
+  3  SELECT d.DepartmentNumber, d.DepartmentName, p.ProjectTitle, p.Location
+  4  FROM Department d JOIN Project p ON (d.DepartmentNumber=p.DepartmentNumber)
+  5  WHERE Location IN ('Maryville', 'Edwardsville');
+
+View created.
+
+SQL> 
+SQL> /*accessing vwDepartmentProjects*/
+SQL> SELECT *
+  2  FROM  vwDepartmentProjects;
+
+    DEPTNO DEPARTMENT                PROJECT                   LOCATION         
+---------- ------------------------- ------------------------- ---------------  
+         2 Radiology                 New MRI Installation      Maryville        
+         3 Emergency-Surgical        Add Crash Cart Equipment  Edwardsville     
+         3 Emergency-Surgical        Remodel ER Suite          Maryville        
+         8 Admin/Labs                Personnel Records Update  Maryville        
+
+SQL> 
+SQL> /*Q.No.13)Create a view named vwProjectHours that will be used by the senior project manager to access information about work hours that have been reported for different projects. The view should join the project and projectAssignment tables.  The view should have two columns; project title (not project number) and the average hours worked on each project.  Name the columns Project and AverageHours in the view.  (Hint: The rows in the view should be grouped by the project name).  Write a SELECT statement against this view to display projects where the average hours is equal to or greater than 15.  HINT: When creating the View you have renamed the average hours to AverageHours.  This is the attribute you will reference in the query against the view.*/
+SQL> /*Creating a view named vwProjectHours*/
+SQL> CREATE VIEW vwProjectHours
+  2  ("Project", "AverageHours")AS
+  3  SELECT ProjectTitle, Avg(Hoursworked)
+  4  FROM ProjectAssignment pa JOIN Project p ON (pa.ProjectNumber=p.ProjectNumber)
+  5  GROUP BY ProjectTitle
+  6  HAVING Avg(Hoursworked)>=15;
+
+View created.
+
+SQL> 
+SQL> /*accessing vwProjectHours*/
+SQL> SELECT *
+  2  FROM vwProjectHours;
+
+Project                   AverageHours                                          
+------------------------- ------------                                          
+Personnel Records Update          28.7                                          
+Remodel ER Suite                17.275                                          
+New MRI Installation              17.6                                          
+Child Care Center                23.55                                          
+
+SQL> 
+SQL> 
+SQL> /*last line of question 13 is some confusing, write the select statement against this view to display projects, by this if question means just need the project names, this is code in that case*/
+SQL> /*Before that let's drop old one*/
+SQL> DROP VIEW vwProjectHours;
+
+View dropped.
+
+SQL> CREATE VIEW vwProjectHours
+  2  (Project, AverageHours)AS
+  3  SELECT ProjectTitle, Avg(Hoursworked)
+  4  FROM ProjectAssignment pa JOIN Project p ON (pa.ProjectNumber=p.ProjectNumber)
+  5  GROUP BY ProjectTitle;
+
+View created.
+
+SQL> 
+SQL> /*accessing vwProjectHours*/
+SQL> SELECT Project
+  2  FROM vwProjectHours
+  3  WHERE AverageHours >=15;
+
+PROJECT                                                                         
+-------------------------                                                       
+Personnel Records Update                                                        
+Remodel ER Suite                                                                
+New MRI Installation                                                            
+Child Care Center                                                               
+
+SQL> 
+SQL> 
+SQL> /*                                       THE END                                                */
+SQL> SPOOL OFF;

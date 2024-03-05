@@ -1,0 +1,198 @@
+---
+title: "ML Exam"
+author: "Sagar Kalauni"
+date: "2023-12-15"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+set.seed(100)
+library(datasets)
+library(ISLR2)
+library(tree)
+library(randomForest)
+library(boot)
+library(ggplot2)
+library(e1071)
+library(gbm)
+library(nnet)
+library(ISLR)
+library(factoextra)
+```
+
+
+This problem involves the Caravan data set which is part of the ISLR2 package. Perform the following analysis. This is an imbalanced data set.
+
+```{r}
+library(ISLR2)
+dim(Caravan)
+nrow(Caravan)
+
+#
+standardize=function(x) {(x-min(x))/(max(x)-min(x))}
+Caravan$MOSTYPE=standardize(Caravan$MOSTYPE)
+#Caravan$MOSHOOFD=standardize(Caravan$MOSHOOFD)
+```
+
+
+```{r}
+colnames(Caravan)
+```
+
+
+
+(1) It's a large data. To reduce computational time (and just for illustration), let's first create a training set containing the first 1000 observations, and a test set containing the next 300 observations.
+```{r}
+# Step 1: Split the data into training and testing sets
+train_data=Caravan[1:1000, ]
+test_data=Caravan[1001:1300, ]
+
+train_index=1:1000
+```
+
+
+(2) Fit a tree to the training data, with Purchase as the response and the other variables as predictors. Use the summary() function to produce summary statistics about the tree, and describe the results obtained. What is the training error rate? How many terminal nodes does the tree have?
+
+```{r}
+set.seed(100)
+library(tree)
+tree.d=tree(Purchase~., Caravan, split = 'gini', subset =train_index ) # except Purchase all other variables in the data set are be considered as predictors.
+```
+
+
+```{r}
+summary(tree.d)
+```
+
+This is a classification tree, we have a total number of terminal node of 63, so it's a big tree.
+we have mean deviance: 0.2391 , which is calculated deviance divided by total number of training observation minus the number of terminal nodes. We also have Misclassification error rate: 0.058, which is calculated as Number of Misclassification divided by total training set.
+
+we see that the training error rate is 5.8%. The residual mean deviance reported is simply the deviance divided by $n-|T_0|$, which in this case is 1000-63= 937.
+
+(2) Create a plot of the tree. Pick one of the terminal nodes, and interpret the information displayed.
+
+```{r}
+plot(tree.d)  # for Plotting the decision tree
+#text(tree.d, pretty= 0) #if you want to see labels also
+```
+
+
+```{r}
+set.seed(100)
+tree.d
+```
+
+Interpertation:
+For interpertaion purpose I took the terminal node at the 1048576 position in the tree(internal node), Clearly it is a terminal node because it has * sign with it.
+the node is going to assign data examples that reached this node to label No when MOPLLAAG < 7.5 249 and to label Yes otherwise. 
+
+(3) Produce a pruned tree corresponding to the optimal tree size using cross-validation. Which tree size corresponds to the lowest cross-validated classification error rate? Call this your model #1.
+```{r}
+cv.d=cv.tree(tree.d)
+plot(cv.d$size, cv.d$dev, type="b") 
+```
+
+```{r}
+cv.d
+```
+
+
+
+```{r}
+model_1=prune.d=prune.tree(tree.d,best=2) 
+summary(prune.d)
+
+pred.prune.d=predict(prune.d,test_data,type="class")
+table(pred.prune.d,test_data$Purchase)
+```
+tree size=2
+
+(4) Fit a boosting model to the training set with Purchase as the response label and the other variables as features. Use 1,000 trees, and a shrinkage value of 0.01. Call this your model #2. Which predictor appear to be the most important?
+
+```{r}
+train_data$Purchase = factor(train_data$Purchase, levels=c("No","Yes"), labels=c(0,1))
+train_data$Purchase = as.integer(train_data$Purchase)-1
+
+model_2= gbm(Purchase ~ ., data=train_data, distribution="bernoulli",
+n.trees=1000, interaction.depth=4, shrinkage=0.01)
+```
+
+```{r}
+summary(model_2)
+```
+predictor PPERSAUT appear to be the most important
+
+(5)  Use the boosting model to predict the response on the test data. Predict that a person will make a purchase if the estimated probability of purchase is greater than 20%. 
+
+```{r}
+set.seed(100)
+glm.probs=predict(model_2 , test_data, type = "response")
+```
+
+```{r}
+glm.pred <- rep("No", 300)
+glm.pred[glm.probs > .2] = "Yes"
+```
+
+
+```{r}
+glm.pred[1:10][1:10] # first 10 prediction
+
+(cm <- table(test_data$Purchase, glm.pred))
+```
+
+
+(6) Fit a radial kernel SVM to the training data with Purchase as the label and the other variables as features. Use a cost value of 0.01, and a gamma value of 0.5 . Call this your model #3.
+
+```{r}
+# Fitting a linear model with cost=0.01
+Model_3 = svm(Purchase ~ ., data =train_data, kernel = "radial", gamma=0.5, cost =0.01, scale = FALSE)
+summary(Model_3)
+```
+```{r}
+svm.pred.test=predict(Model_3, test_data, type="response")
+table(svm.pred.test, test_data$Purchase)
+```
+
+
+(7) Generate confusion matrix for the test set predictions for Model 1,2,3. Discuss your findings. Which model did better in terms of overall test error? How about in terms of Recall?
+
+```{r}
+table(pred.prune.d,test_data$Purchase)
+```
+
+```{r}
+(cm <- table(test_data$Purchase, glm.pred))
+```
+
+
+```{r}
+table(svm.pred.test, test_data$Purchase)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

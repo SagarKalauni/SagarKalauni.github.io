@@ -1,0 +1,93 @@
+/*Sagar Kalauni*/
+/* Lab8-Kalauni*/
+
+/*Q.NO.1)The ProjectAssignment table stores data about the hours that employees are working on specific projects.  A senior project manager needs a listing of employee names (first and last concatenated) who have not worked on projects 1, 2, 7 or 8. Use a subquery approach and sort the rows of the result table by employee last name.*/
+COLUMN "Employee" FORMAT A20;
+SELECT LastName||', '||FirstName "Employee"
+FROM Employee
+WHERE EmployeeID NOT IN ( SELECT EmployeeID
+                             FROM ProjectAssignment
+							 WHERE ProjectNumber IN (1, 2, 7, 8))
+ORDER BY lastName;
+							 
+
+/*Q.NO.2)Management would like a report on all employees with a salary GREATER than the MINIMUM salary of the employees in Department 3.  Use a subquery approach and include the employee first name, last name (concatenated), department number, and salary.  Sort the rows by departmentnumber. */						 
+COLUMN "Employee" FORMAT A20;
+COLUMN Salary FORMAT $99,999.99;
+SELECT LastName||', '||FirstName "Employee", DepartmentNumber, Salary
+FROM Employee
+WHERE Salary > (SELECT MIN(Salary) 
+                     FROM Employee
+					 WHERE DepartmentNumber=3)
+ORDER BY DepartmentNumber;
+
+/*Q.NO.3)Management is concerned that some employees are not putting in sufficient work hours on assigned projects 1, 2, and 3.  List the names of employees (last and first concatenated) for those employees who worked on one of these three projects, but worked fewer hours than the average number of hours worked on these three projects combined.  This is a nested subquery. Order the report by last name.*/
+COLUMN "Employee Name" FORMAT A20;
+SELECT LastName||', '||FirstName "Employee Name"
+FROM Employee
+WHERE EmployeeID IN ( SELECT EmployeeID
+                      FROM ProjectAssignment
+					  WHERE ProjectNumber IN (1,2,3) AND HoursWorked < (SELECT SUM(AVG(HoursWorked))
+                                                                        FROM ProjectAssignment
+                                                                        WHERE ProjectNumber IN (1,2,3)
+                                                                        GROUP BY ProjectNumber))
+ORDER BY LastName;																		
+
+/*Q.NO.4)The previous report has piqued the project manager’s curiosity. He would now like a report that lists all employees who have worked fewer hours than the average for all projects combined.  Computer the average hours worked on a project in a subquery.  In the report, list the employee’s first and last name. */                      
+COLUMN "Employee Name" FORMAT A20;
+SELECT LastName||', '||FirstName "Employee Name"
+FROM Employee
+WHERE EmployeeID IN ( SELECT EmployeeID
+                      FROM ProjectAssignment
+					  WHERE HoursWorked < (SELECT SUM(AVG(HoursWorked))
+                                           FROM ProjectAssignment
+                                           GROUP BY ProjectNumber));
+
+/*Q.NO.5)The Chief Nurse would like a list of all room numbers that have a bed with a description that has Surgical anywhere in the field and are available.  The result field should list the room */
+COLUMN "Room Number" FORMAT A12; 
+SELECT RoomNumber "Room Number"
+FROM Bed
+WHERE Availability='Y' AND BedType IN (SELECT BedType
+                                         FROM BedClassification
+										 WHERE Description LIKE '%Surgical%');
+										 
+/*Q.NO.6)The project manager needs to know all available employees who can work on a new project. He wants a report that lists the employee last name, first name, and department name.  But, he only wants the employees who are in the departments that are currently working on projects 3 or 5. This query will require both a JOIN (in the outer query) and a subquery.  */
+COLUMN "Last Name"  FORMAT   A12;
+COLUMN "First Name"  FORMAT   A15;
+SELECT LastName "Last Name", FirstName "First Name", d.DepartmentName "Department Name"
+FROM Employee e LEFT OUTER JOIN Department d ON (e.DepartmentNumber=d.departmentnumber)
+WHERE d.DepartmentNumber IN (SELECT DepartmentNumber
+                            FROM Project
+                            WHERE ProjectNumber IN (3,5)); 																			 
+
+/*Q.NO.7)The head of Pediatrics would like a list of all current patients in Pediatrics beds.  Pediatric beds will always have PED somewhere in the roomnumber field.  The hospital may add more pediatric beds in the future.  Create the list by using a subquery.  Format patient names with one heading.*/
+COLUMN "Patient Name" FORMAT A20;
+SELECT LastName||', '||FirstName "Patient Name"
+FROM Patient 
+WHERE Bedno IN (SELECT BedNumber
+                FROM Bed
+				WHERE RoomNumber LIKE '%PED%');
+				
+/*Q.NO.8)Provide the treatment number, patientId, and employeeID of all treatments with a service Category description of ‘Surgery’ and have a standardCharge greater than $5,000.  This is a nested subquery.   Order the report by treatment number. */
+COLUMN "Patient ID" FORMAT A10;
+COLUMN "Employee ID" FORMAT A12;
+SELECT treatmentNumber "Treatment Number", PatientID "Patient ID", EmployeeID "Employee ID"
+FROM Treatment
+WHERE ServiceID IN (SELECT ServiceID
+                    FROM Service
+                    Where StandardCharge>5000 AND CategoryID IN (SELECT CategoryID 
+					                                             FROM ServiceCategory
+																 WHERE Description LIKE '%Surgery%'))
+ORDER BY treatmentNumber;
+
+/*Q.NO.9)The Hospital Chief has requested a list of employees whose salary is less than all employee salaries in Department 2.  The result should not include any employee who has a wagerate rather than a salary (i.e. salary should not be null).  Use a subquery approach and the ALL function.*/
+COLUMN "Employee" FORMAT A20;
+COLUMN Salary FORMAT $999,999.99;
+SELECT LastName||', '||FirstName "Employee", Salary, DepartmentNumber
+FROM employee 
+WHERE salary < ALL (SELECT Salary
+                    FROM employee 
+                    WHERE DepartmentNumber = 2 AND salary IS NOT NULL);
+
+
+/*                                        THE END                                                                    */

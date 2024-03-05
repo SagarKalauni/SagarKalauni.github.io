@@ -1,0 +1,258 @@
+---
+title: "Machine Learning HW-4"
+author: "Sagar Kalauni"
+date: "2023-12-10"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1) Consider a neural network with two hidden layers: p = 4 input units, 2 units in the first hidden layer, 3 units in the second hidden layer, and a single output.
+
+(a) Draw a picture of the network.
+(b) Write out an expression for f(X), assuming ReLU activation functions. Be as explicit as you can!
+(c) How many parameters are there?
+ANSWER:- 
+Please look for the attached figure below:
+
+
+2) Consider the Default data. Split the data into 70% training and 30% test.
+```{r}
+set.seed(100)
+#install.packages("ISLR2")
+library(ISLR2)
+library(nnet)
+
+standardize=function(x) {(x-min(x))/(max(x)-min(x))}
+Default$income=standardize(Default$income)
+Default$balance=standardize(Default$balance)
+
+index=sample(1:nrow(Default), 0.7*nrow(Default))
+train=Default[index,]
+test=Default[-index,]
+```
+
+(a) Fit a neural network using a single hidden layer with 10 units.
+```{r}
+set.seed(100)
+#install.packages("nnet")
+#library(nnet)
+
+NN.fit=nnet(default~., data=train, size=10 )  # For linout:-Default logistic output units
+```
+
+
+```{r}
+set.seed(100)
+test_prob=predict(NN.fit, test)
+
+test_pred=rep("No", nrow(test))
+test_pred[test_prob>0.5]="Yes"
+
+table(test_pred, test$default)
+```
+
+Observation: The test Accuracy of the Neural network with single hidden layer having 10 units in the test data set is:$Accuracy= \frac{TP + TN}{TP +TN+FP+FN} =\frac{2900+26}{2900+59+15+26}=0.9753333$
+```{r}
+set.seed(100)
+# Fit a linear logistic regression model
+logistic_model=glm(
+  formula = default ~ income + balance + student,
+  data = train,
+  family = binomial
+)
+glm_test_prob=predict(logistic_model, newdata = test)
+
+glm_test_pred=rep("No", nrow(test))
+glm_test_pred[glm_test_prob>0.5]="Yes"
+
+table(glm_test_pred, test$default)
+
+```
+
+Observation: The test Accuracy of the Logistic regression model in the test data set is:$Accuracy= \frac{TP + TN}{TP +TN+FP+FN} =\frac{2909+15}{2909+70+6+15}=0.9746667$
+
+
+(b) Compare the classification performance of your model with that of linear logistic regression.
+ANSWER: Both are doing comparatively same but neural network with single hidden layer has slight more accuracy then logistic regression model in our test data. 
+
+3) In this problem, you will perform K-means clustering manually, with $K = 2 $, on a small example. The observations are as follows.
+
+```{r}
+mydata <- data.frame(
+  Obs = c(1, 2, 3, 4, 5, 6),
+  X1 = c(1, 1, 0, 5, 6, 4),
+  X2 = c(4, 3, 4, 1, 2, 0)
+)
+print(mydata)
+```
+(a) Sketch the observations.
+```{r}
+x <- cbind(c(1, 1, 0, 5, 6, 4), c(4, 3, 4, 1, 2, 0))
+plot(x[,1], x[,2])
+text(mydata$X1+0.15, mydata$X2, 1:6)
+
+# Here I am showing each data point with its observation number in the plot, +0.15 is added not to concide the label and data in one, so at the same y-distance and little more x-distance, I am showing my label of the data point.
+```
+
+(b) Randomly assign a cluster label to each observation.
+```{r}
+set.seed(100)
+labels=sample(2, nrow(x), replace = T)
+labels
+```
+
+
+```{r}
+plot(x[, 1], x[, 2], col = (labels + 1), pch = 20, cex = 2)
+```
+(c) Compute the centroid for each cluster.
+ANSWER:-
+We compute the centroid of red cluster as
+$ \bar{x}_{11} = \frac{1}{3}(1 + 4 + 6) = \frac{11}{3}  $ and $ \bar{x}_{12} = \frac{1}{3}(3 + 0 + 2) = \frac{5}{3} $
+
+and the centroid of the green cluster as:
+$ \bar{x}_{21} = \frac{1}{3}(0 + 1 + 5) = 2  $ and  $ \bar{x}_{22} = \frac{1}{3}(4 + 4 + 1) = 3 $
+
+```{r}
+set.seed(100)
+centroid1 <- c(mean(x[labels == 1, 1]), mean(x[labels == 1, 2]))
+centroid2 <- c(mean(x[labels == 2, 1]), mean(x[labels == 2, 2]))
+centroid1
+centroid2
+```
+
+
+```{r}
+plot(x[,1], x[,2], col=(labels + 1), pch = 20, cex = 2)
+points(centroid1[1], centroid1[2], col = 2, pch = 4)
+points(centroid2[1], centroid2[2], col = 3, pch = 4)
+```
+
+
+(d) Assign each observation to the centroid to which it is closest, in terms of Euclidean distance. Report the cluster labels for each observation.
+```{r}
+labels <- c(1, 1, 1, 2, 2, 2)
+plot(x[, 1], x[, 2], col = (labels + 1), pch = 20, cex = 2)
+points(centroid1[1], centroid1[2], col = 2, pch = 4)
+points(centroid2[1], centroid2[2], col = 3, pch = 4)
+```
+
+(e) Repeat (c) and (d) until the answers obtained stop changing.
+Answer:-We compute the centroid of red cluster as
+$ \bar{x}_{11} = \frac{1}{3}(0 + 1 + 1) = \frac{2}{3}  $ and $ \bar{x}_{12} = \frac{1}{3}(3 + 4 + 4) = \frac{11}{3} $ 
+and the centroid of the green cluster as:
+$ \bar{x}_{21} = \frac{1}{3}(4 + 5 + 6) = 5  $ and  $ \bar{x}_{22} = \frac{1}{3}(0 + 1 + 2) = 1 $
+
+```{r}
+set.seed(100)
+centroid1 <- c(mean(x[labels == 1, 1]), mean(x[labels == 1, 2]))
+centroid2 <- c(mean(x[labels == 2, 1]), mean(x[labels == 2, 2]))
+centroid1
+centroid2
+```
+
+
+```{r}
+plot(x[,1], x[,2], col=(labels + 1), pch = 20, cex = 2)
+points(centroid1[1], centroid1[2], col = 2, pch = 4)
+points(centroid2[1], centroid2[2], col = 3, pch = 4)
+```
+
+Re- asagining
+```{r}
+labels <- c(1, 1, 1, 2, 2, 2)
+plot(x[, 1], x[, 2], col = (labels + 1), pch = 20, cex = 2)
+points(centroid1[1], centroid1[2], col = 2, pch = 4)
+points(centroid2[1], centroid2[2], col = 3, pch = 4)
+```
+If we assign each observation to the centroid to which it is closest, nothing changes, so the algorithm is terminated at this step.
+
+
+(f) In your plot from (a), label the observations according to the final cluster labels obtained.
+```{r}
+plot(x[, 1], x[, 2], col=(labels + 1), pch = 20, cex = 2)
+text(x[, 1]+0.15, x[, 2], labels)
+```
+
+4. In this problem, you consider the gene expression data (Khan, in ISLR), and then perform clustering
+on the data.
+```{r, warning=FALSE}
+# Application to Gene Expression Data
+set.seed(500)
+library(ISLR)
+names(Khan)
+dim(Khan$xtrain)
+dim(Khan$xtest)
+length(Khan$ytrain)
+length(Khan$ytest)
+table(Khan$ytrain)
+table(Khan$ytest)
+dat=data.frame(x=Khan$xtrain, y=as.factor(Khan$ytrain))
+```
+
+
+(a) Perform K-means clustering of the ”xtrain” with K = 4. How well do the clusters that you obtained in K-means clustering compare to the true class labels (”ytrain”)?
+```{r}
+set.seed(500)
+khan_clust=kmeans(Khan$xtrain,centers=4)
+khan_clust$cluster
+```
+
+```{r}
+set.seed(500)
+library(factoextra)
+plot(Khan$xtrain, col = (khan_clust$cluster + 1),
+main = "K-Means Clustering Results with K = 4",
+xlab = "", ylab = "", pch = 20, cex = 2)
+
+fviz_cluster(list(data=Khan$xtrain,cluster=khan_clust$cluster))
+```
+
+
+
+
+```{r}
+set.seed(500)
+table(khan_clust$cluster,Khan$ytrain)
+```
+Observation: the clustering done by kmean clustering algorithm has accuracy of: (0+5+3+4)/63 = 0.1904762 i.e 12.69%. so we can say it performs really poor in clustering.
+```{r}
+set.seed(500)
+plot(khan_clust$cluster,Khan$ytrain, col=Khan$ytrain+1, pch=19)
+```
+
+(b) Using hierarchical clustering with complete linkage and Euclidean distance, cluster the states.
+```{r}
+set.seed(500)
+distance=dist(dat,method="euclidean")
+cc=hclust(distance,method="complete")
+plot(cc)
+```
+
+(c) Cut the dendrogram at a height that results in 4 distinct clusters.
+```{r}
+set.seed(100)
+cutree(cc, 4)
+```
+
+If you want to vissually look the cut point and look at the cluster formed 
+```{r}
+plot(cc)
+rect.hclust(cc, k = 4, border = 2:5)
+```
+
+
+
+
+
+
+
+
+
+
+

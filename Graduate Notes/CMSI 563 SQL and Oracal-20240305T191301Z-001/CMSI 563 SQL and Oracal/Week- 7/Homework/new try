@@ -1,0 +1,55 @@
+/*If done this way perfectly works for last table*/
+
+TTITLE CENTER 'Employee Name:' EmployeeNameVar -
+    RIGHT 'Page: ' FORMAT 99 sql.pno SKIP 2
+BTITLE SKIP 1 CENTER 'Not for external dissemination.'
+SET LINESIZE 65
+SET PAGESIZE 15
+SET NEWPAGE 1
+
+-- Create a view to use in the Select command
+CREATE OR REPLACE VIEW vwEmpDep ( Employee, "Emp ID", DependentName, gender, Relationship) AS
+SELECT e.Lastname||', '||e.Firstname, d.EmployeeID, d.Name, d.gender, d.RelationshipToEmployee
+FROM Dependent d JOIN Employee e ON (e.employeeID=d.employeeID)
+ORDER BY -DependentName;
+
+COLUMN Employee NEW_VALUE EmployeeNameVar NOPRINT
+COLUMN "Emp ID" FORMAT A20
+COLUMN DependentName FORMAT A15
+COLUMN gender FORMAT A6
+COLUMN Relationship FORMAT A12
+
+BREAK ON Employee ON "Emp ID" PAGE;
+COMPUTE COUNT LABEL "Number of Dependents" OF Relationship ON "Emp ID"
+
+SELECT Employee, "Emp ID", DependentName, gender, Relationship
+FROM vwEmpDep
+ORDER BY "Emp ID" , relationship;
+
+/**/
+
+TTITLE CENTER 'Employee Name:' EmployeeNameVar -
+    RIGHT 'Page: ' FORMAT 99 sql.pno SKIP 2
+BTITLE SKIP 1 CENTER 'Not for external dissemination.'
+SET LINESIZE 65
+SET PAGESIZE 15
+SET NEWPAGE 1
+
+-- Create a view to use in the Select command
+CREATE OR REPLACE VIEW vwEmpDep ( Employee, "Emp ID", DependentName, gender, Relationship) AS
+SELECT e.Lastname||', '||e.Firstname, d.EmployeeID, d.Name, d.gender, d.RelationshipToEmployee
+FROM Dependent d JOIN Employee e ON (e.employeeID=d.employeeID)
+ORDER BY -DependentName;
+
+COLUMN Employee NEW_VALUE EmployeeNameVar NOPRINT
+COLUMN "Emp ID" FORMAT A20
+COLUMN DependentName FORMAT A15
+COLUMN gender FORMAT A6
+COLUMN Relationship FORMAT A12
+
+BREAK ON Employee ON "Emp ID" PAGE;
+COMPUTE COUNT LABEL "Number of Dependents" OF Relationship ON "Emp ID"
+
+SELECT Employee, "Emp ID", DependentName, gender, Relationship
+FROM vwEmpDep
+ORDER BY "Emp ID" , relationship;

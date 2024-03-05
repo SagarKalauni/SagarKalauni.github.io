@@ -1,0 +1,388 @@
+---
+title: "Homework-3 ML 562"
+author: "Sagar Kalauni"
+date: "2023-11-28"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+1. Let's explore the maximal margin classifier on a toy data set. We are given n = 7 observations in p = 2 dimensions. For each observation, there is an associated class label Y .
+```{r}
+set.seed(12321)
+X1 <- c(3,2,4,1,2,4,4)
+X2 <- c(4,2,4,4,1,3,1)
+Y  <- c(rep("Red", 4),rep("Blue", 3))
+mydf <- data.frame(X1, X2, Y)
+
+mydf
+```
+
+```{r}
+set.seed(12321)
+#install.packages("tidyverse")
+library(ggplot2)
+#install.packages("e1071")
+library(e1071)
+```
+
+
+
+(a) Sketch the observations.
+```{r}
+set.seed(12321)
+# Creating the scatter plot
+plot(mydf$X1, mydf$X2, col=Y, pch=19)
+```
+Observation:
+From the above plot we can say that they are linearly seperable.
+
+(b) Sketch the optimal separating hyperplane.
+
+```{r}
+set.seed(12321)
+library(e1071)
+mydf$Y=as.factor(mydf$Y)
+
+# Fitting our model with some random cost
+fit.svm = svm(Y ~ ., data = mydf, kernel = "linear", cost = 10, scale = FALSE)
+fit.svm$index
+```
+
+-I believe to sketch the optimal separating hyperplane, my model should also have to be the one with the best fit, So I will first find the best fitting model and then draw Optimal separating hyperplane with the help of that.
+
+- The optimal separating hyperplane refers to the decision boundary that maximally separates different classes in the feature space.
+
+-Here I want to do cross-validation to find the best model but tune function by default take 10-fold cross validation and my sample size was not enough to do that so I need to do the tunecontrol and preform cross-validation. 
+
+# Cross-validation to find the best fit model
+```{r}
+set.seed(12321)
+# perform cross-validation
+tune.out <- tune(
+  svm,                   # SVM function
+  Y ~ .,                 # Formula for the model
+  data = mydf,            # my data frame
+  kernel = "linear",     # Linear kernel
+  ranges = list(cost = c(0.001, 0.01, 0.1, 1, 5, 10, 100)),  # Range of cost values(she did not mention in particular which value to take so I am taking of my wish)
+  tunecontrol = tune.control(sampling = "cross", cross = 2)  # 2-fold cross-validation
+)
+
+summary(tune.out)
+```
+
+Observation:
+-Here 5e+00 means $5×10^0=5$, so we can see the error is minimum when cost is 5. So our model will be best when cost=5
+
+
+Now we have clear idea which cost will give us our best model, so let's find our best model
+
+```{r}
+best.mod=svm(Y ~ ., data = mydf, kernel = "linear", cost = 5, scale = FALSE, )
+best.mod
+```
+```{r}
+set.seed(12321)
+summary(tune.out$best.model)
+```
+
+Now using this best model to sketch the optimal separating hyperplane.
+
+```{r, warning=FALSE}
+set.seed(12321)
+# Extract beta_0 and beta_1
+beta0 = best.mod$rho
+beta = drop(t(best.mod$coefs) %*% as.matrix(mydf[best.mod$index,1:2]))
+
+# Replot, this time with the solid line representing the optimal(maximal) margin plane.
+plot(X1, X2, col=Y, pch=19, data=mydf)
+abline(beta0/beta[2], -beta[1]/beta[2])
+```
+Here we got our optimal seperating hyperplane
+The a, b arguments above in abline() represent the intercept and slope, single values in the plot functions.
+
+(c) Provide the equation for this hyperplane. Describe the classification rule. It should be something along the lines of ?Classify to Red if \(\beta_0 + \beta_1 X_1 + \beta_2 X_2 > 0\)
+ANSWER:
+   The equation of the given hyperplane is: \(\beta_0 + \beta_1 X_1 + \beta_2 X_2 = 0\), 
+ where 
+ $\beta_0 = -1.00041, \beta_1=-1.999846,\beta_2=1.999693 $
+
+ Hence the exect equation of the hyperplane is: $-1.00041 + -1.999846 X_1 + 1.999693 X_2 = 0$
+   which on simplification became: $X_2 = -1.000077 X_1 + (-0.500281)$
+   
+```{r}
+set.seed(12321)
+paste("Intercept: ", round(beta0/beta[2],1), ", Slope: ", round(-beta[1]/beta[2],1), sep="")
+```   
+If the Values were rounded then the equation becomes: $X_2 = 1 X_1 + (-0.5)$
+   
+-The Classification Rule is any point that lies below hyperplane(lower half space) will be classified as blue and any point that lies above the hyperplane(upper half space) will be classified as Red.
+
+Mathematically, any point lies in \(\beta_0 + \beta_1 X_1 + \beta_2 X_2 > 0\) classified as RED otherwise BLUE
+
+```{r}
+set.seed(12321)
+# Making better plot
+make.grid = function(x, n = 75) {
+	grange = apply(x, 2, range)
+	x1 = seq(from = grange[1,1], to = grange[2,1], length = n)
+	x2 = seq(from = grange[1,2], to = grange[2,2], length = n)
+	expand.grid(X1 = x1, X2 = x2)
+ }
+xgrid = make.grid(mydf)
+ygrid = predict(best.mod, xgrid)
+
+plot(xgrid, col = c("blue","Red")[as.numeric(ygrid)], pch = 20, cex = .2)
+points(mydf, col =mydf$Y, pch = 19)
+#points(mydf[best.mod$index,1:2], pch = 5, cex = 2)
+
+
+### Add the margins
+## you have to do some work to get back the linear coefficients
+beta = t(best.mod$coefs)%*%as.matrix(mydf[best.mod$index,1:2])
+beta0 = best.mod$rho
+
+abline(beta0 / beta[2], -beta[1] / beta[2])
+#abline((beta0 - 1) / beta[2], -beta[1] / beta[2], lty = 2)
+#abline((beta0 + 1) / beta[2], -beta[1] / beta[2], lty = 2)
+```
+(d) On your sketch, indicate the margin for the maximal margin hyperplane.
+```{r}
+set.seed(12321)
+# Making better plot
+make.grid = function(x, n = 75) {
+	grange = apply(x, 2, range)
+	x1 = seq(from = grange[1,1], to = grange[2,1], length = n)
+	x2 = seq(from = grange[1,2], to = grange[2,2], length = n)
+	expand.grid(X1 = x1, X2 = x2)
+ }
+xgrid = make.grid(mydf)
+ygrid = predict(best.mod, xgrid)
+
+plot(xgrid, col = c("blue","Red")[as.numeric(ygrid)], pch = 20, cex = .2)
+points(mydf, col =mydf$Y, pch = 19)
+#points(mydf[best.mod$index,1:2], pch = 5, cex = 2)
+
+
+### Add the margins
+## you have to do some work to get back the linear coefficients
+beta = t(best.mod$coefs)%*%as.matrix(mydf[best.mod$index,1:2])
+beta0 = best.mod$rho
+
+abline(beta0 / beta[2], -beta[1] / beta[2])
+abline((beta0 - 1) / beta[2], -beta[1] / beta[2], lty = 2)
+abline((beta0 + 1) / beta[2], -beta[1] / beta[2], lty = 2)
+```
+Observation:
+-To find the margin length we compute the smallest distance from any training observation to the given separating hyperplane. This is the same as computing the distance from the dashed margin line to the solid hyperplane.The margin width is from the solid line to either of the dashed lines
+
+
+(e) Indicate the support vectors for the maximal margin classifier.
+```{r}
+set.seed(12321)
+# Making better plot
+make.grid = function(x, n = 75) {
+	grange = apply(x, 2, range)
+	x1 = seq(from = grange[1,1], to = grange[2,1], length = n)
+	x2 = seq(from = grange[1,2], to = grange[2,2], length = n)
+	expand.grid(X1 = x1, X2 = x2)
+ }
+xgrid = make.grid(mydf)
+ygrid = predict(best.mod, xgrid)
+
+plot(xgrid, col = c("blue","Red")[as.numeric(ygrid)], pch = 20, cex = .2)
+points(mydf, col =mydf$Y, pch = 19)
+points(mydf[best.mod$index,1:2], pch = 5, cex = 2)
+
+
+### Add the margins
+## you have to do some work to get back the linear coefficients
+beta = t(best.mod$coefs)%*%as.matrix(mydf[best.mod$index,1:2])
+beta0 = best.mod$rho
+
+abline(beta0 / beta[2], -beta[1] / beta[2])
+abline((beta0 - 1) / beta[2], -beta[1] / beta[2], lty = 2)
+abline((beta0 + 1) / beta[2], -beta[1] / beta[2], lty = 2)
+```
+Observation:
+-Support vectors are indicated by the square box around them.
+
+# Ask her
+Why the fourth point which is also seems to be in the line was not considered as the support vector?
+
+(f) Draw an additional observation on the plot so that the two classes are no longer separable by a hyperplane.
+Answer:
+So In order to make data no longer separable by a hyperplane, I just need to add one point (at least, I can add more also) in the opposite side of the halfspace determined by our hyperplane. If our hyperplane classify all point to be blue in the lower halfspace \(\beta_0 + \beta_1 X_1 + \beta_2 X_2 < 0\), I will add one Red point over there, then hyperplane can not seperate them. I need to keep in mind that, newly added point should be outside of the margin also
+```{r, warning=FALSE}
+set.seed(12321)
+plot(mydf$X1, mydf$X2, col=Y, pch=19)
+points(3, 1.5, col="Red", pch=19)
+points(3, 1.5, col="red", pch=5, cex=2)
+```
+
+Observation:
+This newly added data point which is red point with red squre around make the data point linearly inseperable that means we can not seperate our two classes using linear classifier like hyperplane. 
+
+-------------------------------------------------------------------------------------------------------
+
+2. In this problem, you will use support vector approaches in order to predict Purchase based on the OJ data set.
+
+
+(a) Create a training set containing a random sample of 800 observations, and a test set containing the remaining observations.
+```{r}
+set.seed(100)
+library(ISLR2) #Loading the ISLR2 library in the R working environment
+```
+
+```{r}
+set.seed(100)
+# Load the OJ dataset
+data(OJ)
+dim(OJ)
+```
+```{r}
+# Spliting the data into training and testing set
+set.seed(100) 
+Index=sample(1:nrow(OJ), 800) # we take 800 data for training set 
+train=OJ[Index,]
+test=OJ[-Index,]
+```
+
+
+(b) Fit a linear SVM to the training data using cost=0.01, with Purchase as the response and the other variables as predictors. Describe the results obtained.
+```{r}
+set.seed(100)
+library(e1071)
+
+# Fitting a linear model with cost=0.01
+OJ.fit.svm = svm(Purchase ~ ., data =train, kernel = "linear", cost = 0.01, scale = FALSE)
+OJ.fit.svm
+```
+```{r}
+set.seed(100)
+summary(OJ.fit.svm)
+```
+Observation:
+Summary tells us that, the linear kernel was used with cost=0.01 and that there were 623 support vectors, out of which 312 belongs to one class and 311 belongs to the other class. Number of classes are two with levels CH and MM
+
+
+
+(c) What are the training and test error rates?
+```{r}
+set.seed(100)
+# Prediciting the class for our training dataset
+pred_train=predict(OJ.fit.svm, train)
+pred_train[1:10] # Looking at the first 10 prediction made by our model in the training dataset
+```
+```{r}
+set.seed(100)
+# Confusion matrix
+table(pred_train, train$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the training error rate is: (177+22)/800= 0.24875 i.e 24.875%
+
+Now predicting the class for our test data set using our model
+```{r}
+set.seed(100)
+pred_test=predict(OJ.fit.svm, test)
+pred_test[1:10]   # Looking at the first 10 prediction made by our model in the Test dataset
+```
+```{r}
+set.seed(100)
+# Confusion Matrix
+table(pred_test, test$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the test error rate is: (63+8)/270= 0.262963 i.e 26.2963%
+
+
+(d) Tune the linear SVM with various values of cost. Report the cross-validation errors associated with different values of this parameter. Select an optimal cost. Compute the training and test error rates using this new cost value. Comment on your findings.
+```{r}
+set.seed(100)
+# perform cross-validation
+OJ.tune.out <- tune(
+  svm,                   # SVM function
+  Purchase~.,                 # Formula for the model
+  data = train,            # my training data frame
+  kernel = "linear",     # Linear kernel
+  ranges = list(cost = seq(0.01, 10, length.out = 20))  # Range of cost values(she did not mention in particular which value to take so I am taking of my wish)
+)
+OJ.tune.out
+```
+Observation:
+-Here we can see the error is minimum when cost is 6.845263. So our model will be best when cost=6.845263
+So the best performance model can be obtained using cost=0.01(depending upon the cost which we have tried on , can not say in general)
+```{r}
+OJ.best.mod=svm(Purchase~ ., data = train, kernel = "linear", cost = 6.845263, scale = FALSE, )
+OJ.best.mod
+```
+```{r}
+set.seed(100)
+# Prediciting the class for our training dataset using this new best model after cross-validation
+B_pred_train=predict(OJ.best.mod, train)
+B_pred_train[1:10] # Looking at the first 10 prediction made by our new best model in the training dataset
+```
+```{r}
+set.seed(100)
+# Confusion matrix
+table(B_pred_train, train$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the training error rate is: (65+59)/800= 0.155 i.e 15.5% for this new best fit model.
+
+
+Now predicting the class for our test data set using this new best model
+```{r}
+set.seed(100)
+B_pred_test=predict(OJ.best.mod, test)
+B_pred_test[1:10]   # Looking at the first 10 prediction made by new best model in the Test dataset
+```
+```{r}
+# Confusion matrix
+table(B_pred_test, test$Purchase)
+```
+Observation:
+-Looking at the confusion matrix we see that the test error rate is: (28+21)/270= 0.1814815 i.e 18.14815% for this new best fit model.
+
+Conclusion:
+This is kind of interesting observation, the training error rate goes down from 24.875% to 15.5% when using the best model and test error rate goes down from 26.2963% to 18.14815%. So we can say that by doing model tuning we make our model really nice compared the original one.
+
+(e) Now repeat (d), with radial basis kernels, with different values of gamma and cost. Comment on your results. Which approach seems to give the better results on this data?
+```{r}
+
+```
+
+(f) Now repeat again, with polynomial basis kernels, with different values of degree and cost. Comment on your results. Which approach (kernel) seems to give the best results on this data?
+```{r}
+
+```
+
+(g) Perform gradient boost (using gbm function in R) on the training set with 1,000 trees for a chosen values of the shrinkage parameter. You may experiment with a range of values of the shrinkage parameter.
+```{r}
+
+```
+
+(h) Which variables appear to be the most important predictors in the boost model?
+```{r}
+
+```
+
+(i) Use the boosting model to predict the response on the test data. Form a confusion matrix. How does this compare with the result SVM obtained?
+```{r}
+
+```
+
+-----------------------------------------------THE END----------------------------------------------------
+
+
+
+
+
+
+
+
+

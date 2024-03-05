@@ -1,0 +1,67 @@
+---
+title: "Test of the final data"
+author: "Sagar Kalauni"
+date: "2023-12-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+Original_test_data= read.csv("C:/Users/Dell/Desktop/Stat 562 Machine Learning/Project Machine Learning/TravelInsuranceTest.csv")
+Main_test_data=Original_test_data[,-1]
+
+Main_test_data$ChronicDiseases=as.factor(Main_test_data$ChronicDiseases)
+Main_test_data$Employment.Type= as.factor(Main_test_data$Employment.Type)
+Main_test_data$GraduateOrNot= as.factor(Main_test_data$GraduateOrNot)
+Main_test_data$FrequentFlyer= as.factor(Main_test_data$FrequentFlyer)
+Main_test_data$EverTravelledAbroad= as.factor(Main_test_data$EverTravelledAbroad)
+Main_test_data$TravelInsurance= as.factor(Main_test_data$TravelInsurance)
+```
+
+```{r}
+set.seed(12312) 
+# trying m=2 
+rf.Insurance_data_2=randomForest(TravelInsurance~., data=Insurance_data, subset=train, mtry=2, importance=TRUE) 
+rf.Insurance_data_2 # lets take a look at the output
+```
+
+```{r}
+yhat.rf_org=predict(rf.Insurance_data_2, newdata = Main_test_data)
+yhat.rf_org 
+```
+```{r}
+table(yhat.rf_org)
+```
+
+```{r}
+# Assuming your dataframe is named df
+library(dplyr)
+
+Main_test_data <- Main_test_data %>%
+  mutate(TravelInsurance = coalesce(TravelInsurance, yhat.rf_org))
+```
+
+
+```{r}
+Main_test_data %>% group_by(Main_test_data$TravelInsurance)
+```
+
+
+```{r}
+count_ones <- sum(Main_test_data$TravelInsurance == 0)
+```
+
+```{r}
+install.packages("writexl")
+library(writexl)
+write_xlsx(Main_test_data, path = "C:/Users/Dell/Desktop/Stat 562 Machine Learning/Project Machine Learning/TravelInsuranceTest.csv")
+
+install.packages("openxlsx")
+write.xlsx(Main_test_data, file = "path/to/your/file.xlsx")
+```
+
+

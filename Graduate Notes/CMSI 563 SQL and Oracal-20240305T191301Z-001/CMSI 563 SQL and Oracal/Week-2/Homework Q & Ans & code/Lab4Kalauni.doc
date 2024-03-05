@@ -1,0 +1,512 @@
+SQL> /*Sagar Kalauni*/
+SQL> /*Lab4-Kalauni*/
+SQL> 
+SQL> /*Q NO. 1) Write a query that will select all columns from the Specialty table without using the (*) in your query. You may wish to use the DESCRIBE command to examine the structure of the Specialty table*/
+SQL> /*First let's look at all the columns in the Specialty Table using DESC command */
+SQL> DESC Specialty;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ SPECIALTYID                               NOT NULL CHAR(6)
+ TITLE                                     NOT NULL VARCHAR2(50)
+ AWARDEDBY                                          VARCHAR2(100)
+
+SQL> 
+SQL> /*Manually selecting all columns of the Specialty table*/
+SQL> SELECT SpecialtyID, Title, AwardedBy
+  2  FROM Specialty;
+
+SPECIA TITLE                                                                    
+------ --------------------------------------------------                       
+AWARDEDBY                                                                       
+--------------------------------------------------------------------------------
+OPT    Optometrist                                                              
+Complete certified program of instruction for Optometry.                        
+                                                                                
+ONC    Oncologist                                                               
+Complete Medical Doctor of Oncology board certification.                        
+                                                                                
+RAD    Radiologist                                                              
+Complete Medical Doctor of Radiology board certification.                       
+                                                                                
+
+SPECIA TITLE                                                                    
+------ --------------------------------------------------                       
+AWARDEDBY                                                                       
+--------------------------------------------------------------------------------
+CAR    Cardiologist                                                             
+Complete Medical Doctor of Cardiology board certification.                      
+                                                                                
+GYN    Gynecologist                                                             
+Complete Medical Doctor of Gynecology board certification.                      
+                                                                                
+GMD    General Practitioner                                                     
+Complete Medical School.                                                        
+                                                                                
+
+SPECIA TITLE                                                                    
+------ --------------------------------------------------                       
+AWARDEDBY                                                                       
+--------------------------------------------------------------------------------
+SU1    Surgeon-Thoracic                                                         
+Complete Thoracic Surgeon board certification.                                  
+                                                                                
+SU2    Surgeon-General                                                          
+Complete General Surgeon board certification.                                   
+                                                                                
+SU3    Neurosurgeon                                                             
+Complete Neurosurgery board certification.                                      
+                                                                                
+
+SPECIA TITLE                                                                    
+------ --------------------------------------------------                       
+AWARDEDBY                                                                       
+--------------------------------------------------------------------------------
+PED    Pediatrician                                                             
+Complete Medical Doctor of Pediatrics board certification.                      
+                                                                                
+SU4    Surgeon-Abdominal Cavity                                                 
+Complete Abdominal Surgical Procedures board certification.                     
+                                                                                
+RN1    Registered Nurse                                                         
+Complete Registered Nurse board certification.                                  
+                                                                                
+
+SPECIA TITLE                                                                    
+------ --------------------------------------------------                       
+AWARDEDBY                                                                       
+--------------------------------------------------------------------------------
+LPN    Licensed Practicing Nurse                                                
+Complete Licensed Practicing Nurse board certification.                         
+                                                                                
+NPR    Nurse-Practitioner                                                       
+Complete Nurse-Practitioner board certification.                                
+                                                                                
+RA2    Radiology Technologist                                                   
+Complete program of instruction in radiology technology.                        
+                                                                                
+
+15 rows selected.
+
+SQL> /*OBSERVATION;- We can see Specialty table with all its columns*/
+SQL> 
+SQL> /*Q NO.2)Your manager wonders what types of employee titles are tracked in the Employee table.  Produce a sample listing of the titles of employees at the hospital that does not include any duplicate rows. */
+SQL> /*Using distinct command to select the all non duplicated titles in the employee table*/
+SQL> SELECT distinct title
+  2  FROM Employee;
+
+TITLE                                                                           
+--------------------------------------------------                              
+Hospital Chief                                                                  
+M.D.                                                                            
+Pharmacist                                                                      
+M.D.-Chief of Surgery                                                           
+Records Clerk                                                                   
+Rad. Tech.                                                                      
+R.N.                                                                            
+V.P. Admin                                                                      
+Building Custodian                                                              
+L.P.N.                                                                          
+
+10 rows selected.
+
+SQL> /*OBSERVATION:- So There are 10 different type of employee titles in the employee table*/
+SQL> 
+SQL> /*Q NO. 3)Execute a query that will display all treatment dates for patient 100302.  Include the patientID, employeeID, and date treated.*/
+SQL> /*To fully show column name and make our output infromative, formating done initially*/
+SQL> COLUMN PatientID    FORMAT   A10;
+SQL> COLUMN EmployeeID   FORMAT   A12;
+SQL> COLUMN DateTreated  FORMAT   A12;
+SQL> SELECT  PatientID, EmployeeID, DateTreated
+  2  From Treatment
+  3  WHERE PatientID='100302';
+
+PATIENTID  EMPLOYEEID   DATETREATED                                             
+---------- ------------ ------------                                            
+100302     66427        05-SEP-23                                               
+100302     67585        05-SEP-23                                               
+100302     67585        05-SEP-23                                               
+100302     66444        05-SEP-23                                               
+100302     67585        05-SEP-23                                               
+
+SQL> /*OBSERVATION:- All required data for patient with patientid=100302*/
+SQL> 
+SQL> /*Q NO.4)Execute a query that lists all the male nurses – i.e., employees with a job title that includes the degree ‘R.N..’ List each employee’s last name, first name, title, and gender. Format your columns so that lastName is 12 characters, firstName is 12 characters, title is 5 characters, and gender is 6 characters.*/
+SQL> /*M- Male as a gender*/
+SQL> COLUMN LastName  FORMAT   A12;
+SQL> COLUMN FirstName FORMAT   A12;
+SQL> COLUMN Title     FORMAT   A5;
+SQL> COLUMN Gender    FORMAT   A6;
+SQL> SELECT LastName, FirstName, Title, Gender
+  2  FROM Employee
+  3  WHERE Title LIKE '%R.N..%' AND Gender='M';
+
+no rows selected
+
+SQL> 
+SQL> /*Q No.5)Produce a listing that will only display patients from Alton or Collinsville. The result table should display the first name and last name of these patients as well as the city they are from. Sort the report by city. Format first name and last name so they are 12 characters wide each.*/
+SQL> /*While looking for city in where condition, we should give the city name as they are in the table, because it is case sensetive*/
+SQL> COLUMN LastName FORMAT A12;
+SQL> COLUMN FirstName FORMAT A12;
+SQL> SELECT FirstName, LastName, City
+  2  FROM Patient
+  3  WHERE City IN ('Alton', 'Collinsville')
+  4  ORDER BY City;
+
+FIRSTNAME    LASTNAME     CITY                                                  
+------------ ------------ -------------------------                             
+Andrew       Able         Alton                                                 
+Ronald       Howard       Alton                                                 
+Barbara      Benton       Alton                                                 
+Gretchen     Greathouse   Alton                                                 
+Gregory      Grant        Alton                                                 
+Harold       Harnett      Alton                                                 
+Ivy          Iona         Alton                                                 
+Juliet       Juneau       Alton                                                 
+Keith        Kraut        Alton                                                 
+Linda        Lima         Alton                                                 
+Hank         Henderson    Alton                                                 
+
+FIRSTNAME    LASTNAME     CITY                                                  
+------------ ------------ -------------------------                             
+Ilama        Ilama        Alton                                                 
+Norman       November     Alton                                                 
+Rudolph      Pappa        Alton                                                 
+Renny        Reinhardt    Alton                                                 
+Zina         Zenna        Alton                                                 
+Albert       Algebra      Alton                                                 
+Bradley      Beaufort     Alton                                                 
+Danny        Dunland      Alton                                                 
+David        Davis        Collinsville                                          
+Rue          Chen         Collinsville                                          
+
+21 rows selected.
+
+SQL> /*OBSERVATION:- There are 21 patients from city Alton and Collinsville combinedly */
+SQL> 
+SQL> /*Q NO.6)Execute a query that will display all equipment with an original cost below $500, AND either have 10 or more items in stock (quantityAvailable) OR are used in project 8.  List the equipment description, original cost, quantity available, and project number.  Format your columns so that the output fits on one row.  Format your columns so the output fits on one row.*/
+SQL> /*First looking at the table and resizing the format*/
+SQL> COLUMN Description FORMAT A12;
+SQL> COLUMN "Orginal Cost" FORMAT 9999.99;
+SQL> COLUMN "Quantity Available" FORMAT 9999;
+SQL> COLUMN "Project Number" FORMAT 99;
+SQL> SELECT Description, OriginalCost "Orginal Cost", QuantityAvailable "Quantity Available", ProjectNumber "Projec Number"
+  2  FROM Equipment
+  3  WHERE OriginalCost<500 AND (QuantityAvailable>=10 OR ProjectNumber=8);
+
+DESCRIPTION  Orginal Cost Quantity Available Projec Number                      
+------------ ------------ ------------------ -------------                      
+Tanks, Nitro       355.55                 10             2                      
+us Oxide                                                                        
+                                                                                
+Desk, Child        285.40                  6             8                      
+Chair, Child        65.40                 12             8                      
+
+SQL> /*OBSERVATION:- Output fits perfectly*/
+SQL> 
+SQL> /*Q NO.7)The CFO needs a report to justify standard charges to the State Health Department. The report should contain the description, standard charge, and category ID. Sort the report by categoryID and then by standard charge. Use the appropriate command to limit the output column width for the description to 30 characters. The report should be sorted first by categoryID and then by standard charge with the highest standard charge for each category appearing first.*/
+SQL> COLUMN Description  A30;
+SP2-0158: unknown COLUMN option "A30"
+SQL> SELECT Description, StandardCharge, CategoryID
+  2  FROM Service
+  3  ORDER BY CategoryID, StandardCharge DESC;
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+EKG/Interp               85 CAR                                                 
+Hep B 20-adu            195 INJ                                                 
+lt                                                                              
+                                                                                
+Hep B 0-19 V            185 INJ                                                 
+FC                                                                              
+                                                                                
+Hep A vaccin            175 INJ                                                 
+e                                                                               
+                                                                                
+Antibiotic I            110 INJ                                                 
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+nj                                                                              
+                                                                                
+Depo Provera             95 INJ                                                 
+ Hormone tx                                                                     
+                                                                                
+Prevnar Pedi             92 INJ                                                 
+Pneumovax ad             88 INJ                                                 
+ult                                                                             
+                                                                                
+Depo Provera             85 INJ                                                 
+ Contracept                                                                     
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+                                                                                
+Therapeutic              75 INJ                                                 
+Inj                                                                             
+                                                                                
+Vaccine Inj              75 INJ                                                 
+#2 + more                                                                       
+                                                                                
+DPT-AC VFC               75 INJ                                                 
+DPT-AC /HIB              75 INJ                                                 
+dT Adult VFC             75 INJ                                                 
+Varicella Va             65 INJ                                                 
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+c VFC                                                                           
+                                                                                
+HIB VFC                  65 INJ                                                 
+Fluvax                   55 INJ                                                 
+IPV VFC                  55 INJ                                                 
+MMR VFC                  55 INJ                                                 
+Allergy #2 +             55 INJ                                                 
+ more                                                                           
+                                                                                
+Vaccine Inj              45 INJ                                                 
+#1                                                                              
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+                                                                                
+Allergy #1               25 INJ                                                 
+Complete Met            115 LAB                                                 
+abolic                                                                          
+                                                                                
+Prenatal Pan            110 LAB                                                 
+el                                                                              
+                                                                                
+Hgb A1C                  95 LAB                                                 
+Hepatic Func             95 LAB                                                 
+tion                                                                            
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+                                                                                
+TSH                      90 LAB                                                 
+PSA                      85 LAB                                                 
+Protime/INR              75 LAB                                                 
+Arthritis Pa             75 LAB                                                 
+nel (RA, ANA                                                                    
+, UA, ESR)                                                                      
+                                                                                
+Pap Smear                75 LAB                                                 
+General Pane             55 LAB                                                 
+l                                                                               
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+                                                                                
+Pathology-Ge             50 LAB                                                 
+neral                                                                           
+                                                                                
+Lipid Panel              45 LAB                                                 
+Throat Cultu             45 LAB                                                 
+re                                                                              
+                                                                                
+Urine Cultur             45 LAB                                                 
+e                                                                               
+                                                                                
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+Basic Metabo             35 LAB                                                 
+lic                                                                             
+                                                                                
+SGOT                     30 LAB                                                 
+CBC                      21 LAB                                                 
+Emergency               155 OLA                                                 
+After Hours             125 OLA                                                 
+Comprehensiv             95 OLA                                                 
+e High                                                                          
+                                                                                
+Detailed Pro             95 OLA                                                 
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+blem                                                                            
+                                                                                
+Comprehensiv             75 OLA                                                 
+e. Moderate                                                                     
+                                                                                
+Expanded Pro             75 OLA                                                 
+blem                                                                            
+                                                                                
+Problem Focu             55 OLA                                                 
+sed                                                                             
+                                                                                
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+Special Hand          35.75 OLA                                                 
+ling                                                                            
+                                                                                
+Blood Draw            35.55 OLA                                                 
+Hemoglobin               25 OLA                                                 
+Blood Glucos           20.4 OLA                                                 
+e                                                                               
+                                                                                
+Hemocult               15.4 OLA                                                 
+KOH                      15 OLA                                                 
+Wet Smear                15 OLA                                                 
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+Strep Screen           13.5 OLA                                                 
+Urine/Micro            12.9 OLA                                                 
+Prognosis, U             12 OLA                                                 
+rine                                                                            
+                                                                                
+Urine/Dip             10.75 OLA                                                 
+Spirometry               55 PRO                                                 
+Audiometry               45 PRO                                                 
+Tympanometry             40 PRO                                                 
+Cerumen-oval             35 PRO                                                 
+Burn Debride             35 PRO                                                 
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+ment                                                                            
+                                                                                
+Breathing TX             35 PRO                                                 
+DRE                      30 PRO                                                 
+Pulse Oxygen             25 PRO                                                 
+Anoscopy                 21 PRO                                                 
+Lumbar Spine            675 RAD                                                 
+ (5 view)                                                                       
+                                                                                
+Abdomen Obst            340 RAD                                                 
+ Series                                                                         
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+                                                                                
+Foot (3 view            325 RAD                                                 
+)                                                                               
+                                                                                
+Ankle (3 vie            325 RAD                                                 
+w)                                                                              
+                                                                                
+Knee (3 view            325 RAD                                                 
+)                                                                               
+                                                                                
+Wrist (3 vie            285 RAD                                                 
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+w min)                                                                          
+                                                                                
+Hand (3 view            280 RAD                                                 
+)                                                                               
+                                                                                
+Calcaneus (2            275 RAD                                                 
+ view min)                                                                      
+                                                                                
+Soft Tissue             275 RAD                                                 
+Neck                                                                            
+                                                                                
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+Hip (2 view             275 RAD                                                 
+min)                                                                            
+                                                                                
+Clavicle (2             250 RAD                                                 
+view)                                                                           
+                                                                                
+Shoulder (2             250 RAD                                                 
+view min)                                                                       
+                                                                                
+Abdomen (KUB            240 RAD                                                 
+)                                                                               
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+                                                                                
+CXR (2 view)            225 RAD                                                 
+Elbow (2 vie            225 RAD                                                 
+w)                                                                              
+                                                                                
+Toe (2 view             225 RAD                                                 
+min)                                                                            
+                                                                                
+Finger (2 vi            225 RAD                                                 
+ew)                                                                             
+                                                                                
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+C-Spine (4 v            205 RAD                                                 
+iew min)                                                                        
+                                                                                
+CXR (1 view)            170 RAD                                                 
+Cranial               10000 SUR                                                 
+Thoracic-Hea           9500 SUR                                                 
+rt                                                                              
+                                                                                
+Abdominal-In           7800 SUR                                                 
+testine                                                                         
+                                                                                
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+Liver                  7800 SUR                                                 
+Kidneys                7500 SUR                                                 
+Pancreatic             6500 SUR                                                 
+Thoracic-Lun           6500 SUR                                                 
+g                                                                               
+                                                                                
+Thoracic-Gen           6200 SUR                                                 
+eral Explora                                                                    
+tory                                                                            
+                                                                                
+Abdominal-Ge           6000 SUR                                                 
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+neral                                                                           
+                                                                                
+Spinal-Disc            3800 SUR                                                 
+Spinal-Explo           3500 SUR                                                 
+ratory                                                                          
+                                                                                
+Fracture-Com           2500 SUR                                                 
+plex                                                                            
+                                                                                
+Fracture-Sim           1500 SUR                                                 
+ple                                                                             
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+                                                                                
+Appendectomy            555 SUR                                                 
+I and D Comp            320 SUR                                                 
+. Multiple                                                                      
+                                                                                
+I and D Simp            258 SUR                                                 
+le                                                                              
+                                                                                
+Cerumen-oval            230 SUR                                                 
+ F.B.                                                                           
+                                                                                
+
+DESCRIPTION  STANDARDCHARGE CAT                                                 
+------------ -------------- ---                                                 
+Skin Lesion             225 SUR                                                 
+Paring                                                                          
+                                                                                
+Nail Bed Des            185 SUR                                                 
+truct                                                                           
+                                                                                
+Nail Avulsio            175 SUR                                                 
+n                                                                               
+                                                                                
+
+105 rows selected.
+
+SQL> /*OBSERVATION:-
+> Nicely shorted table, with 105 rows*/
+SQL> 
+SQL> 
+SQL> 
+SQL> SPOOL OFF;

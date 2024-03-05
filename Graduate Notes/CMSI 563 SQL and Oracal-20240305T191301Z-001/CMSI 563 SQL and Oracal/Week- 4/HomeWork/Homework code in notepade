@@ -1,0 +1,208 @@
+/*Sagar Kalauni*/
+/* Lab7-Kalauni*/
+
+/*Q.NO.1)The company’s vice president for project management needs a listing of employees who have received specialties. The result table should list the employee name (last name first, then first name) and their associated specialty title and the date they received the specialty.  Format the columns so output lines are on a single row.  The column header for the Specialty title should be ‘Specialty Name’. */
+/*OBSERVATION:- So 21 employees has recived Specialities */
+COLUMN "Employee Name" FORMAT A24;
+COLUMN "Specialty Name" FORMAT A27;
+COLUMN "Date Recived" FORMAT A12;
+SELECT LastName||', '||FirstName "Employee Name" , s.Title "Specialty Name", DateReceived "Date Recived"
+FROM Employee e JOIN EmployeeSpecialty es ON (e.EmployeeID=es.EmployeeID) JOIN Specialty s ON (es.SpecialtyID=s.SpecialtyID);
+
+/*Q.NO.2)The hospital pharmacist would like a report listing patient first and last names (concatenated) who have been prescribed Valium.  The result table should have just two columns, Patient Name and CommonName. Use relevant column headers and format commonName so it is 10 or fewer characters.*/
+/*OBSERVATION:- Patient Name who are Prescribed Valium*/
+COLUMN "CommonName" FORMAT A10;
+SELECT LastName||', '||FirstName "Patient Name", CommonName "CommonName"
+FROM patient p JOIN Prescription pr ON (p.PatientID=pr.PatientID) JOIN Medicine m ON (pr.MedicineCode=m.MedicineCode)
+WHERE Commonname='Valium';
+
+/*Q.NO.3)The company's vice president for project management needs a listing of employees assigned to projects.  The result table should list the LastName and FirstName column values (concatenated into one column) and their ProjectTitle and HoursWorked (from the projectAssignment table).  The result table should only list employees assigned to a project that have worked on the project more than 10 hours.  Sort results by employee last name and then by project number.  Use alias names for the table names.  Give each column an appropriate column name.  HoursWorked has a decimal.*/
+/*OBSERVATION:- Nicely formated table with employee name, their project title and hours worked*/
+COLUMN "Hours Worked" FORMAT 99.9;
+SELECT LastName||', '||FirstName "Employee Name", ProjectTitle "Project Title", HoursWorked "Hours Worked"
+FROM Employee e JOIN ProjectAssignment pa ON (e.EmployeeID=pa.EmployeeID) JOIN Project p ON (pa.ProjectNumber=p.ProjectNumber)
+WHERE HoursWorked >10
+ORDER BY LastName, p.ProjectNumber;
+
+/*Q.NO4)Produce a query that will list all employee last names, employee gender, dependent names and dependent gender where the employee's have dependents of the same gender.  Also list the dependent relationship.  The columns needed in the result table are LastName, employee.Gender, dependent.Name, dependent.Gender, and RelationshipToEmployee.  Use the employee and dependent tables.  Use the FROM clause to join the tables.  Use the column names and formats shown below.  Sort the result table by LastName. 
+COLUMN "Employee" FORMAT A10;
+COLUMN "Emp Gender" FORMAT A10;
+COLUMN "Dependent" FORMAT A10;
+COLUMN "Dep Gender" FORMAT A10;
+COLUMN "Relationship" FORMAT A12; */
+/*OBSERVATION:- Nicely formated table with infromation of employee, dependent their relation and gender */
+COLUMN "Employee" FORMAT A10;
+COLUMN "Emp Gender" FORMAT A10;
+COLUMN "Dependent" FORMAT A10;
+COLUMN "Dep Gender" FORMAT A10;
+COLUMN "Relationship" FORMAT A12;
+SELECT LastName "Employee", employee.Gender "Emp Gender", dependent.Name "Dependent", dependent.Gender "Dep Gender", RelationshipToEmployee "Relationship"
+FROM employee JOIN dependent ON (employee.EmployeeID=dependent.EmployeeID)
+WHERE employee.Gender=dependent.Gender
+ORDER BY LastName;
+
+/*Q.NO.5)The director of Pediatric Nursing requires a report listing each patient name, their bedNumber and their roomNumber for pediatric patients only.  You will need to figure out how to determine which rooms are for pediatric patients and there is more than one way to do this. The result tale should display the patient’s first and last names concatenated, their bednumber, and roomnumber. Assign appropriate column headers and format so the columns fit on a single line.*/
+/*OBSERVATION:- Name and bed number and room no. of the patient in pediatric*/
+COLUMN "Patient Name" FORMAT A20;
+SELECT p.FirstName||' '||p.LastName "Patient Name", bedNumber "Bed Number",  roomNumber "Room Number"
+FROM Patient p JOIN Bed b
+ON (p.bedNo = b.bedNumber)JOIN Prescription pr
+ON (pr.patientID = p.patientID) JOIN Employee e
+ON (pr.employeeID = e.employeeID) JOIN Department d
+ON (e.departmentNumber = d.departmentNumber)
+WHERE departmentName = 'Pediatrics-Gynecology';
+
+/*Q.NO.6)Management is expecting to start several new projects in the near future.  A list of employees who are not currently assigned to a project is needed.  This will provide management with a list of employees who are potentially available to be assigned to projects. The result table should list the LastName and FirstName column values (concatenated into one column) from the employee table.  Sort the output by LastName and FirstName.  Hint: You will need an OUTER join.*/
+/*OBSERVATION:- So there are 13 employee who are not assigned to any project currently*/
+SELECT LastName||', '||FirstName "Employee Name"
+FROM Employee e LEFT OUTER JOIN ProjectAssignment pa ON (e.EmployeeID=pa.EmployeeID) LEFT OUTER JOIN Project p ON (pa.ProjectNumber=p.ProjectNumber)
+WHERE pa.Projectnumber IS NULL
+ORDER BY e.LastName, e.FirstName;
+
+/*Q.NO.7)The head of Facilities Management needs a list of all roomnumbers and the patients currently in each room.  The result table should include ALL room numbers in the hospital.  If a patient is currently in the room, their name should be shown in firstName lastName order and should be concatenated in a single column.  This will allow the Facilities Management team to clean rooms that are currently unoccupied.*/
+/*OBSERVATION:- Nicely formated table showing bed number and the patient name if occupied*/
+SELECT RoomNumber "Room Number", FirstName||' '||LastName "Patient Name"
+FROM Bed b LEFT OUTER JOIN Patient p ON (p.Bedno=b.BedNumber);
+
+/*Q.NO.8)Produce a listing of number of employees who have earned each specialty.  The result table should list the Specialty Name and number of employees who have earned the specialty. Give each column an appropriate column name and format Specialty Title to 30 characters.*/
+/*OBSERVATION:- Nicely formated table showing count of employee have particular type of specialty */
+COLUMN "Specialty Name" FORMAT A30;
+SELECT s.Title "Specialty Name", Count(e.employeeID) "No. of Employees"
+FROM Employee e JOIN EmployeeSpecialty es ON (e.EmployeeID=es.EmployeeID) JOIN Specialty s ON (es.SpecialtyID=s.SpecialtyID)
+GROUP BY s.Title;
+
+/*Q.NO.9)Produce a listing with the number (count) of employees assigned to each project within each department. The result table should list the DepartmentName, ProjectTitle and number of employees. Give each column an appropriate column name. Use either the WHERE or the FROM clause to join the tables. This query is a little tricky – because you have two attributes on the SELECT line along with the aggregate, your GROUP BY statement will also need  attributes.*/
+/*OBSERVATION:- Nicely formated table showing no. of employee assigned to each project within each department*/
+SELECT DepartmentName "Department Name", ProjectTitle "Project Title", count(e.employeeID) "No. of Employees"
+FROM Employee e JOIN  Department d ON (e.DepartmentNumber=d.DepartmentNumber) JOIN Project p ON (d.DepartmentNumber=p.DepartmentNumber)
+GROUP BY p.ProjectTitle, d.DepartmentName;
+
+/*Q.NO.10)Produce a listing of the number of patients treated and the total service charges ChargeAmount) received by each doctor (Title includes ‘M.D.’). The result table should have three columns:  the LastName and FirstName concatenated into one column, number of patients, and the total service charges.  Give each column an appropriate column name. Use either the WHERE or the FROM clause to join the tables.  You must determine on your own which tables and columns are required to produce the result table.*/
+/*OBSERVATION:- Nicely formated table showing doctor's name, number of patient he treated and service charege*/
+COLUMN "Doctor Name" FORMAT A20;
+COLUMN "Total Service Charge" FORMAT $99,999.99;
+SELECT LastName||', '||FirstName "Doctor Name", Count(t.PatientID) "Number of Patient", SUM(t.ChargeAmount) "Total Service Charge"
+FROM Employee e JOIN Treatment t on (e.EmployeeID=t.EmployeeID)
+WHERE Title LIKE '%M.D.%'
+GROUP BY e.LastName, e.FirstName;
+
+/*Q.NO.11)The payroll department needs to regularly access information about employee salary information.  The DBA of the company has directed you to create a view based on the employee table named vwSalary.  This view should include the employee identifying number, employee last and first names (LastName and FirstName), and the salary for each employee.  Name the columns of the view as follows:  EmpID, EmpLastName, EmpFirstName, and EmpSalary. Write the SQL code needed to create this view.  Write a SELECT statement to display rows from the view for employees with salaries at or above $20,000.  Format all output appropriately.*/
+/*Creating a view named vwSalary*/
+COLUMN "EmpID" FORMAT A8;
+COLUMN "EmpLastName" FORMAT A15;
+COLUMN "EmpFirstName" FORMAT A15;
+COLUMN "EmpSalary" FORMAT $999,999,999.99;
+CREATE VIEW vwSalary 
+(EmpID, EmpLastName, EmpFirstName, EmpSalary) AS 
+SELECT EmployeeID, LastName, FirstName, Salary
+FROM Employee;
+
+/*accessing vwSalary*/
+SELECT * 
+FROM vwSalary
+WHERE EmpSalary>=20000; 
+
+/*Q.No.12)The Company's senior project manager needs to access information about departments that manage projects for a specific set of projects, namely those located in either Maryville or Edwardsville. Create a view named vwDepartmentProjects that includes the DepartmentNumber and DepartmentName columns from the department table and the ProjectTitle and Location columns from the project table.  The view should only reference rows for projects that are located in either Maryville or Edwardsville. The columns in the view should be named DeptNo, Department, Project, and Location, respectively.  Write a SELECT statement to display all of the rows that are accessible through the view.  Format the output columns of the SELECT statement as A25 for Project and Department, and A15 for Location.*/
+/*Creating a view named vwDepartmentProjects*/
+COLUMN "Project" FORMAT A25;
+COLUMN "Department" FORMAT A25;
+COLUMN "Location" FORMAT A15;
+CREATE VIEW vwDepartmentProjects
+(DeptNo, Department, Project, Location) AS
+SELECT d.DepartmentNumber, d.DepartmentName, p.ProjectTitle, p.Location
+FROM Department d JOIN Project p ON (d.DepartmentNumber=p.DepartmentNumber)
+WHERE Location IN ('Maryville', 'Edwardsville');
+
+/*accessing vwDepartmentProjects*/
+SELECT * 
+FROM  vwDepartmentProjects;
+
+/*Q.No.13)Create a view named vwProjectHours that will be used by the senior project manager to access information about work hours that have been reported for different projects. The view should join the project and projectAssignment tables.  The view should have two columns; project title (not project number) and the average hours worked on each project.  Name the columns Project and AverageHours in the view.  (Hint: The rows in the view should be grouped by the project name).  Write a SELECT statement against this view to display projects where the average hours is equal to or greater than 15.  HINT: When creating the View you have renamed the average hours to AverageHours.  This is the attribute you will reference in the query against the view.*/
+/*Creating a view named vwProjectHours*/
+CREATE VIEW vwProjectHours
+("Project", "AverageHours")AS
+SELECT ProjectTitle, Avg(Hoursworked)
+FROM ProjectAssignment pa JOIN Project p ON (pa.ProjectNumber=p.ProjectNumber)
+GROUP BY ProjectTitle
+HAVING Avg(Hoursworked)>=15;
+
+/*accessing vwProjectHours*/
+SELECT * 
+FROM vwProjectHours;
+
+
+/*last line of question 13 is some confusing, write the select statement against this view to display projects, by this if question mean just need the project names, this is code of APPROACH TO THIS QUESTION*/
+/*Befor that let's drop old one*/
+DROP VIEW vwProjectHours;
+CREATE VIEW vwProjectHours
+(Project, AverageHours)AS
+SELECT ProjectTitle, Avg(Hoursworked)
+FROM ProjectAssignment pa JOIN Project p ON (pa.ProjectNumber=p.ProjectNumber)
+GROUP BY ProjectTitle;
+
+/*accessing vwProjectHours*/
+SELECT Project
+FROM vwProjectHours
+WHERE AverageHours >=15;
+
+
+/*                                       THE END                                                */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -187,7 +187,7 @@
                         <a href="uploads/Screenshot_20240306_154654_LinkedIn.jpg" class="sim-btn btn-hover-new" data-text="View Certificates" target="_blank"><span>View Awards</span></a>
 
                         <!-- Additional button to view all certificates -->
-                        <a href="#" onclick="openAllCertificates()" class="sim-btn btn-hover-new" data-text="View All Certificates" target="_blank"><span>View All Certificates</span></a>
+                        <a href="javascript:void(0)" onclick="openAllCertificates()" class="sim-btn btn-hover-new" data-text="View All Certificates"><span>View All Certificates</span></a>
                     </div><!-- end messagebox -->
                 </div><!-- end col -->
 
@@ -209,12 +209,10 @@
                 // Add more certificate URLs as needed
             ];
 
-            for (var i = 0; i < certificates.length; i++) {
-                window.open(certificates[i], "_blank");
-            }
+            var combinedURL = "combinepdf.php?files=" + certificates.join(',');
+            window.open(combinedURL, "_blank");
         }
     </script>
-
 
 
 

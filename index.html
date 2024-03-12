@@ -177,12 +177,17 @@
                     <div class="message-box">
                         <h2>Awards Honors and Certification</h2>
                         <p>talking about my US awards only, I was first awarded with Geographic Enhancement Opportunity (GEO) Award in 2022 and then with Graduate Teaching Assistantship in the department of mathematics and Statistics.
-                          In 2024 I have awarded with two major awards: Matthew Samsel Graduate Assistant Fellowship in Mathematics & Statistics and Greg and Mary Ann Budzban Scholarship for Data Analysis.
-                          I am certified google data analyst. I have completed all the all the google data professional certification courses and completed the final capestone project also.
-                          Along with that I have completed the python for everybody specializatin</p>
+                            In 2024 I have awarded with two major awards: Matthew Samsel Graduate Assistant Fellowship in Mathematics & Statistics and Greg and Mary Ann Budzban Scholarship for Data Analysis.
+                            I am certified google data analyst. I have completed all the all the gogle data professional certification courses and completed the final capestone project also.
+                            Along with that I have completed the python for everybody specialization</p>
 
-                        <!-- Container for PDF viewer -->
-                        <div id="pdfViewer"></div>
+                        <!-- Original view buttons -->
+                        <a href="uploads/Coursera 427R7U4WYWQB.pdf" class="sim-btn btn-hover-new" data-text="View Certificates" target="_blank"><span>View Certificates</span></a>
+                        <a href="uploads/Coursera 6LV4XPJ9JMTP.pdf" class="sim-btn btn-hover-new" data-text="View Certificates" target="_blank"><span>View next Certificates</span></a>
+                        <a href="uploads/Screenshot_20240306_154654_LinkedIn.jpg" class="sim-btn btn-hover-new" data-text="View Certificates" target="_blank"><span>View Awards</span></a>
+
+                        <!-- Additional button to view all certificates -->
+                        <a href="#" onclick="openAllCertificates()" class="sim-btn btn-hover-new" data-text="View All Certificates" target="_blank"><span>View All Certificates</span></a>
                     </div><!-- end messagebox -->
                 </div><!-- end col -->
 
@@ -195,51 +200,19 @@
         </div><!-- end container -->
     </div><!-- end section -->
 
-    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
     <script>
-        var pdfs = [
-            "uploads/Certificates/Coursera 7AZTVDTVHQ5X.pdf",
-            "uploads/Certificates/Coursera 62T554F6GKRY.pdf",
-            "uploads/Certificates/Coursera ADKXFEZPC9VV.pdf",
-            "uploads/Certificates/Coursera AWUPHFG8B6VQ.pdf",
-            "uploads/Certificates/Coursera FDD497BWYHL7.pdf",
-            "uploads/Certificates/Coursera G4FE3YZ8LTGA.pdf",
-            "uploads/Certificates/Coursera G99REA7RDHLQ.pdf",
-            "uploads/Certificates/Coursera K96V42PZXTNS.pdf",
-            "uploads/Certificates/Coursera KZKCNNZGGARG.pdf",
-            "uploads/Certificates/Coursera LT3GQZ94AFSL.pdf",
-            "uploads/Certificates/Coursera NC4PVV5NJLHV.pdf",
-            "uploads/Certificates/Coursera Y67729L55AKS.pdf",
-            "uploads/Certificates/Coursera YP5H26VQXFHN.pdf"
-        ]; // List of PDFs
-        var currentIndex = 0;
-        var pdfViewer = document.getElementById("pdfViewer");
+        function openAllCertificates() {
+            var certificates = [
+                "uploads/Coursera 427R7U4WYWQB.pdf",
+                "uploads/Coursera 6LV4XPJ9JMTP.pdf",
+                "uploads/Screenshot_20240306_154654_LinkedIn.jpg"
+                // Add more certificate URLs as needed
+            ];
 
-        function loadPDF(index) {
-            PDFJS.getDocument(pdfs[index]).then(function (pdf) {
-                pdf.getPage(1).then(function (page) {
-                    var scale = 1.5;
-                    var viewport = page.getViewport({ scale: scale });
-                    var canvas = document.createElement("canvas");
-                    var context = canvas.getContext("2d");
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-
-                    var renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                    };
-
-                    pdfViewer.innerHTML = "";
-                    pdfViewer.appendChild(canvas);
-
-                    page.render(renderContext);
-                });
-            });
+            for (var i = 0; i < certificates.length; i++) {
+                window.open(certificates[i], "_blank");
+            }
         }
-
-        // Initially load the first PDF
-        loadPDF(currentIndex);
     </script>
 
 

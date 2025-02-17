@@ -337,7 +337,7 @@
         // Function to handle the first step (number of letters)
         function handleStep1() {
             const numLetters = parseInt(document.getElementById("num_letters").value);
-            if (isNaN(numLetters) || numLetters < 1) {
+            if (isNaN(numLetters) {
                 alert("Please enter a valid number of letters.");
                 return;
             }
@@ -372,13 +372,20 @@
             });
 
             let step3HTML = "<h3>We are close! One more time, please select column:</h3>";
+            step3HTML += "<table>";
             transposedRows.forEach((row, i) => {
                 step3HTML += `
-                    <p>Row ${i + 1}: ${row.split('').join(' | ')}</p>
-                    <label for="final_col_${i + 1}">Select the column number for letter ${i + 1}:</label>
-                    <input type="number" id="final_col_${i + 1}" name="final_col_${i + 1}" min="1" max="${row.length}" required><br><br>
+                    <tr>
+                        <td>Row ${i + 1}:</td>
+                        <td>${row.split('').join(' | ')}</td>
+                        <td>
+                            <label for="final_col_${i + 1}">Select column:</label>
+                            <input type="number" id="final_col_${i + 1}" name="final_col_${i + 1}" min="1" max="${row.length}" required>
+                        </td>
+                    </tr>
                 `;
             });
+            step3HTML += "</table>";
             step3HTML += `<button onclick="handleStep3(${numLetters}, ${JSON.stringify(transposedRows)}, ${JSON.stringify(columnNumbers)})">Get Result</button>`;
             document.getElementById("step3").innerHTML = step3HTML;
             document.getElementById("step3").style.display = "block";

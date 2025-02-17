@@ -285,12 +285,13 @@
                             <img src="uploads/Presentation1 new.jpg" alt="" class="img-fluid img-rounded">
                             <img src="uploads/With professors.jpg" alt="" class="img-fluid img-rounded">
                             <img src="uploads/content creator.jpg" alt="" class="img-fluid img-rounded">
-                            <img src="uploads/Master's thesis.png" alt="" class="img-fluid img-rounded">
+                            <img src="uploads/content creator.jpg" alt="" class="img-fluid img-rounded">
                         </div><!-- end media -->
                     </div><!-- end col -->
                 </div><!-- end row -->
             </div><!-- end container -->
         </div><!-- end section -->
+
 
 
     <section id="My graduate Courses" class="main-banner parallaxie" style="background: url('uploads/web pic.jpg')">
@@ -314,6 +315,16 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
     <script>
         // Step 1: Create the 6x5 alphabet matrix
         const alphabet = "abcdefghijklmnopqrstuvwxyz";
@@ -328,6 +339,7 @@
             matrix.forEach(row => {
                 matrixHTML += `<p>${row.split('').join(' | ')}</p>`;
             });
+            matrixHTML += "<p>Columns are numbered from 1 to 5 (left to right).</p>";
             document.getElementById("matrix").innerHTML = matrixHTML;
         }
 
@@ -339,7 +351,7 @@
                 return;
             }
 
-            let step2HTML = "<h3>Almost got the name you were thinking of!</h3>";
+            let step2HTML = "<h3>Enter the column numbers for each letter:</h3>";
             for (let i = 1; i <= numLetters; i++) {
                 step2HTML += `
                     <label for="col_${i}">Enter the column number for letter ${i}:</label>
@@ -348,36 +360,8 @@
             }
             step2HTML += `<button onclick="handleStep2(${numLetters})">Next</button>`;
             document.getElementById("step2").innerHTML = step2HTML;
+            document.getElementById("step2").style.display = "block";
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         // Function to handle the second step (transposed matrix)
         function handleStep2(numLetters) {
@@ -393,106 +377,81 @@
 
             // Transpose the selected columns into rows
             const transposedRows = columnNumbers.map(col => {
-                return matrix.map(row => row[col - 1] || '').join('');
+                return matrix.map(row => row[col - 1] || ' ').join('');
             });
 
-            let step3HTML = "<h3>One more time, please select column:</h3>";
+            let step3HTML = "<h3>We are close! One more time, please select column:</h3>";
             transposedRows.forEach((row, i) => {
                 step3HTML += `
                     <p>Row ${i + 1}: ${row.split('').join(' | ')}</p>
-                    <label for="final_col_${i + 1}">Select column for letter ${i + 1}:</label>
+                    <label for="final_col_${i + 1}">Select the column number for letter ${i + 1}:</label>
                     <input type="number" id="final_col_${i + 1}" name="final_col_${i + 1}" min="1" max="${row.length}" required><br><br>
                 `;
             });
-            step3HTML += `<button onclick="handleStep3(${numLetters}, ${JSON.stringify(transposedRows)})">Get Result</button>`;
+            step3HTML += `<button onclick="handleStep3(${numLetters}, ${JSON.stringify(transposedRows)}, ${JSON.stringify(columnNumbers)})">Get Result</button>`;
             document.getElementById("step3").innerHTML = step3HTML;
+            document.getElementById("step3").style.display = "block";
         }
 
         // Function to handle the final step (result)
-        function handleStep3(numLetters, transposedRows) {
+        function handleStep3(numLetters, transposedRows, columnNumbers) {
             const finalLetters = [];
+            const finalMappings = [];
             for (let i = 1; i <= numLetters; i++) {
                 const col = parseInt(document.getElementById(`final_col_${i}`).value);
                 if (isNaN(col) || col < 1 || col > transposedRows[i - 1].length) {
                     alert("Please enter valid column numbers.");
                     return;
                 }
-                finalLetters.push(transposedRows[i - 1][col - 1]);
+                const letter = transposedRows[i - 1][col - 1];
+                finalLetters.push(letter);
+                finalMappings.push(`${columnNumbers[i - 1]}${col}-${letter.toUpperCase()}`);
             }
 
             const finalName = finalLetters.join('').toUpperCase();
             document.getElementById("result").innerHTML = `
-                <h1>The name you're thinking of is:</h1>
+                <h3>The name you're thinking of is:</h3>
                 <div style="font-size: 3rem; font-weight: bold; text-align: center;">${finalName}</div>
+                <h4>Final Mappings:</h4>
+                <p>${finalMappings.join('<br>')}</p>
             `;
+            document.getElementById("result").style.display = "block";
         }
     </script>
 
 
     <div id="name-calc" class="section lb">
-        <div class="container">
-            <div class="section-title text-left">
-                <h3>Name Calculation Tool</h3>
-                <p>Try out this fun tool to calculate the name you're thinking of!</p>
-            </div>
-
-            <!-- Step 1: Number of letters -->
-            <div id="step1">
-                <label for="num_letters">How many letters are in the name you're thinking of?</label>
-                <input type="number" id="num_letters" name="num_letters" min="1" required>
-                <button onclick="handleStep1()">Next</button>
-            </div>
-
-            <!-- Step 2: Column numbers -->
-            <div id="step2" style="display: none;"></div>
-
-            <!-- Step 3: Transposed matrix -->
-            <div id="step3" style="display: none;"></div>
-
-            <!-- Result -->
-            <div id="result" style="display: none;"></div>
-
-            <!-- Alphabet Matrix -->
-            <div id="matrix" style="margin-top: 20px;"></div>
+    <div class="container">
+        <div class="section-title text-left">
+            <h3>Name Calculation Tool</h3>
+            <p>Try out this fun tool to calculate the name you're thinking of!</p>
         </div>
+
+        <!-- Step 1: Number of letters -->
+        <div id="step1">
+            <label for="num_letters">How many letters are in the name you're thinking of?</label>
+            <input type="number" id="num_letters" name="num_letters" min="1" required>
+            <button onclick="handleStep1()">Next</button>
+        </div>
+
+        <!-- Step 2: Column numbers -->
+        <div id="step2" style="display: none;"></div>
+
+        <!-- Step 3: Transposed matrix -->
+        <div id="step3" style="display: none;"></div>
+
+        <!-- Result -->
+        <div id="result" style="display: none;"></div>
+
+        <!-- Alphabet Matrix -->
+        <div id="matrix" style="margin-top: 20px;"></div>
     </div>
+</div>
 
-    <script>
-        // Display the alphabet matrix when the page loads
-        displayMatrix();
-    </script>
-
-
-    #name-calc {
-        padding: 50px 0;
-        background: #f9f9f9;
-    }
-
-    #name-calc input[type="number"] {
-        padding: 10px;
-        margin: 10px 0;
-        width: 100%;
-        max-width: 200px;
-    }
-
-    #name-calc button {
-        padding: 10px 20px;
-        background: #007bff;
-        color: white;
-        border: none;
-        cursor: pointer;
-    }
-
-    #name-calc button:hover {
-        background: #0056b3;
-    }
-
-    #matrix p {
-        font-family: monospace;
-        font-size: 1.2rem;
-        margin: 5px 0;
-    }
-
+<script>
+    // Display the alphabet matrix when the page loads
+    displayMatrix();
+</script>
 
 
 

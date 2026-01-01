@@ -952,12 +952,18 @@
 
 
 
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sagar's Ultimate Tracker</title>
+    <title>Limitless Command Center</title>
     
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -967,7 +973,25 @@
             theme: {
                 extend: {
                     colors: {
-                        slate: { 850: '#1e293b', 900: '#0f172a' }
+                        obsidian: '#0f172a',
+                        charcoal: '#1e293b',
+                        gold: '#fbbf24',
+                        neon: '#3b82f6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        }
                     }
                 }
             }
@@ -984,33 +1008,41 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
-    <!-- 4. CONFETTI -->
+    <!-- 4. UTILS -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts for that premium look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
         
-        /* Excel Grid Tweaks */
-        .excel-header { font-size: 0.75rem; text-align: center; font-weight: 700; user-select: none; }
-        .excel-cell { font-size: 0.85rem; text-align: center; cursor: pointer; user-select: none; transition: all 0.1s; }
-        .excel-cell:active { transform: scale(0.95); }
-        
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-        .dark .glass-panel {
+        .glass {
             background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
+        
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.2);
+        }
+
+        /* Excel Grid Specifics */
+        .excel-cell { transition: all 0.1s; }
+        .excel-cell:hover { filter: brightness(1.1); }
     </style>
 </head>
-<body class="bg-gray-100 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
+<body class="bg-obsidian text-slate-200 antialiased overflow-hidden selection:bg-blue-500 selection:text-white">
 
     <div id="root"></div>
 
@@ -1025,25 +1057,38 @@
             appId: "1:123456789:web:abcdef"
         };
 
-        // Init Firebase safely
+        // Init Firebase
         let db, auth;
         try {
             if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
             auth = firebase.auth();
+            // Enable offline persistence if available
+            db.enablePersistence().catch(err => console.log("Persistence disabled:", err.code));
         } catch (e) { console.error("Firebase Init Error:", e); }
 
         const { useState, useEffect, useMemo, useRef } = React;
 
         // --- ICONS ---
         const Icons = {
+            Home: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>,
+            Grid: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>,
+            Chart: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>,
             Check: () => <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
-            Flame: () => <svg className="w-4 h-4 text-orange-500" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8.5 14.5A2.5 2.5 0 0011 17c1.38 0 2.5-1.12 2.5-2.5 0-1.38-1.12-2.5-2.5-2.5a2.5 2.5 0 00-2.5 2.5M12 2a10 10 0 00-10 10c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/><path d="M12 6c-3.31 0-6 2.69-6 6 0 1.25.38 2.41 1.03 3.38A5.49 5.49 0 0111 11.5c1.38 0 2.5 1.12 2.5 2.5 0 .26-.05.5-.12.74A5.99 5.99 0 0018 12c0-3.31-2.69-6-6-6z"/></svg>,
-            Moon: () => <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>,
-            Sun: () => <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
-            Download: () => <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
-            Book: () => <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            Flame: () => <svg className="w-4 h-4 text-orange-500" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0011 17c1.38 0 2.5-1.12 2.5-2.5 0-1.38-1.12-2.5-2.5-2.5a2.5 2.5 0 00-2.5 2.5M12 2a10 10 0 00-10 10c0 5.52 4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>,
+            Clock: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+            Trophy: () => <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>,
+            Settings: () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
+            Sync: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
         };
+
+        const QUOTES = [
+            "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
+            "Your future is found in your daily routine.",
+            "Discipline is choosing what you want most over what you want now.",
+            "Don't count the days, make the days count.",
+            "Small daily improvements are the key to staggering long-term results."
+        ];
 
         const DEFAULT_HABITS = [
             "Wakeup at 5:45", "3 Liters of Water", "Check All emails & Calendar",
@@ -1052,353 +1097,456 @@
             "1+ hour of exercise (Calling)", "Learn for \"How in US\" new things", "Sleep by 11 PM"
         ];
         
-        const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const YEARS = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
+        // --- LEVEL SYSTEM ---
+        const getLevel = (xp) => Math.floor(Math.sqrt(xp) * 0.2) + 1;
+        const getNextLevelXp = (level) => Math.pow((level) / 0.2, 2);
 
         function App() {
-            // --- STATE ---
+            // State
             const [trackerId, setTrackerId] = useState(localStorage.getItem('tracker_id') || '');
             const [loggedIn, setLoggedIn] = useState(!!localStorage.getItem('tracker_id'));
-            const [darkMode, setDarkMode] = useState(localStorage.getItem('dark_mode') === 'true');
-            const [activeTab, setActiveTab] = useState('sheet'); // 'sheet', 'dashboard', 'edit'
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const [isSaving, setIsSaving] = useState(false);
+            
+            // Data
             const [habits, setHabits] = useState(DEFAULT_HABITS);
             const [completionData, setCompletionData] = useState({});
-            const [journalData, setJournalData] = useState({}); // New: { "YYYY-MM-DD": "text" }
-            const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-            const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-            const [journalOpen, setJournalOpen] = useState(null); // Date string or null
+            const [xp, setXp] = useState(0);
+            
+            // Focus Timer
+            const [timerActive, setTimerActive] = useState(false);
+            const [timeLeft, setTimeLeft] = useState(25 * 60);
+            const [selectedHabitForTimer, setSelectedHabitForTimer] = useState(null);
 
-            // --- EFFECTS ---
-            useEffect(() => {
-                if (darkMode) document.documentElement.classList.add('dark');
-                else document.documentElement.classList.remove('dark');
-                localStorage.setItem('dark_mode', darkMode);
-            }, [darkMode]);
-
+            // Init
             useEffect(() => {
                 if (loggedIn && trackerId && db) {
                     const docRef = db.collection('habit_trackers').doc(trackerId);
                     return docRef.onSnapshot((doc) => {
                         if (doc.exists) {
                             const data = doc.data();
-                            if (data.habits) setHabits(data.habits);
-                            if (data.completionData) setCompletionData(data.completionData);
-                            if (data.journalData) setJournalData(data.journalData);
+                            // Only update if we aren't currently saving (avoids jitter)
+                            if (!isSaving) {
+                                setHabits(data.habits || DEFAULT_HABITS);
+                                setCompletionData(data.completionData || {});
+                                setXp(data.xp || 0);
+                            }
                         } else {
-                            docRef.set({ habits: DEFAULT_HABITS, completionData: {}, journalData: {}, createdAt: new Date().toISOString() });
+                            docRef.set({ habits: DEFAULT_HABITS, completionData: {}, xp: 0 });
                         }
                     });
                 }
             }, [loggedIn, trackerId]);
 
-            // --- ACTIONS ---
-            const saveData = (partialData) => {
+            // Timer Logic
+            useEffect(() => {
+                let interval = null;
+                if (timerActive && timeLeft > 0) {
+                    interval = setInterval(() => setTimeLeft(t => t - 1), 1000);
+                } else if (timeLeft === 0 && timerActive) {
+                    setTimerActive(false);
+                    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                    audio.play().catch(e=>console.log(e));
+                    confetti({ particleCount: 150, spread: 100 });
+                }
+                return () => clearInterval(interval);
+            }, [timerActive, timeLeft]);
+
+            // Actions
+            const saveData = async (partial) => {
                 if (!db || !trackerId) return;
-                db.collection('habit_trackers').doc(trackerId).set({ ...partialData, lastUpdated: new Date().toISOString() }, { merge: true });
+                setIsSaving(true);
+                try {
+                    await db.collection('habit_trackers').doc(trackerId).set({ ...partial, lastUpdated: new Date().toISOString() }, { merge: true });
+                    // Small delay to show "Saved" state
+                    setTimeout(() => setIsSaving(false), 500);
+                } catch (error) {
+                    console.error("Save error:", error);
+                    setIsSaving(false);
+                }
             };
 
             const toggleHabit = (dateStr, habitIdx) => {
                 const currentList = completionData[dateStr] || [];
-                let newList = currentList.includes(habitIdx) ? currentList.filter(i => i !== habitIdx) : [...currentList, habitIdx];
+                const isCompleted = currentList.includes(habitIdx);
+                let newList;
+                let newXp = xp;
+
+                if (isCompleted) {
+                    newList = currentList.filter(i => i !== habitIdx);
+                    newXp = Math.max(0, xp - 10);
+                } else {
+                    newList = [...currentList, habitIdx];
+                    newXp = xp + 10;
+                    confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 } });
+                }
+                
                 const newData = { ...completionData, [dateStr]: newList };
                 setCompletionData(newData);
-                saveData({ completionData: newData });
-
-                // Celebration logic
-                if (newList.length === habits.length && habits.length > 0) {
-                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                }
+                setXp(newXp);
+                saveData({ completionData: newData, xp: newXp });
             };
 
-            const saveJournal = (dateStr, text) => {
-                const newData = { ...journalData, [dateStr]: text };
-                setJournalData(newData);
-                saveData({ journalData: newData });
-            };
+            const updateHabits = (newHabits) => {
+                setHabits(newHabits);
+                saveData({ habits: newHabits });
+            }
 
-            const exportData = () => {
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ habits, completionData, journalData }));
-                const downloadAnchorNode = document.createElement('a');
-                downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", `habits_backup_${trackerId}.json`);
-                document.body.appendChild(downloadAnchorNode);
-                downloadAnchorNode.click();
-                downloadAnchorNode.remove();
-            };
-
-            const calculateStreak = (habitIdx) => {
+            const formatDateKey = (date) => date.toISOString().split('T')[0];
+            const getStreak = (habitIdx) => {
                 let streak = 0;
-                const today = new Date();
-                // Check back 365 days max for streak
                 for (let i = 0; i < 365; i++) {
-                    const d = new Date();
-                    d.setDate(today.getDate() - i);
-                    const k = d.toISOString().split('T')[0];
-                    if ((completionData[k] || []).includes(habitIdx)) streak++;
-                    else if (i === 0) continue; // If today is missed, don't break yet (unless yesterday missed)
-                    else break;
+                    const d = new Date(); d.setDate(new Date().getDate() - i);
+                    if ((completionData[formatDateKey(d)] || []).includes(habitIdx)) streak++;
+                    else if (i===0) continue; else break;
                 }
                 return streak;
             };
 
-            const daysInView = useMemo(() => {
-                const date = new Date(selectedYear, selectedMonth, 1);
-                const days = [];
-                while (date.getMonth() === selectedMonth) {
-                    days.push(new Date(date));
-                    date.setDate(date.getDate() + 1);
-                }
-                return days;
-            }, [selectedYear, selectedMonth]);
+            const startTimer = (minutes) => {
+                setTimeLeft(minutes * 60);
+                setTimerActive(true);
+            };
 
-            const formatDateKey = (date) => date.toISOString().split('T')[0];
+            const formatTime = (seconds) => {
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                return `${m}:${s < 10 ? '0' : ''}${s}`;
+            };
 
-            if (!loggedIn) {
-                return (
-                    <div className="min-h-screen flex items-center justify-center p-4">
-                        <div className="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-100 dark:border-slate-700">
-                            <div className="text-center mb-6">
-                                <h1 className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">Ultimate Tracker</h1>
-                                <p className="text-gray-500 dark:text-gray-400 mt-2">Enter your Personal ID to begin</p>
-                            </div>
-                            <form onSubmit={(e) => {
-                                e.preventDefault();
-                                const id = e.target.id.value.trim().toLowerCase().replace(/\s+/g, '-');
-                                if(id) { setTrackerId(id); localStorage.setItem('tracker_id', id); setLoggedIn(true); }
-                            }} className="space-y-4">
-                                <input name="id" type="text" placeholder="e.g. sagar-pro" className="w-full p-4 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" required />
-                                <button className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg shadow-blue-500/30 transition-all transform active:scale-95">Launch Dashboard</button>
-                            </form>
-                             <div className="mt-6 pt-6 border-t border-gray-100 dark:border-slate-700 text-center">
-                                <a href="index.html" className="text-sm text-blue-500 hover:text-blue-400 font-medium">← Back to Website</a>
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
+            // Views
+            if (!loggedIn) return <LoginScreen onLogin={(id) => { setTrackerId(id); localStorage.setItem('tracker_id', id); setLoggedIn(true); }} />;
+
+            const currentLevel = getLevel(xp);
+            const nextLevelXp = getNextLevelXp(currentLevel);
+            const prevLevelXp = getNextLevelXp(currentLevel - 1);
+            const levelProgress = ((xp - prevLevelXp) / (nextLevelXp - prevLevelXp)) * 100;
 
             return (
-                <div className="min-h-screen flex flex-col font-sans">
-                    {/* TOP BAR */}
-                    <header className="glass-panel sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
-                                S
-                            </div>
-                            <div>
-                                <h1 className="font-bold text-lg leading-tight">Sagar's Tracker</h1>
-                                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                                    <span className="font-mono bg-gray-100 dark:bg-slate-800 px-1 rounded">{trackerId}</span>
-                                    <span className="text-green-500">• Synced</span>
-                                </div>
-                            </div>
+                <div className="flex h-screen w-full bg-obsidian text-slate-300">
+                    
+                    {/* SIDEBAR */}
+                    <aside className="w-20 lg:w-64 glass flex flex-col border-r border-slate-700/50 flex-shrink-0 z-20">
+                        <div className="h-20 flex items-center justify-center lg:justify-start lg:px-6 border-b border-slate-700/50">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">L</div>
+                            <span className="ml-3 font-bold text-white tracking-wide hidden lg:block">LIMITLESS</span>
                         </div>
-                        
-                        <div className="flex items-center bg-gray-100 dark:bg-slate-800 p-1 rounded-xl">
-                            {['sheet', 'dashboard', 'edit'].map(tab => (
+
+                        <nav className="flex-1 py-6 space-y-2 px-3">
+                            {[
+                                { id: 'dashboard', icon: Icons.Home, label: 'Command Center' },
+                                { id: 'matrix', icon: Icons.Grid, label: 'The Matrix' },
+                                { id: 'insights', icon: Icons.Chart, label: 'Insights' },
+                                { id: 'settings', icon: Icons.Settings, label: 'Habit Config' },
+                            ].map(item => (
                                 <button 
-                                    key={tab}
-                                    onClick={() => setActiveTab(tab)}
-                                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all capitalize ${activeTab === tab ? 'bg-white dark:bg-slate-600 shadow text-blue-600 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                                    key={item.id}
+                                    onClick={() => setActiveTab(item.id)}
+                                    className={`w-full flex items-center p-3 rounded-xl transition-all ${activeTab === item.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50' : 'hover:bg-slate-800 text-slate-400 hover:text-white'}`}
                                 >
-                                    {tab}
+                                    <item.icon />
+                                    <span className="ml-3 font-medium hidden lg:block">{item.label}</span>
                                 </button>
                             ))}
-                        </div>
+                        </nav>
 
-                        <div className="flex gap-2">
-                             <button onClick={exportData} className="p-2 text-gray-500 hover:text-blue-500 transition-colors" title="Export Data"><Icons.Download/></button>
-                            <button onClick={() => setDarkMode(!darkMode)} className="p-2 text-gray-500 hover:text-yellow-500 transition-colors bg-gray-100 dark:bg-slate-800 rounded-lg">
-                                {darkMode ? <Icons.Sun /> : <Icons.Moon />}
-                            </button>
-                            <button onClick={() => { setLoggedIn(false); localStorage.removeItem('tracker_id'); }} className="px-4 py-2 bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 rounded-lg font-bold text-sm transition-colors">
-                                Exit
+                        <div className="p-4 border-t border-slate-700/50">
+                            <button onClick={()=>{setLoggedIn(false);localStorage.removeItem('tracker_id')}} className="w-full flex items-center justify-center lg:justify-start p-2 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                                <span className="ml-3 hidden lg:block text-sm font-bold">Log Out</span>
                             </button>
                         </div>
-                    </header>
+                    </aside>
 
-                    {/* CONFIG WARNING */}
-                    {!db && (
-                        <div className="bg-red-500 text-white p-2 text-center text-sm font-bold">
-                            ⚠️ Demo Mode: Configure Firebase keys in tracker.html to save data permanently.
+                    {/* MAIN AREA */}
+                    <main className="flex-1 flex flex-col overflow-hidden relative">
+                        {/* Background Effects */}
+                        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+                            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
+                            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2"></div>
                         </div>
-                    )}
 
-                    {/* MAIN CONTENT */}
-                    <main className="flex-1 p-4 md:p-6 overflow-hidden flex flex-col">
-                        
-                        {/* VIEW: SHEET */}
-                        {activeTab === 'sheet' && (
-                            <div className="flex flex-col h-full bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
-                                {/* Filters */}
-                                <div className="p-4 border-b border-gray-100 dark:border-slate-700 flex gap-4 items-center bg-gray-50 dark:bg-slate-900/50">
-                                    <select value={selectedYear} onChange={e => setSelectedYear(parseInt(e.target.value))} className="bg-white dark:bg-slate-800 border dark:border-slate-600 rounded-lg px-3 py-1 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500">
-                                        {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
-                                    </select>
-                                    <select value={selectedMonth} onChange={e => setSelectedMonth(parseInt(e.target.value))} className="bg-white dark:bg-slate-800 border dark:border-slate-600 rounded-lg px-3 py-1 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500">
-                                        {MONTHS.map((m, i) => <option key={m} value={i}>{m}</option>)}
-                                    </select>
-                                    <div className="ml-auto text-sm text-gray-400 font-medium hidden md:block">
-                                        {daysInView.length} Days in view
-                                    </div>
-                                </div>
-
-                                {/* The Grid */}
-                                <div className="flex-1 overflow-auto">
-                                    <table className="w-full border-collapse">
-                                        <thead className="sticky top-0 z-20 bg-gray-100 dark:bg-slate-900 shadow-sm">
-                                            <tr>
-                                                <th className="p-3 text-left min-w-[240px] sticky left-0 z-30 bg-gray-100 dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                                                    Habit
-                                                </th>
-                                                {daysInView.map(d => {
-                                                    const isToday = d.toDateString() === new Date().toDateString();
-                                                    const hasJournal = !!journalData[formatDateKey(d)];
-                                                    return (
-                                                        <th key={d} 
-                                                            onClick={() => setJournalOpen(formatDateKey(d))}
-                                                            className={`p-1 min-w-[36px] text-center border-r border-gray-200 dark:border-slate-700 cursor-pointer group hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors ${isToday ? 'bg-blue-50 dark:bg-slate-800' : ''}`}>
-                                                            <div className={`text-[10px] font-bold mb-1 ${isToday ? 'text-blue-600' : 'text-gray-400'}`}>
-                                                                {d.toLocaleDateString('en-US', {weekday:'narrow'})}
-                                                            </div>
-                                                            <div className={`w-7 h-7 mx-auto rounded-full flex items-center justify-center text-xs font-bold ${isToday ? 'bg-blue-500 text-white shadow-md' : 'text-gray-700 dark:text-gray-300'}`}>
-                                                                {d.getDate()}
-                                                            </div>
-                                                            {hasJournal && <div className="h-1 w-1 bg-purple-500 rounded-full mx-auto mt-1"></div>}
-                                                        </th>
-                                                    )
-                                                })}
-                                                <th className="p-3 sticky right-0 z-30 bg-gray-100 dark:bg-slate-900 border-l border-gray-200 dark:border-slate-700 text-xs font-bold text-gray-500 dark:text-gray-400">Stats</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {habits.map((habit, idx) => {
-                                                const streak = calculateStreak(idx);
-                                                return (
-                                                    <tr key={idx} className="border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/30 transition-colors group">
-                                                        <td className="p-3 sticky left-0 z-10 bg-white dark:bg-slate-800 group-hover:bg-gray-50 dark:group-hover:bg-slate-700/30 border-r border-gray-200 dark:border-slate-700 font-medium text-sm flex items-center justify-between">
-                                                            <span className="truncate pr-2">{habit}</span>
-                                                            {streak > 2 && (
-                                                                <span className="flex items-center text-[10px] font-bold text-orange-500 bg-orange-50 dark:bg-orange-900/30 px-1.5 py-0.5 rounded-full">
-                                                                    <Icons.Flame /> {streak}
-                                                                </span>
-                                                            )}
-                                                        </td>
-                                                        {daysInView.map(d => {
-                                                            const k = formatDateKey(d);
-                                                            const done = (completionData[k] || []).includes(idx);
-                                                            return (
-                                                                <td key={k} 
-                                                                    onClick={() => toggleHabit(k, idx)}
-                                                                    className={`p-1 border-r border-gray-100 dark:border-slate-700 text-center cursor-pointer relative overflow-hidden ${done ? 'bg-green-50 dark:bg-green-900/20' : ''}`}>
-                                                                    <div className={`w-full h-full flex items-center justify-center transition-all duration-300 ${done ? 'scale-100 opacity-100' : 'scale-50 opacity-0'}`}>
-                                                                         <div className="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center text-white shadow-sm">
-                                                                             <Icons.Check />
-                                                                         </div>
-                                                                    </div>
-                                                                </td>
-                                                            )
-                                                        })}
-                                                        <td className="p-2 sticky right-0 z-10 bg-white dark:bg-slate-800 border-l border-gray-200 dark:border-slate-700 text-center font-bold text-xs">
-                                                            {Math.round((daysInView.filter(d => (completionData[formatDateKey(d)] || []).includes(idx)).length / daysInView.length) * 100)}%
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            })}
-                                        </tbody>
-                                    </table>
+                        {/* Top Bar */}
+                        <header className="h-20 glass border-b border-slate-700/50 flex items-center justify-between px-8 z-10">
+                            <div>
+                                <h2 className="text-xl font-bold text-white">{activeTab === 'dashboard' ? 'Ready to conquer, Sagar?' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h2>
+                                <div className="flex items-center gap-2">
+                                    <p className="text-xs text-slate-400 font-mono">{new Date().toLocaleDateString(undefined, {weekday:'long', month:'long', day:'numeric'})}</p>
+                                    <span className="text-slate-600">|</span>
+                                    {isSaving ? (
+                                        <span className="text-xs font-bold text-blue-400 flex items-center gap-1"><Icons.Sync /> Saving...</span>
+                                    ) : (
+                                        <span className="text-xs font-bold text-green-400 flex items-center gap-1"><Icons.Check /> All Saved</span>
+                                    )}
                                 </div>
                             </div>
-                        )}
-
-                        {/* VIEW: DASHBOARD */}
-                        {activeTab === 'dashboard' && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-                                {habits.map((habit, idx) => {
-                                    const streak = calculateStreak(idx);
-                                    const monthTotal = daysInView.filter(d => (completionData[formatDateKey(d)] || []).includes(idx)).length;
-                                    const percent = Math.round((monthTotal / daysInView.length) * 100);
-                                    
-                                    return (
-                                        <div key={idx} className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-slate-700 relative overflow-hidden group hover:shadow-xl transition-shadow">
-                                            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-700 dark:to-slate-600 rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
-                                            
-                                            <h3 className="font-bold text-lg mb-4 relative z-10 pr-4">{habit}</h3>
-                                            
-                                            <div className="flex items-end gap-4 mb-4">
-                                                <div className="text-4xl font-black text-slate-800 dark:text-white">{percent}%</div>
-                                                <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Monthly Success</div>
-                                            </div>
-
-                                            <div className="w-full bg-gray-100 dark:bg-slate-700 h-3 rounded-full overflow-hidden mb-6">
-                                                <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-600" style={{width: `${percent}%`}}></div>
-                                            </div>
-
-                                            <div className="flex justify-between items-center text-sm font-medium">
-                                                <div className="flex items-center gap-1 text-orange-500">
-                                                    <Icons.Flame />
-                                                    <span>{streak} Day Streak</span>
-                                                </div>
-                                                <div className="text-gray-400">{monthTotal} / {daysInView.length} Reps</div>
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        )}
-
-                        {/* VIEW: EDIT */}
-                        {activeTab === 'edit' && (
-                            <div className="max-w-2xl mx-auto w-full bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700">
-                                <h2 className="text-2xl font-bold mb-6">Manage Habits</h2>
-                                <div className="space-y-3">
-                                    {habits.map((h, i) => (
-                                        <div key={i} className="flex gap-3">
-                                            <div className="bg-gray-100 dark:bg-slate-700 w-8 h-10 flex items-center justify-center rounded font-bold text-gray-500">{i+1}</div>
-                                            <input 
-                                                value={h} 
-                                                onChange={e => { const n=[...habits]; n[i]=e.target.value; setHabits(n); }}
-                                                className="flex-1 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded px-3 outline-none focus:border-blue-500"
-                                            />
-                                            <button onClick={() => { const n=habits.filter((_,x)=>x!==i); setHabits(n); saveData({habits:n}); }} className="text-red-400 hover:text-red-500 font-bold px-3">×</button>
-                                        </div>
-                                    ))}
-                                    <button onClick={() => { const n=[...habits,"New Habit"]; setHabits(n); saveData({habits:n}); }} className="w-full py-3 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-xl text-gray-400 font-bold hover:border-blue-500 hover:text-blue-500 transition-colors">
-                                        + Add New Habit
+                            
+                            <div className="flex items-center gap-6">
+                                {/* Focus Timer Widget */}
+                                <div className={`flex items-center gap-3 px-4 py-2 rounded-full border transition-all ${timerActive ? 'border-red-500/50 bg-red-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
+                                    <Icons.Clock />
+                                    <span className="font-mono text-xl font-bold w-16 text-center">{formatTime(timeLeft)}</span>
+                                    <button onClick={() => setTimerActive(!timerActive)} className={`w-8 h-8 rounded-full flex items-center justify-center ${timerActive ? 'bg-red-500 text-white' : 'bg-green-500 text-white hover:bg-green-400'}`}>
+                                        {timerActive ? '⏸' : '▶'}
                                     </button>
                                 </div>
-                            </div>
-                        )}
 
-                    </main>
-
-                    {/* JOURNAL MODAL */}
-                    {journalOpen && (
-                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                            <div className="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-pop-in">
-                                <div className="p-4 bg-gray-50 dark:bg-slate-900 border-b border-gray-100 dark:border-slate-700 flex justify-between items-center">
-                                    <div className="flex items-center gap-2">
-                                        <Icons.Book />
-                                        <span className="font-bold">{new Date(journalOpen).toLocaleDateString(undefined, {weekday:'long', month:'long', day:'numeric'})}</span>
+                                {/* XP Bar */}
+                                <div className="hidden md:block w-48">
+                                    <div className="flex justify-between text-xs mb-1">
+                                        <span className="text-gold font-bold">LVL {currentLevel}</span>
+                                        <span className="text-slate-400">{Math.floor(xp)} XP</span>
                                     </div>
-                                    <button onClick={() => setJournalOpen(null)} className="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors">×</button>
-                                </div>
-                                <div className="p-4">
-                                    <textarea 
-                                        className="w-full h-48 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl p-4 outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                                        placeholder="Write your daily notes, thoughts, or excuses here..."
-                                        value={journalData[journalOpen] || ''}
-                                        onChange={e => saveJournal(journalOpen, e.target.value)}
-                                    ></textarea>
-                                </div>
-                                <div className="p-4 bg-gray-50 dark:bg-slate-900 text-right text-xs text-gray-400">
-                                    Autosaved to cloud
+                                    <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                        <div className="h-full bg-gradient-to-r from-yellow-500 to-amber-300 transition-all duration-500" style={{width: `${levelProgress}%`}}></div>
+                                    </div>
                                 </div>
                             </div>
+                        </header>
+
+                        {/* CONTENT SCROLL AREA */}
+                        <div className="flex-1 overflow-y-auto overflow-x-hidden p-6 lg:p-10 z-10">
+                            
+                            {/* DASHBOARD VIEW */}
+                            {activeTab === 'dashboard' && (
+                                <div className="max-w-6xl mx-auto space-y-8 animate-fade-in">
+                                    {/* Quote Card */}
+                                    <div className="p-8 rounded-3xl bg-gradient-to-r from-blue-900/40 to-indigo-900/40 border border-blue-500/20 relative overflow-hidden">
+                                        <div className="relative z-10">
+                                            <h3 className="text-2xl md:text-3xl font-bold text-white italic mb-2">"{QUOTES[new Date().getDate() % QUOTES.length]}"</h3>
+                                            <p className="text-blue-300 uppercase tracking-widest text-xs font-bold">- Daily Wisdom</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Focus Area */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                        <div className="lg:col-span-2 glass rounded-3xl p-6 border border-slate-700">
+                                            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2"><Icons.Check/> Today's Targets</h3>
+                                            <div className="space-y-3">
+                                                {habits.map((h, i) => {
+                                                    const k = formatDateKey(new Date());
+                                                    const done = (completionData[k]||[]).includes(i);
+                                                    return (
+                                                        <div key={i} 
+                                                            onClick={() => toggleHabit(k, i)}
+                                                            className={`p-4 rounded-xl border flex items-center justify-between cursor-pointer transition-all group ${done ? 'bg-green-500/10 border-green-500/50' : 'bg-slate-800/40 border-slate-700 hover:border-blue-500/50'}`}
+                                                        >
+                                                            <div className="flex items-center gap-4">
+                                                                <div className={`w-6 h-6 rounded-md flex items-center justify-center border transition-colors ${done ? 'bg-green-500 border-green-500 text-white' : 'border-slate-600 group-hover:border-blue-500'}`}>
+                                                                    {done && <Icons.Check/>}
+                                                                </div>
+                                                                <span className={done ? 'text-slate-400 line-through' : 'text-white'}>{h}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-2">
+                                                                <button onClick={(e) => { e.stopPropagation(); setSelectedHabitForTimer(h); startTimer(60); }} className="p-2 text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg" title="Start Focus Timer">
+                                                                    <Icons.Clock/>
+                                                                </button>
+                                                                <div className="flex items-center gap-1 text-xs text-orange-500 font-bold bg-orange-500/10 px-2 py-1 rounded">
+                                                                    <Icons.Flame/> {getStreak(i)}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            {/* Level Card */}
+                                            <div className="glass rounded-3xl p-6 border border-slate-700 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                                                <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/10 to-transparent pointer-events-none"></div>
+                                                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-400 to-amber-600 flex items-center justify-center text-3xl font-black text-white shadow-xl shadow-amber-500/20 mb-4 animate-float">
+                                                    {currentLevel}
+                                                </div>
+                                                <h3 className="text-white font-bold text-xl">
+                                                    {currentLevel < 5 ? "Rookie" : currentLevel < 10 ? "Pro" : currentLevel < 20 ? "Elite" : "Legend"}
+                                                </h3>
+                                                <p className="text-slate-400 text-sm mb-4">Current Rank</p>
+                                                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                                    <div className="bg-yellow-500 h-full" style={{width: `${levelProgress}%`}}></div>
+                                                </div>
+                                                <p className="text-xs text-slate-500 mt-2">{Math.floor(xp)} / {Math.floor(getNextLevelXp(currentLevel))} XP to next rank</p>
+                                            </div>
+
+                                            {/* Badges */}
+                                            <div className="glass rounded-3xl p-6 border border-slate-700">
+                                                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Badges</h3>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {xp > 100 ? (
+                                                        <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold border border-blue-500/50">Early Riser</span>
+                                                    ) : <span className="text-xs text-slate-600">Gain XP to unlock badges</span>}
+                                                    {xp > 500 && <span className="px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 text-xs font-bold border border-purple-500/50">Habit Master</span>}
+                                                    {currentLevel >= 5 && <span className="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-bold border border-yellow-500/50">Pro Status</span>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* MATRIX VIEW (EXCEL GRID) */}
+                            {activeTab === 'matrix' && (
+                                <MatrixView 
+                                    habits={habits} 
+                                    completionData={completionData} 
+                                    toggleHabit={toggleHabit} 
+                                />
+                            )}
+                            
+                            {/* ANALYTICS VIEW */}
+                            {activeTab === 'insights' && (
+                                <div className="max-w-5xl mx-auto">
+                                    <h2 className="text-2xl font-bold text-white mb-6">Performance Insights</h2>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                        {habits.map((h, i) => {
+                                            const total = Object.values(completionData).filter(arr => arr.includes(i)).length;
+                                            return (
+                                                <div key={i} className="glass p-4 rounded-xl border border-slate-700 hover:border-blue-500/50 transition-colors">
+                                                    <h4 className="text-xs text-slate-400 mb-2 truncate" title={h}>{h}</h4>
+                                                    <div className="flex items-end gap-2">
+                                                        <span className="text-2xl font-bold text-white">{total}</span>
+                                                        <span className="text-xs text-slate-500 mb-1">Reps</span>
+                                                    </div>
+                                                    <div className="mt-2 w-full bg-slate-800 h-1 rounded-full overflow-hidden">
+                                                        <div className="bg-blue-500 h-full" style={{width: `${Math.min(100, (total/30)*100)}%`}}></div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                    
+                                    <div className="mt-8 glass p-6 rounded-xl border border-slate-700">
+                                        <h3 className="text-lg font-bold text-white mb-4">Heatmap (Last 30 Days)</h3>
+                                        <div className="flex gap-1 overflow-x-auto pb-2">
+                                            {[...Array(30)].map((_, i) => {
+                                                const d = new Date();
+                                                d.setDate(d.getDate() - (29 - i));
+                                                const k = formatDateKey(d);
+                                                const count = (completionData[k] || []).length;
+                                                const intensity = count === 0 ? 'bg-slate-800' : 
+                                                                count < 3 ? 'bg-blue-900' :
+                                                                count < 7 ? 'bg-blue-700' : 'bg-blue-500';
+                                                return (
+                                                    <div key={i} className="flex flex-col gap-1 items-center group">
+                                                        <div className={`w-8 h-8 rounded ${intensity} border border-slate-700/50 transition-all hover:scale-110`} title={`${k}: ${count} habits`}></div>
+                                                        <span className="text-[10px] text-slate-600">{d.getDate()}</span>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                             {/* SETTINGS VIEW */}
+                             {activeTab === 'settings' && (
+                                <div className="max-w-2xl mx-auto glass p-8 rounded-2xl border border-slate-700">
+                                    <h2 className="text-xl font-bold text-white mb-6">Habit Configuration</h2>
+                                    <div className="space-y-3">
+                                        {habits.map((h, i) => (
+                                            <div key={i} className="flex gap-3">
+                                                <div className="bg-slate-800 w-8 h-10 flex items-center justify-center rounded font-bold text-slate-500">{i+1}</div>
+                                                <input 
+                                                    value={h} 
+                                                    onChange={e => { const n=[...habits]; n[i]=e.target.value; setHabits(n); }}
+                                                    onBlur={() => saveData({ habits })}
+                                                    className="flex-1 bg-slate-900 border border-slate-700 rounded px-3 text-slate-200 outline-none focus:border-blue-500"
+                                                />
+                                                <button onClick={() => { const n=habits.filter((_,x)=>x!==i); updateHabits(n); }} className="text-red-400 hover:text-red-500 font-bold px-3">×</button>
+                                            </div>
+                                        ))}
+                                        <button onClick={() => { const n=[...habits,"New Habit"]; updateHabits(n); }} className="w-full py-3 border border-dashed border-slate-700 rounded-xl text-slate-400 font-bold hover:border-blue-500 hover:text-blue-500 transition-colors">
+                                            + Add New Habit
+                                        </button>
+                                    </div>
+                                    <p className="text-xs text-slate-500 mt-4 text-center">Changes are autosaved when you click away from the input field.</p>
+                                </div>
+                            )}
+
                         </div>
-                    )}
+                    </main>
                 </div>
             );
+        }
+
+        // Sub-component for Matrix to keep code clean
+        function MatrixView({ habits, completionData, toggleHabit }) {
+            const [year, setYear] = useState(new Date().getFullYear());
+            const [month, setMonth] = useState(new Date().getMonth());
+            
+            const days = useMemo(() => {
+                const date = new Date(year, month, 1);
+                const d = [];
+                while (date.getMonth() === month) {
+                    d.push(new Date(date));
+                    date.setDate(date.getDate() + 1);
+                }
+                return d;
+            }, [year, month]);
+
+            return (
+                <div className="glass rounded-2xl border border-slate-700 overflow-hidden flex flex-col h-full animate-fade-in">
+                    <div className="p-4 border-b border-slate-700 flex gap-4 bg-slate-800/50">
+                        <select value={month} onChange={e=>setMonth(parseInt(e.target.value))} className="bg-slate-900 border border-slate-700 rounded px-3 py-1 text-sm font-bold text-white">
+                            {["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"].map((m,i)=><option key={m} value={i}>{m}</option>)}
+                        </select>
+                        <select value={year} onChange={e=>setYear(parseInt(e.target.value))} className="bg-slate-900 border border-slate-700 rounded px-3 py-1 text-sm font-bold text-white">
+                            {[2024,2025,2026,2027,2028].map(y=><option key={y} value={y}>{y}</option>)}
+                        </select>
+                    </div>
+                    <div className="flex-1 overflow-auto">
+                        <table className="w-full border-collapse">
+                            <thead>
+                                <tr>
+                                    <th className="p-3 bg-slate-800 sticky left-0 z-20 text-left text-xs font-bold text-slate-400 uppercase border-r border-slate-700 min-w-[200px]">Habit</th>
+                                    {days.map(d => (
+                                        <th key={d} className={`min-w-[40px] p-2 text-center border-r border-slate-700/50 bg-slate-800/80 text-xs font-bold text-slate-400 ${d.toDateString()===new Date().toDateString()?'text-blue-400':''}`}>
+                                            {d.getDate()}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {habits.map((h, i) => (
+                                    <tr key={i} className="border-b border-slate-700/50 hover:bg-white/5">
+                                        <td className="p-3 sticky left-0 z-10 bg-slate-900 border-r border-slate-700 text-sm font-medium text-slate-300 truncate">{h}</td>
+                                        {days.map(d => {
+                                            const k = d.toISOString().split('T')[0];
+                                            const done = (completionData[k]||[]).includes(i);
+                                            return (
+                                                <td key={k} onClick={()=>toggleHabit(k,i)} className={`cursor-pointer border-r border-slate-700/50 text-center hover:bg-white/10 ${done?'bg-green-500/20 text-green-500':''}`}>
+                                                    {done ? '✓' : ''}
+                                                </td>
+                                            )
+                                        })}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )
+        }
+
+        // Login Screen
+        function LoginScreen({ onLogin }) {
+            const [val, setVal] = useState('');
+            return (
+                <div className="min-h-screen bg-obsidian flex items-center justify-center p-4 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-blue-600/10 blur-[100px] pointer-events-none"></div>
+                    <div className="relative glass p-8 rounded-3xl w-full max-w-md border border-slate-700 shadow-2xl">
+                        <div className="text-center mb-8">
+                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 mx-auto flex items-center justify-center text-3xl font-bold text-white shadow-lg shadow-blue-500/30 mb-4">L</div>
+                            <h1 className="text-3xl font-black text-white tracking-tight">LIMITLESS</h1>
+                            <p className="text-slate-400 mt-2">Command Center Login</p>
+                        </div>
+                        <form onSubmit={(e)=>{e.preventDefault(); if(val.length>2) onLogin(val.toLowerCase().replace(/\s/g,'-'))}} className="space-y-4">
+                            <input value={val} onChange={e=>setVal(e.target.value)} placeholder="Enter your ID (e.g. sagar)" className="w-full bg-slate-900 border border-slate-700 p-4 rounded-xl text-white outline-none focus:border-blue-500 transition-colors" autoFocus />
+                            <button className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all transform active:scale-95 shadow-lg shadow-blue-600/30">Enter System</button>
+                        </form>
+                    </div>
+                </div>
+            )
         }
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -1410,13 +1558,6 @@
 
 
 
-
-
-
-
-
-
- 
 
 
 

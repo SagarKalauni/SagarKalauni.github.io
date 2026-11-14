@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
     <!-- Basic -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,12 +9,11 @@
     <!-- Mobile Metas -->
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-     <!-- Site Metas -->
-    <title>Sagar Kalauni - Portfolio</title>
-    <meta name="keywords" content="">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
+    <!-- Site Metas -->
+    <title>Sagar Kalauni, M.S. — Data Science Faculty & Operations Research Portfolio</title>
+    <meta name="keywords" content="Sagar Kalauni, Data Science Faculty, Lindenwood University, SIUE, Statistics, Operations Research, Machine Learning, Power BI, SQL, R, Python">
+    <meta name="description" content="Official Academic & Data Science Portfolio of Sagar Kalauni, M.S. — Full-Time Data Science Faculty at Lindenwood University and Operations Research Analyst.">
+    <meta name="author" content="Sagar Kalauni, M.S.">
 
     <!-- Site Icons -->
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
@@ -27,31 +27,143 @@
     <link rel="stylesheet" href="css/responsive.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/custom.css">
-	<script src="js/modernizr.js"></script> <!-- Modernizr -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="js/modernizr.js"></script>
 
-
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+    <style>
+        .role-card {
+            background: #ffffff;
+            border-left: 4px solid #c5b358;
+            border-radius: 6px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+        .role-card h3 {
+            margin-top: 0;
+            color: #1e293b;
+            font-weight: 700;
+            font-size: 20px;
+        }
+        .role-meta {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .badge-pill-gold {
+            display: inline-block;
+            background: #1e293b;
+            color: #c5b358;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin: 3px 4px 3px 0;
+        }
+        .lab-grid-card {
+            background: #1e293b;
+            color: #f8fafc;
+            border-radius: 8px;
+            padding: 22px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(197, 179, 88, 0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            height: calc(100% - 24px);
+        }
+        .lab-grid-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: #c5b358;
+        }
+        .lab-grid-card h4 {
+            color: #c5b358;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+        .lab-grid-card p {
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-bottom: 14px;
+        }
+        .lab-btn {
+            display: inline-block;
+            background: #c5b358;
+            color: #0f172a !important;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 13px;
+            text-decoration: none !important;
+            margin-right: 8px;
+            margin-top: 4px;
+        }
+        .lab-btn-outline {
+            display: inline-block;
+            background: transparent;
+            color: #f8fafc !important;
+            border: 1px solid #64748b;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 13px;
+            text-decoration: none !important;
+            margin-top: 4px;
+        }
+        .ml-portal-banner {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 2px solid #c5b358;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 36px;
+            color: #ffffff;
+            text-align: center;
+        }
+        .ml-portal-banner h2 {
+            color: #c5b358;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+        .ml-portal-banner p {
+            color: #e2e8f0;
+            font-size: 16px;
+            max-width: 820px;
+            margin: 0 auto 20px auto;
+        }
+        .ref-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .ref-card h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+    </style>
 </head>
+
 <body id="page-top" class="politics_version">
 
     <!-- LOADER -->
     <div id="preloader">
         <div id="main-ld">
-			<div id="loader"></div>
-		</div>
-    </div><!-- end loader -->
+            <div id="loader"></div>
+        </div>
+    </div>
     <!-- END LOADER -->
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
       <div class="container">
         <a class="navbar-brand js-scroll-trigger" href="#page-top">
-			<img class="img-fluid" src="images/logo.png" alt="" />
-		</a>
+            <img class="img-fluid" src="images/logo.png" alt="Sagar Kalauni" />
+        </a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           Menu
           <i class="fa fa-bars"></i>
@@ -62,46 +174,53 @@
               <a class="nav-link js-scroll-trigger active" href="#home">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#about">About Me</a>
+              <a class="nav-link js-scroll-trigger" href="#about">About</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#services">What I can Do..</a>
+              <a class="nav-link js-scroll-trigger" href="#Work Experience">Experience</a>
             </li>
-           <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#portfolio">Portfolio</a>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#interactive-labs">ML Masterclass &amp; Labs</a>
             </li>
- <!--            <li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#testimonials">Testimonials</a>
-            </li>-->
-			<li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#My graduate Courses">My graduate Courses</a>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#Portfolio">Awards</a>
             </li>
-			<li class="nav-item">
-              <a class="nav-link js-scroll-trigger" href="#Contact Me">Contact Me</a>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#portfolio">Projects</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#Contact Me">Contact</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
 
-	<section id="home" class="main-banner parallaxie" style="background: url('uploads/Sagar.jpeg')">
-		<div class="heading">
-			<h1>Hi, I am Sagar</h1>
-			<p>Data Enthusiast based in Glen Carbon, Illinois <br>Currently a grad student in Statistics & Data Science - Southern Illinois University Edwardsville</p>
-			<h3 class="cd-headline clip is-full-width">
-				<span>Experienced and Interested in</span>
-				<span class="cd-words-wrapper">
-					<b class="is-visible">Data Analysis</b>
-					<b>Data Science</b>
-					<b>Machine Learning</b>
-					<b>Statistics</b>
-          <b>Business Intelligence</b>
-				</span>
-			</h3>
-		</div>
-	</section>
+    <!-- HERO SECTION -->
+    <section id="home" class="main-banner parallaxie" style="background: url('uploads/Sagar.jpeg')">
+        <div class="heading">
+            <h1>Sagar Kalauni, M.S.</h1>
+            <p>Full-Time Data Science Faculty @ Lindenwood University | St. Charles, MO &amp; Glen Carbon, IL<br>
+            M.S. in Statistics &amp; Operations Research (GPA: 4.0/4.0) &amp; Post-Baccalaureate in Data Science — SIUE</p>
+            <h3 class="cd-headline clip is-full-width">
+                <span>Specializing in </span>
+                <span class="cd-words-wrapper">
+                    <b class="is-visible">Data Science &amp; Machine Learning</b>
+                    <b>Statistical Modeling &amp; Operations Research</b>
+                    <b>Interactive Visual Pedagogy</b>
+                    <b>Time Series &amp; Regression Analysis</b>
+                    <b>Power BI, SQL &amp; Business Intelligence</b>
+                </span>
+            </h3>
+            <div style="margin-top: 22px;">
+                <a href="https://ml-courses.netlify.app/" target="_blank" class="sim-btn btn-hover-new" data-text="Launch ML Course Portal"><span>🎓 Launch ML Masterclass Portal</span></a>
+                <a href="https://github.com/SagarKalauni" target="_blank" class="sim-btn btn-hover-new" data-text="GitHub Profile"><span>💻 GitHub (@SagarKalauni)</span></a>
+                <a href="https://www.linkedin.com/in/sagarkalauni7/" target="_blank" class="sim-btn btn-hover-new" data-text="LinkedIn Profile"><span>🔗 LinkedIn</span></a>
+            </div>
+        </div>
+    </section>
 
-	<svg id="clouds" class="hidden-xs" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 85 100" preserveAspectRatio="none">
+    <svg id="clouds" class="hidden-xs" xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="100" viewBox="0 0 85 100" preserveAspectRatio="none">
         <path d="M-5 100 Q 0 20 5 100 Z
             M0 100 Q 5 0 10 100
             M5 100 Q 10 30 15 100
@@ -126,330 +245,404 @@
         </path>
     </svg>
 
+    <!-- ABOUT SECTION -->
     <div id="about" class="section wb">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
                     <div class="message-box">
-                        <h2>About Sagar!</h2>
-                        <h3><strong>Profile</strong></h3>
-                              <ul>
-                                  <li>Detail-oriented and results-driven data analyst with a background in Data, Statistics and Visualization and 3+ years of experience in Data analysis.
-                                    Proven ability to analyze complex datasets, identify key trends and insights, and communicate findings effectively to both technical and non-technical stakeholders.
-                                    Expertise in Power BI, SQL, R, Tableau and Python with a strong foundation in data analysis methodologies and a passion for leveraging data to improve business outcomes.</li>
-                              </ul>
+                        <h2>About Sagar Kalauni, M.S.</h2>
+                        <h3><strong>Academic &amp; Professional Profile</strong></h3>
+                        <ul>
+                            <li>Motivated academic and data scientist with a rigorous background in <strong>Mathematics, Statistics, and Data Science</strong>, passionate about applied research, interactive teaching, and operational analytics.</li>
+                            <li>Over <strong>5+ years of university &amp; secondary teaching/tutoring experience</strong> across Machine Learning, Regression Analysis, Time Series Forecasting, Probability &amp; Mathematical Statistics, Calculus, and Quantitative Reasoning.</li>
+                            <li><strong>Two-time SIUE Honored Student</strong> receiving multiple fellowships and awards for Data Analysis and Teaching Excellence. A proud first-generation college graduate committed to making complex mathematical and statistical concepts accessible and engaging in inclusive learning environments.</li>
+                        </ul>
 
-                              <h3><strong>Personality</strong></h3>
-                                    <ul>
-                                        <li>Technical person with emotional Intelligence and humble beginning, that everyone wants to be around with</li>
-                                    </ul>
+                        <h3><strong>Education</strong></h3>
+                        <ul>
+                            <li><strong>SOUTHERN ILLINOIS UNIVERSITY EDWARDSVILLE (SIUE)</strong> (Aug 2022 – Dec 2024)
+                                <ul>
+                                    <li><strong>Master of Science, Statistics &amp; Operations Research</strong> — <strong>Overall GPA: 4.0 / 4.0</strong></li>
+                                    <li><strong>Post-Baccalaureate Certificate, Data Science</strong></li>
+                                </ul>
+                            </li>
+                            <li><strong>TRIBHUVAN UNIVERSITY – NEPAL</strong> (Jan 2016 – Nov 2020)
+                                <ul>
+                                    <li><strong>Bachelor of Science, Mathematics</strong> — GPA: 68.8 / 100</li>
+                                </ul>
+                            </li>
+                        </ul>
 
-                              <h3><strong>Skills</strong></h3>
-                              <ul>
-                                  <li><strong>Technical Skills:</strong> Power BI, SQL, R, Power Query M language, DAX, Microsoft PowerPoint, Power Apps, Microsoft Excel/Google Sheets, SharePoint, IBM Maximo, RStudio, Python, Tableau, Arena, Teams, Microsoft Word.</li>
-                                  <li><strong>Data Analysis Skills:</strong> ETL (Extract, Transform, Load), Data Visualization, Machine Learning, Dashboarding, Web Scraping, Statistics, Trend Analysis, and Data-driven Decision-making.</li>
-                                  <li><strong>Soft Skills:</strong> Problem-solving, critical thinking, and attention to detail (from a math background); teamwork, time management, leadership, collaboration, communication, and creativity (as a content creator); adaptability, eagerness to learn, and thankfulness (as an international student).</li>
-                              </ul>
+                        <h3><strong>Comprehensive Skills</strong></h3>
+                        <ul>
+                            <li><strong>Academic &amp; Pedagogical Skills:</strong> Curriculum Design, Beamer/LaTeX Typesetting, Interactive Web Simulation Pedagogy (D3.js/MathJax), Academic Advising, Multidisciplinary Research Collaboration, Technical Communication, and Public Speaking.</li>
+                            <li><strong>Technical Arsenal:</strong> SQL (Oracle, SQLite, PostgreSQL), Python, R &amp; RStudio, Power BI, DAX, Power Query (M Language), Tableau, SAS, Excel, Arena Simulation, IBM Maximo, Git/GitHub.</li>
+                            <li><strong>Data Science &amp; Statistical Modeling:</strong> Machine Learning, Regression Analysis, Time Series Analysis &amp; Forecasting, Predictive Modeling, Handling Imbalanced/Rare-Event Data (SMOTE &amp; Finite Sample Correction), ETL Pipelines, Web Scraping, Executive Dashboarding.</li>
+                            <li><strong>Core Competencies:</strong> Analytical problem-solving, critical thinking, adaptability, cross-functional teamwork, and extreme attention to detail.</li>
+                        </ul>
 
-                              <h3><strong>Education</strong></h3>
-                              <ul>
-                                  <li><strong>SOUTHERN ILLINOIS UNIVERSITY – EDWARDSVILLE</strong> (Aug 2022 – Dec 2024)
-                                      <ul>
-                                          <li>Master of Science, Statistics & Operations Research, GPA: 4/4</li>
-                                          <li>Post-Baccalaureate Degree, Data Science, overall GPA: 3.917/4</li>
-                                      </ul>
-                                  </li>
-                                  <li><strong>TRIBHUVAN UNIVERSITY – NEPAL</strong> (Aug 2016 – Jul 2020)
-                                      <ul>
-                                          <li>Bachelor of Science, Mathematics, GPA: 68.80/100</li>
-                                      </ul>
-                                  </li>
-                              </ul>
-						<!-- <p>To know more about me in a formal way you can view and save my Resume.</p> -->
-
-                        <a href="uploads/Professional_Resume_Sagar.pdf" class="sim-btn btn-hover-new" data-text="View updated Resume" target="_blank" ><span>View updated Resume</span></a>
-                    </div><!-- end messagebox -->
-                </div><!-- end col -->
+                        <a href="uploads/Professional_Resume_Sagar.pdf" class="sim-btn btn-hover-new" data-text="View Resume PDF" target="_blank"><span>📄 View Resume PDF</span></a>
+                        <a href="https://www.linkedin.com/in/sagarkalauni7/" class="sim-btn btn-hover-new" data-text="Connect on LinkedIn" target="_blank"><span>🔗 LinkedIn Profile</span></a>
+                    </div>
+                </div>
 
                 <div class="col-md-6">
                     <div class="right-box-pro wow fadeIn">
-                        <img src="uploads/about_04.jpg" alt="" class="img-fluid img-rounded">
-                    </div><!-- end media -->
-                </div><!-- end col -->
-            </div><!-- end row -->
-        </div><!-- end container -->
-    </div><!-- end section -->
+                        <img src="uploads/about_04.jpg" alt="Sagar Kalauni" class="img-fluid img-rounded">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- WORK EXPERIENCE & RESEARCH SECTION -->
+    <div id="Work Experience" class="section lb">
+        <div class="container">
+            <div class="section-title text-left">
+                <h3>Academic Appointments, Industry Experience &amp; Research</h3>
+                <p>Bridging university data science instruction, multidisciplinary academic research, and high-impact industry analytics.</p>
+            </div>
 
-    <!-- added new section for work experiences-->
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="message-box">
 
-        <div id="Work Experience" class="section wb">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="message-box">
-                            <h2>Work Experiences</h2>
+                        <!-- 1. LINDENWOOD UNIVERSITY -->
+                        <div class="role-card">
+                            <h3>🦁 LINDENWOOD UNIVERSITY — St. Charles, MO</h3>
+                            <span class="role-meta">Full-Time Data Science Faculty | Aug 2025 – Present</span>
+                            <ul>
+                                <li><strong>Instruction &amp; Curriculum:</strong> Deliver engaging lectures and design rigorous coursework for core undergraduate and special-topics Statistics and Data Science courses.</li>
+                                <li><strong>Course Development &amp; Pioneering:</strong> Authored structured lab assignments, Beamer/LaTeX presentation slides, and Canvas LMS modules. Pioneered and introduced new special-topics courses into the Lindenwood University catalog, including <em>Time Series Analysis &amp; Forecasting</em>, <em>SQL for Data Analysis</em>, and <em>Data Visualization &amp; Storytelling Using Power BI</em>.</li>
+                                <li><strong>Student Engagement &amp; Simulation Pedagogy:</strong> Modernized curricula by integrating interactive web-based D3.js/MathJax simulations for complex machine learning concepts and gamified labs (e.g., <a href="https://sagarkalauni.github.io/LU-sql-project/" target="_blank">The Lindenwood Missing Golden Lion Trophy SQL Mystery</a>), consistently achieving full class enrollment and top faculty evaluation scores.</li>
+                                <li><strong>Multidisciplinary Collaboration &amp; Mentorship:</strong> Partnered with Biology and Botany faculty to mentor multidisciplinary student research, including a regression study on the <em>Effects of Gibberellic Acid (GA<sub>3</sub>) on Mutant Millet (Setaria viridis) Growth</em>.</li>
+                                <li><strong>Academic Advising:</strong> Serve as an official academic advisor for students across Data Science, Cybersecurity, and Information Technology programs (developed the <a href="https://sagarkalauni.github.io/lu-cyber-advisor/" target="_blank">LU Cyber Advisor &amp; PPG Generator</a>).</li>
+                            </ul>
+                            <h4 style="font-size:15px; font-weight:700; margin-top:12px;">📚 Course Rotation at Lindenwood University:</h4>
+                            <p style="margin-bottom:6px;"><strong>Fall Rotation:</strong></p>
+                            <div>
+                                <span class="badge-pill-gold">MTH 34200 Probability &amp; Math Statistics II</span>
+                                <span class="badge-pill-gold">MTH 35300 Time Series Analysis &amp; Forecasting</span>
+                                <span class="badge-pill-gold">DSCI 30100 Data Analysis With R</span>
+                                <span class="badge-pill-gold">DSCI 39023 SQL for Business/Data Analysis</span>
+                                <span class="badge-pill-gold">MTH 14100 Basic Statistics</span>
+                            </div>
+                            <p style="margin:8px 0 6px 0;"><strong>Spring Rotation:</strong></p>
+                            <div>
+                                <span class="badge-pill-gold">DSCI 35600 Machine Learning</span>
+                                <span class="badge-pill-gold">MTH 34500 Regression Analysis</span>
+                                <span class="badge-pill-gold">MTH 30200 Data Visualization &amp; Storytelling (Power BI)</span>
+                                <span class="badge-pill-gold">MTH 39500 Prep for Industrial Careers in Math Sciences</span>
+                                <span class="badge-pill-gold">MTH 14100 Basic Statistics</span>
+                            </div>
+                        </div>
 
-      <h3><strong>PRARIE STATE GENERATING COMPANY</strong></h3>
-      <ul>
-          <li><strong>Position:</strong> Analytics & Insight Intern</li>
-          <li><strong>Work type:</strong> Full time (on Site)</li>
-          <li><strong>Worked period:</strong> May 2024 - Aug 2024</li>
-          <li><strong>Supervisor:</strong> Josh Hagene</li>
-          <li><strong>HR:</strong> Mackenzie Tabing</li>
-          <li><strong>Department:</strong> Data Analytics</li>
-          <li><strong>Link:</strong> <a href="https://prairiestateenergycampus.com/" target="_blank">Prairie State Generating Company</a></li>
-      </ul>
+                        <!-- 2. ALLIANCETEL -->
+                        <div class="role-card">
+                            <h3>📊 ALLIANCETEL — Lackland, MO (Remote)</h3>
+                            <span class="role-meta">Operations Data Analyst | May 2025 – Aug 2025</span>
+                            <ul>
+                                <li><strong>Executive Dashboarding &amp; Telemetry:</strong> Designed, developed, and maintained interactive business intelligence dashboards and automated reporting systems—including the <strong>Express Leader Board (ELB)</strong>—using Power BI and internal platforms to provide stakeholders with real-time operational KPIs.</li>
+                            </ul>
+                        </div>
 
-      <h4><strong>Completed Projects</strong></h4>
-      <ul>
-          <li>->Analyzed Finished and Unfinised Work Orders for 2024: Identified discrepancies in planned vs actual spending across service, hours, and materials for each work order, resulting in twofold enhancement in budget efficiency for work orders.</li>
-          <li>->Conducted ABC and Item Count Analysis: Analyzed over 24,000 items in plant and mine inventory, driving improvements in quality and operational efficiency for a $**.* million plant and mine warehouse inventory.</li>
-          <li>->Developed Dashboards for Repairable Items and Shutdown Dates: Created and implemented dashboards that improved tracking efficiency by 99%, significantly enhancing the company’s operational oversight.</li>
-      </ul>
+                        <!-- 3. ROYAL CELLULAR INC -->
+                        <div class="role-card">
+                            <h3>📈 ROYAL CELLULAR INC. — Illinois, USA</h3>
+                            <span class="role-meta">Operations Data Analyst | Feb 2025 – Apr 2025</span>
+                            <ul>
+                                <li><strong>Facility &amp; Layout Optimization:</strong> Analyzed retail facility layouts to optimize space utilization, customer traffic flow, and staff resource allocation.</li>
+                                <li><strong>Revenue &amp; Pricing Strategy:</strong> Evaluated promotional campaigns and pricing elasticity to identify purchasing trends, forecast demand, and maximize store revenue.</li>
+                            </ul>
+                        </div>
 
-      <h4><strong>About PSGC projects</strong></h4>
-      <ul>
-          <li>©PSGC, Analyst-Sagar Kalauni, permision by @Josh</li>
-      </ul>
-                  <a href="https://docs.google.com/presentation/d/1bcy-Af-n4AHKHzUXkLFBsvILtfpdIDa2/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="WorkOrder Analysis" target="_blank" ><span>see PSGC work project</span></a>
-                  <a href="https://docs.google.com/presentation/d/1L4ueS1Igl9kG35Gxi438J9kZD7tTuiBv/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="Inventory Management Analysis" target="_blank" ><span>see next PSGC work project</span></a>
-                  <a href="https://docs.google.com/presentation/d/1UUEpb5YDIBAP83CIcIf7lBdajSaissEH/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="ABC Analysis" target="_blank" ><span>see next PSGC work project</span></a>
-                  <a href="https://docs.google.com/presentation/d/1icgpWt_i2HzSs3ltx-rECT0tWBVeBcYT/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="Repairable Item Track Analysis" target="_blank" ><span>see next PSGC work project</span></a>
-                  <a href="https://docs.google.com/presentation/d/11e3E290zNbcIDxhwqNiMP2_ybxxPmUew/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="Updated dashboards only" target="_blank" ><span>see next PSGC work project</span></a>
-                  <a href="https://docs.google.com/presentation/d/18yNXfvPTsIia6WSsqwo9QBvyXtZeP7nW/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="Shut down date analysis" target="_blank" ><span>see next PSGC work project</span></a>
+                        <!-- 4. SIUE TA-INSTRUCTOR -->
+                        <div class="role-card">
+                            <h3>🎓 SOUTHERN ILLINOIS UNIVERSITY EDWARDSVILLE (SIUE) — Edwardsville, IL</h3>
+                            <span class="role-meta">Teaching Assistant – Instructor (May 2024 – Dec 2024) &amp; Graduate Teaching Assistant (Aug 2022 – May 2024)</span>
+                            <ul>
+                                <li><strong>Course Instruction (QR-101):</strong> Led primary lectures and discussions for Quantitative Reasoning (QR-101), focusing on financial mathematics (credit card amortization, loan structures, compound interest) and real-world analytical problem solving alongside faculty and 7 TAs.</li>
+                                <li><strong>Calculus &amp; Statistics Recitations:</strong> Led recitation problem-solving sessions for <strong>Calculus I, II, and III</strong>, conducted hands-on Excel/worksheet labs for QR-101 and Pre-Algebra, and mentored students in the SIUE Math Tutor Lab.</li>
+                            </ul>
+                        </div>
 
+                        <!-- 5. PRAIRIE STATE GENERATING COMPANY -->
+                        <div class="role-card">
+                            <h3>⚡ PRAIRIE STATE GENERATING COMPANY — Marissa, IL</h3>
+                            <span class="role-meta">Business Data Analyst Intern – Analytics &amp; Insights | May 2024 – Aug 2024</span>
+                            <ul>
+                                <li><strong>Work Order Variance Analysis (2024):</strong> Audited planned vs. actual expenditures across service, labor hours, and materials, identifying key discrepancies and <strong>doubling (2x) budget efficiency</strong>.</li>
+                                <li><strong>ABC &amp; Warehouse Inventory Optimization:</strong> Analyzed <strong>24,000+ inventory items</strong> across a <strong>$46.9M plant and mine warehouse</strong> to drive operational and quality improvements.</li>
+                                <li><strong>Automated Telemetry Dashboards:</strong> Engineered Python, Power BI, and Tableau dashboards for repairable items and plant shutdown schedules, improving tracking efficiency by <strong>99%</strong>.</li>
+                            </ul>
+                            <div style="margin-top: 10px;">
+                                <a href="https://docs.google.com/presentation/d/1bcy-Af-n4AHKHzUXkLFBsvILtfpdIDa2/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="WorkOrder Analysis" target="_blank"><span>WorkOrder Analysis</span></a>
+                                <a href="https://docs.google.com/presentation/d/1L4ueS1Igl9kG35Gxi438J9kZD7tTuiBv/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="Inventory Analysis" target="_blank"><span>Inventory Analysis</span></a>
+                                <a href="https://docs.google.com/presentation/d/1UUEpb5YDIBAP83CIcIf7lBdajSaissEH/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="ABC Analysis" target="_blank"><span>ABC Analysis</span></a>
+                                <a href="https://docs.google.com/presentation/d/1icgpWt_i2HzSs3ltx-rECT0tWBVeBcYT/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="Repairable Item Track" target="_blank"><span>Repairable Items</span></a>
+                                <a href="https://docs.google.com/presentation/d/18yNXfvPTsIia6WSsqwo9QBvyXtZeP7nW/edit?usp=sharing&ouid=104361064059932714027&rtpof=true&sd=true" class="sim-btn btn-hover-new" data-text="Shutdown Analysis" target="_blank"><span>Shutdown Analysis</span></a>
+                            </div>
+                        </div>
 
-      <h3><strong>GRADUATE TEACHING ASSISTANT/ Instructor</strong></h3>
-      <ul>
-          <li><strong>Position:</strong> Teaching Assistant/Specialist</li>
-          <li><strong>Work type:</strong> Full time (on campus)</li>
-          <li><strong>Worked period:</strong> Aug 2022 - Dec 2024</li>
-          <li><strong>Supervisor:</strong> Steven Morrese</li>
-          <li><strong>HR:</strong> Marcus Agustin</li>
-          <li><strong>Department:</strong> Mathematics and Statistics @ SIUe</li>
-          <li><strong>Link:</strong> <a href="https://www.siue.edu/arts-and-sciences/math/" target="_blank">SIUe Mathematics and Statistics Department</a></li>
-      </ul>
+                        <!-- 6. BAL JAGRITEE -->
+                        <div class="role-card">
+                            <h3>📐 BAL JAGRITEE HIGHER SECONDARY SCHOOL — Nepal</h3>
+                            <span class="role-meta">Mathematics Teacher (Part-Time) | May 2016 – Apr 2022</span>
+                            <ul>
+                                <li>Designed and delivered mathematics curricula across Algebra, Geometry, and Calculus for secondary-level students, mentoring students for national competitive examinations.</li>
+                            </ul>
+                        </div>
 
-      <h4><strong>Duties</strong></h4>
-      <ul> I was among very few students who got a chance to work as an Instructor while doing master's. I worked as Instructor for QR 101 along with other 2 professors and we do have 7 different teaching assistant working under us.
-          <li>•Taught students how to calculate credit card interest, minimum payments, and impact of credit utilization, providing an understanding of how credit card debt affects creditworthiness and financial stability, key skills for assessing individual and business credit risk.</li>
-          <li>•Instructed students on loan repayment structures, including student loans, mortgages, and auto loans, focusing on calculating loan terms, interest rates, and amortization schedules to assess an applicant's financial capacity and risk profile when making lending decisions.</li>
-          <li>•Developed and delivered engaging lessons on consumer math, including simple and compound interest, installment buying, and investing in stocks and bonds, aligning closely with financial analysis principles.</li>
-      </ul>
+                        <!-- 7. THESIS & RESEARCH -->
+                        <div class="role-card">
+                            <h3>🔬 Academic Research, Theses &amp; Publications</h3>
+                            <ul>
+                                <li><strong>Master’s Thesis (SIUE):</strong> <em>Model and Algorithm-Based Approach for Handling Imbalanced Datasets: Handling Rare Event Data with Finite Sample Correction and SMOTE</em> (Advisor: Dr. Beidi Qiang). Developed bias-corrected logistic regression and SMOTE pipelines in R to detect rare oncology/disease events, drug efficacy, and financial credit fraud.</li>
+                                <li><strong>Summer Research Paper (University of Michigan — MREG):</strong> <em>Mistake Bounds for Multiclass Perceptron Algorithms</em>. Investigated the numerical gap between theoretical mistake bounds in online multiclass perceptron algorithms and presented findings at the University of Michigan (<a href="https://drive.google.com/file/d/1jIqnpLStHFWC5HPXgR4HPGY2ChyjLAIr/view" target="_blank">View Paper</a>).</li>
+                                <li><strong>Multidisciplinary Student Research (Lindenwood University):</strong> <em>Effects of Gibberellic Acid (GA<sub>3</sub>) on Growth in Setaria viridis Mutant Families</em>. Guided statistical regression modeling investigating hormone sensitivity on stem elongation and panicle development across eight genetic mutant families.</li>
+                                <li><strong>Undergraduate Thesis (Tribhuvan University):</strong> <em>Cryptography Using Matrices</em>. Explored invertible matrix transformations for message encryption/decryption; presented at the <strong>Nepal Mathematical Society (NMS)</strong> with commendation from former NMS President Dr. Chet Raj Bhatt, and adapted into the interactive <a href="https://sagarkalauni.github.io/game/" target="_blank">Cryptography Mind Read Game</a> (100% deterministic accuracy).</li>
+                            </ul>
+                        </div>
 
-      <h3><strong>DATA/CONTENT ANALYST</strong></h3>
-      <ul>
-          <li><strong>Position:</strong> Content Creator</li>
-          <li><strong>Work type:</strong> Part time (on site)</li>
-          <li><strong>Worked period:</strong> May 2020 - Feb 2021</li>
-          <li><strong>Supervisor:</strong> Prakash Bhatt</li>
-          <li><strong>HR:</strong> Manisha bhatt kalauni</li>
-          <li><strong>Department:</strong> Aasirbad Online Media</li>
-          <li><strong>Link:</strong> <a href="https://www.sudurkhabar.com/" target="_blank">Sudurpashim Khabar</a></li>
-          <li><strong>Sub Department:</strong> Sudur Khabar One</li>
-      </ul>
+                    </div>
+                </div>
 
-      <h4><strong>Duties</strong></h4>
-      <ul>
-          <li>->Facilitated data-driven decision-making by analyzing viewership trends and contributed to content creation and story writing for a major online media outlet in Far West Nepal.</li>
-      </ul>
+                <div class="col-md-5">
+                    <div class="right-box-pro wow fadeIn">
+                        <img src="uploads/PSGC intern book.jpg" alt="Prairie State Analytics" class="img-fluid img-rounded" style="margin-bottom: 18px;">
+                        <img src="uploads/Psgc work from home pic.jpg" alt="Data Analytics Work" class="img-fluid img-rounded" style="margin-bottom: 18px;">
+                        <img src="uploads/Presentation1 new.jpg" alt="Research Presentation" class="img-fluid img-rounded" style="margin-bottom: 18px;">
+                        <img src="uploads/With professors.jpg" alt="With Faculty Advisors" class="img-fluid img-rounded" style="margin-bottom: 18px;">
+                        <img src="uploads/content creator.jpg" alt="Community Engagement" class="img-fluid img-rounded">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<!-- <p>Added new section for thesis and papers.</p> -->
+    <!-- INTERACTIVE ML MASTERCLASS & PEDAGOGICAL SUITE -->
+    <div id="interactive-labs" class="section wb">
+        <div class="container">
+            <div class="ml-portal-banner">
+                <h2>🎓 Machine Learning Masterclass — Full Course Portal</h2>
+                <p>An interactive, end-to-end learning platform designed for university students and self-learners—featuring <strong>50+ structured lectures</strong> (Python for ML, Mathematical Foundations, Supervised &amp; Unsupervised Learning), <strong>34 chapters of Cognitive Theory &amp; Coding Practice Tests</strong>, and a live <strong>Production ML Prediction Sandbox</strong>.</p>
+                <a href="https://ml-courses.netlify.app/" target="_blank" class="lab-btn" style="padding: 12px 28px; font-size: 16px;">🚀 Launch ML Course Portal (ml-courses.netlify.app)</a>
+                <a href="https://github.com/SagarKalauni" target="_blank" class="lab-btn-outline" style="padding: 11px 22px; font-size: 15px;">View All 24 Repositories on GitHub</a>
+            </div>
 
-      <h3><strong>Thesis & Papers</strong></h3>
-      <ul>
-          <li><strong>Master's Thesis:</strong>Handeling Rare Event Data with Finite Sample Correction and SMOTE</li>
-          <li><strong>Undergraduate Senior project</strong> Applications of Matrices: Cryptography Using Matrices</li>
-          <li><strong>MREG Paper</strong> Mistake Bound for Multiclass Preceptron Algorithm</li>
-          <li><strong>Link:</strong> <a href="https://drive.google.com/file/d/1jIqnpLStHFWC5HPXgR4HPGY2ChyjLAIr/view" target="_blank">MREG paper</a></li>
-      </ul>
+            <div class="section-title text-left">
+                <h3>Interactive Machine Learning, Statistics &amp; Academic Web Suite</h3>
+                <p>Pioneered for Lindenwood University coursework: 20+ zero-dependency client-side interactive simulations built with D3.js, MathJax, SQLite, and Vanilla ES6+ JavaScript.</p>
+            </div>
 
-      <h4><strong>Duties</strong></h4>
-      <ul>
-          <li>My master’s thesis was on “Handling Rare Event Data with Finite Sample Correction and SMOTE.” In this work, we modified the logistic regression model to improve its predictive ability in the context of rare event data. As an example, we used this corrected model to predict breast cancer in patients, which is a one of the cases of rare event data.
-             We didn’t stop there—we also applied a data-based technique (SMOTE) to handle rare event data. Finally, we demonstrated how predictions improved significantly after applying the model correction as well as the data-based technique.
-              To showcase the effectiveness of our corrected model, we performed simulation studies. We simulated millions of data points with rare event scenarios, applied our corrected model, and showed that its coefficients provided more accurate estimates of the actual population values. This led to more reliable predictions. Our study particularly highlighted how well the model performed when the sample size was small. For all simulations, I used R programming.</li>
-          <li>I was the first in the Tribhuvan University SNSC campus to do the project in Final year of the Undergraduate degree in Mathematics. We were directly supported by Nepal Mathematical Society and by giving us workshop. For my final presentaion, my project committee includes President of Nepal Mathematical society Dr Chet Raj Bhatt. I worked on cryptography using matrices, where we were using matrices to encode and decode the message.</li>
-          <li> For the summer of 2023, I spent 15 days in the university of Michigan for the research purpose and we as a team worked on the Machine learning topic, completed it and presented it MREG. It was a summer research program funded by University of Michigan
-      </ul>
-                <!-- <p>To know more about me in a formal way you can view and save my Resume.</p> -->
+            <div class="row">
+                <div class="col-md-4 col-sm-6">
+                    <div class="lab-grid-card">
+                        <h4>🦁 The Lindenwood SQL Mystery</h4>
+                        <p><em>The Case of the Missing Golden Lion</em> — Forensic SQL investigation game built on an 8-table relational SQLite schema for DSCI 39023.</p>
+                        <a href="https://sagarkalauni.github.io/LU-sql-project/" target="_blank" class="lab-btn">Play SQL Game</a>
+                        <a href="https://github.com/SagarKalauni/LU-sql-project" target="_blank" class="lab-btn-outline">GitHub</a>
+                    </div>
+                </div>
 
-                        </div><!-- end messagebox -->
-                    </div><!-- end col -->
+                <div class="col-md-4 col-sm-6">
+                    <div class="lab-grid-card">
+                        <h4>🛡️ LU Cyber Advisor &amp; PPG</h4>
+                        <p>Intelligent degree advisor with "Leo the Lion", client-side PDF transcript parsing (PDF.js), topological course scheduling, and Excel PPG export.</p>
+                        <a href="https://sagarkalauni.github.io/lu-cyber-advisor/" target="_blank" class="lab-btn">Launch Advisor</a>
+                        <a href="https://github.com/SagarKalauni/lu-cyber-advisor" target="_blank" class="lab-btn-outline">GitHub</a>
+                    </div>
+                </div>
 
-                    <div class="col-md-6">
-                        <div class="right-box-pro wow fadeIn">
-                            <img src="uploads/PSGC intern book.jpg" alt="" class="img-fluid img-rounded">
-                            <img src="uploads/Psgc work from home pic.jpg" alt="" class="img-fluid img-rounded">
-                            <img src="uploads/Presentation1 new.jpg" alt="" class="img-fluid img-rounded">
-                            <img src="uploads/With professors.jpg" alt="" class="img-fluid img-rounded">
-                            <img src="uploads/content creator.jpg" alt="" class="img-fluid img-rounded">
-                        </div><!-- end media -->
-                    </div><!-- end col -->
-                </div><!-- end row -->
-            </div><!-- end container -->
-        </div><!-- end section -->
+                <div class="col-md-4 col-sm-6">
+                    <div class="lab-grid-card">
+                        <h4>📓 DSCI 35600 Notebook Converter</h4>
+                        <p>Academic reporting utility converting Jupyter Notebooks (<code>.ipynb</code>) and Markdown labs into syntax-highlighted PDF reports.</p>
+                        <a href="https://sagarkalauni.github.io/notebook-converter/" target="_blank" class="lab-btn">Launch Converter</a>
+                        <a href="https://github.com/SagarKalauni/notebook-converter" target="_blank" class="lab-btn-outline">GitHub</a>
+                    </div>
+                </div>
 
+                <div class="col-md-4 col-sm-6">
+                    <div class="lab-grid-card">
+                        <h4>🔐 Matrix Cryptography Mind Reader</h4>
+                        <p>Interactive applied math game using invertible matrix transformations from undergraduate thesis research (100% accuracy).</p>
+                        <a href="https://sagarkalauni.github.io/game/" target="_blank" class="lab-btn">Play Game</a>
+                        <a href="https://github.com/SagarKalauni/game" target="_blank" class="lab-btn-outline">GitHub</a>
+                    </div>
+                </div>
 
+                <div class="col-md-4 col-sm-6">
+                    <div class="lab-grid-card">
+                        <h4>🎯 K-Means Clustering Lab</h4>
+                        <p>Interactive D3.js simulation of Lloyd's algorithm, centroid convergence, Voronoi tessellation, and the WCSS Elbow method.</p>
+                        <a href="https://sagarkalauni.github.io/k-mean-clustering/" target="_blank" class="lab-btn">Launch Lab</a>
+                        <a href="https://github.com/SagarKalauni/k-mean-clustering" target="_blank" class="lab-btn-outline">GitHub</a>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6">
+                    <div class="lab-grid-card">
+                        <h4>🌲 Random Forest &amp; Decision Trees</h4>
+                        <p>Interactive CART recursive splitting (Gini/Entropy) and Random Forest bagging ensemble variance-reduction visualizers.</p>
+                        <a href="https://sagarkalauni.github.io/random-forest/" target="_blank" class="lab-btn">Random Forest</a>
+                        <a href="https://sagarkalauni.github.io/decision-tree/" target="_blank" class="lab-btn-outline">Decision Tree</a>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6">
+                    <div class="lab-grid-card">
+                        <h4>⚡ Linear &amp; RBF Kernel SVM</h4>
+                        <p>Maximum-margin hyperplanes, support vectors, soft-margin $C$, and non-linear Radial Basis Function kernel trick (\gamma, C) tuning.</p>
+                        <a href="https://sagarkalauni.github.io/rbf-kernel-svm/" target="_blank" class="lab-btn">RBF Kernel SVM</a>
+                        <a href="https://sagarkalauni.github.io/support-vector-machine/" target="_blank" class="lab-btn-outline">Linear SVM</a>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6">
+                    <div class="lab-grid-card">
+                        <h4>📈 OLS, Logistic &amp; Regularization</h4>
+                        <p>Ordinary Least Squares residuals, Sigmoid cross-entropy classification, and $L_1$ Lasso vs. $L_2$ Ridge constraint contours.</p>
+                        <a href="https://sagarkalauni.github.io/linear-regression/" target="_blank" class="lab-btn">OLS Lab</a>
+                        <a href="https://sagarkalauni.github.io/logistic-regression/" target="_blank" class="lab-btn">Logistic</a>
+                        <a href="https://sagarkalauni.github.io/Regularization/" target="_blank" class="lab-btn-outline">L1/L2</a>
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-6">
+                    <div class="lab-grid-card">
+                        <h4>📐 Statistical Inference &amp; Diagnostics</h4>
+                        <p>Interactive labs for Bootstrapping, Q-Q Normality Plots, Confidence vs. Prediction Intervals, Confusion Matrix, KNN, and CV Splits.</p>
+                        <a href="https://sagarkalauni.github.io/bootstrap/" target="_blank" class="lab-btn">Bootstrap</a>
+                        <a href="https://sagarkalauni.github.io/confidence-and-prediction-interval/" target="_blank" class="lab-btn">CI vs PI</a>
+                        <a href="https://sagarkalauni.github.io/qq-plot/" target="_blank" class="lab-btn-outline">Q-Q Plot</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COURSES BANNER -->
     <section id="My graduate Courses" class="main-banner parallaxie" style="background: url('uploads/web pic.jpg')">
-  		<div class="heading">
-  			<h1>My Graduate courses</h1>
-  			<p>With an MS in Statistics and a PBC in Data Science,<br> I've completed diverse courses covering statistical methods, machine learning, data visualization, and database management, providing me with comprehensive skills for data analysis.</p>
-  			<h3 class="cd-headline clip is-full-width">
-  				<span>My courses Includes</span>
-  				<span class="cd-words-wrapper">
-  					<b class="is-visible">Fundamentals of Data Science</b>
-  					<b>Machine learning and classification</b>
-  					<b>Oracle SQL for Business Analytics</b>
-  					<b>Predictive Modeling and Visualization</b>
-            <b>Discrete Multivariate Analysis</b>
-            <b>Multivariate Analysis</b>
-            <b>Advanced Simulation Modeling</b>
-  				</span>
-  			</h3>
-  		</div>
-  	</section>
+        <div class="heading">
+            <h1>Graduate &amp; Faculty Course Portfolio</h1>
+            <p>Combining an M.S. in Statistics &amp; Operations Research (4.0 GPA) and a Post-Baccalaureate in Data Science<br>
+            with university instruction across Statistical Modeling, Machine Learning, Time Series, SQL, R, and Power BI.</p>
+            <h3 class="cd-headline clip is-full-width">
+                <span>Core Courses Include </span>
+                <span class="cd-words-wrapper">
+                    <b class="is-visible">Machine Learning &amp; Classification (DSCI 35600)</b>
+                    <b>Time Series Analysis &amp; Forecasting (MTH 35300)</b>
+                    <b>Regression Analysis &amp; Diagnostics (MTH 34500)</b>
+                    <b>Probability &amp; Mathematical Statistics II (MTH 34200)</b>
+                    <b>Data Visualization &amp; Storytelling with Power BI (MTH 30200)</b>
+                    <b>SQL for Business &amp; Data Analysis (DSCI 39023)</b>
+                    <b>Data Analysis with R (DSCI 30100)</b>
+                </span>
+            </h3>
+        </div>
+    </section>
 
-
-
+    <!-- AWARDS, HONORS & CERTIFICATIONS -->
     <div id="Portfolio" class="section wb">
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
                     <div class="message-box">
-                        <h2>Awards Honors and Certification</h2>
-                        <h3>Awards</h3>
-                            <ul>
-                               <li><strong>Graduate Teaching Assistantship</strong></li>
-                               <li><strong>Geographic Enhancement Opportunity (GEO) Award</strong></li>
-                            </ul>
+                        <h2>Awards, Honors &amp; Certifications</h2>
+                        <h3><strong>Academic &amp; Faculty Honors</strong></h3>
+                        <ul>
+                            <li><strong>2025 — Best Incoming Faculty Nominee</strong> at <strong>Lindenwood University</strong></li>
+                            <li><strong>2024 — Greg and Mary Ann Budzban Scholarship for Data Analysis</strong> (SIUE Honors Day — recognized for exceptional data analysis and innovative problem-solving in graduate coursework)</li>
+                            <li><strong>2024 — Matthew Samsel Graduate Assistant Fellowship in Mathematics &amp; Statistics</strong> (SIUE Honors Day — awarded for outstanding graduate scholarship and teaching)</li>
+                            <li><strong>2022 — Graduate Teaching Assistantship &amp; Geographic Enhancement Opportunity (GEO) Award</strong> (SIUE)</li>
+                            <li><strong>2019 — SNSC Student of the Year in Mathematics Department</strong> (Tribhuvan University)</li>
+                        </ul>
 
-                        <h3>Honors</h3>
+                        <h3><strong>Professional Certifications</strong></h3>
                         <ul>
                             <li>
-                                <strong>2024 SIUe Honor Student:</strong> Awarded two major honors awards on April 30th during SIUe Honors Day.
+                                <strong>Microsoft Power BI &amp; Business Intelligence:</strong>
                                 <ul>
-                                    <li>
-                                        <strong>Greg and Mary Ann Budzban Scholarship for Data Analysis:</strong> Recognized for exceptional data analysis and unique problem-solving skills demonstrated in my data science coursework.
-                                    </li>
-                                    <li>
-                                        <strong>Matthew Samsel Graduate Assistant Fellowship in Mathematics & Statistics:</strong> Awarded for outstanding performance in graduate-level Mathematics and Statistics courses.
-                                    </li>
+                                    <li>Maven Analytics Power BI Desktop Course (Udemy)</li>
+                                    <li>Davidson College Power BI Specialization (Udemy)</li>
+                                    <li>Goodly DAX &amp; Data Modeling by Chandeep Chhabra</li>
                                 </ul>
+                            </li>
+                            <li>
+                                <strong>Google Data Analytics Professional Certificate</strong> (Coursera / Google)
+                            </li>
+                            <li>
+                                <strong>Python for Everybody Specialization</strong> (Coursera / University of Michigan)
                             </li>
                         </ul>
 
-                        <h3>Certifications</h3>
-                        <ul>
-                            <li>
-                                <strong>Microsoft Power BI:</strong>
-                                <ul>
-                                    <li>Udemy course by Maven Analytics</li>
-                                    <li>Udemy course by Davidson College</li>
-                                    <li>Goodly course by Chandeep Chhabra</li>
-                                </ul>
-                            </li>
-                            <li>
-                                <strong>Google Data Analytics Professional Certificate:</strong>
-                                <ul>
-                                    <li>Coursera course by Google Team</li>
-                                </ul>
-                            </li>
-                            <li>
-                                <strong>Python for Everybody:</strong>
-                                <ul>
-                                    <li>Coursera course by University of Michigan</li>
-                                </ul>
-                            </li>
-                        </ul>
+                        <a href="uploads/power Bi certificate.jpg" class="sim-btn btn-hover-new" data-text="Power BI Certificate" target="_blank"><span>View Power BI Certificate</span></a>
+                        <a href="uploads/Coursera 427R7U4WYWQB.pdf" class="sim-btn btn-hover-new" data-text="Google Certificate" target="_blank"><span>View Google Certificate</span></a>
+                        <a href="uploads/Coursera 6LV4XPJ9JMTP.pdf" class="sim-btn btn-hover-new" data-text="Python Certificate" target="_blank"><span>View Python Certificate</span></a>
+                        <a href="uploads/honorday.jpg" class="sim-btn btn-hover-new" data-text="SIUE Honors Day" target="_blank"><span>View Honors Photo</span></a>
+                        <a href="uploads/try video.mp4" class="sim-btn btn-hover-new" data-text="Award Video" target="_blank"><span>View Award Video</span></a>
 
-                        <a href="uploads/power Bi certificate.jpg" class="sim-btn btn-hover-new" data-text="View Google Certificates" target="_blank" ><span>View Power BI Certificate</span></a>
-                        <a href="uploads/Coursera 427R7U4WYWQB.pdf" class="sim-btn btn-hover-new" data-text="View Google Certificates" target="_blank" ><span>View Google Certificates</span></a>
-                        <a href="uploads/Coursera 6LV4XPJ9JMTP.pdf" class="sim-btn btn-hover-new" data-text="View Python specialization Certificates" target="_blank" ><span>View Python Certificates</span></a>
-                        <a href="uploads/honorday.jpg" class="sim-btn btn-hover-new" data-text="View Adwards" target="_blank" ><span>View Awards</span></a>
-                        <a href="uploads/try video.mp4" class="sim-btn btn-hover-new" data-text="View Adwards" target="_blank" ><span>View video</span></a>
-
-                    </div><!-- end messagebox -->
-                </div><!-- end col -->
+                    </div>
+                </div>
 
                 <div class="col-md-6">
                     <div class="right-box-pro wow fadeIn">
-                        <img src="uploads/award holding photo.jpg" alt="" class="img-fluid img-rounded">
-                    </div><!-- end media -->
-                </div><!-- end col -->
-            </div><!-- end row -->
-        </div><!-- end container -->
-    </div><!-- end section -->
+                        <img src="uploads/award holding photo.jpg" alt="Sagar Kalauni Holding SIUE Honors Awards" class="img-fluid img-rounded">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-
+    <!-- TECHNICAL PROFICIENCY & PROJECTS GALLERY -->
     <div id="services" class="section lb">
         <div class="container">
             <div class="section-title text-left">
-                <h3>What I can Do..</h3>
-                <p>I find myself enjoying working on these topic -</p>
-            </div><!-- end title -->
-
-            <div class="col-md-6 col-xs-11 wow fadeInRight" data-wow-delay="0.9s">
-                <span class="text-top">Data Analytics</span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                    </div>
-                <span>Data Science</span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                    </div>
-                <span>Machine Learning</span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                    </div>
-                    <span>SQL</span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                    </div>
-                    <span>R</span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                    </div>
-                    <span>Power BI</span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                    </div>
-                    <span>Excel</span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                    </div>
-                    <span>Python</span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                    </div>
-                    <span>Tableau</span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                    </div>
-                <span>Statistics</span>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
-                    </div>
+                <h3>Core Technical Proficiencies</h3>
+                <p>End-to-end expertise across statistical computing, machine learning, database engineering, and executive BI storytelling.</p>
             </div>
 
-            <div id="portfolio" class="section lb">
+            <div class="row">
+                <div class="col-md-6 col-xs-12 wow fadeInRight" data-wow-delay="0.3s">
+                    <span class="text-top">Machine Learning &amp; Predictive Modeling (Python / Scikit-Learn)</span>
+                    <div class="progress"><div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%;"></div></div>
+                    <span>Statistical Inference, Regression &amp; Time Series (R / RStudio / SAS)</span>
+                    <div class="progress"><div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%;"></div></div>
+                    <span>SQL Database Querying &amp; ETL (Oracle / SQLite / PostgreSQL)</span>
+                    <div class="progress"><div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%;"></div></div>
+                    <span>Power BI, DAX &amp; Power Query (M Language)</span>
+                    <div class="progress"><div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%;"></div></div>
+                    <span>Tableau, Advanced Excel &amp; Arena Simulation Modeling</span>
+                    <div class="progress"><div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%;"></div></div>
+                </div>
+                <div class="col-md-6 col-xs-12 wow fadeInRight" data-wow-delay="0.5s">
+                    <span class="text-top">Curriculum Design, LaTeX / Beamer &amp; Interactive D3.js Pedagogy</span>
+                    <div class="progress"><div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%;"></div></div>
+                    <span>Imbalanced &amp; Rare-Event Data Modeling (SMOTE / Bias Correction)</span>
+                    <div class="progress"><div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%;"></div></div>
+                    <span>Operations Research &amp; Warehouse Inventory Optimization (IBM Maximo)</span>
+                    <div class="progress"><div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%;"></div></div>
+                    <span>Multidisciplinary Research &amp; Biometrics Analysis</span>
+                    <div class="progress"><div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%;"></div></div>
+                    <span>Academic Advising &amp; Student Mentorship</span>
+                    <div class="progress"><div class="progress-bar progress-bar-danger" role="progressbar" style="width: 100%;"></div></div>
+                </div>
+            </div>
+
+            <div id="portfolio" class="section lb" style="padding-top: 50px;">
                 <div class="container">
                     <div class="section-title text-left">
-                        <h3>Portfolio</h3>
-                        <!-- <p>Comprises of Academic and others</p>-->
-                    </div><!-- end title -->
-                    <div class="section-title">
-                        <h2>Academic and non-academic</h2>
-                        <p>These are the projects I have worked on and gained experience on. Some of them are academic and some are non-academic</p>
+                        <h3>Selected Academic, Research &amp; Analytics Artifacts</h3>
+                        <p>Explore reports, graduate lecture notes, Kaggle notebooks, and case studies.</p>
                     </div>
                     <div class="gallery-menu row">
                         <div class="col-md-12">
                             <div class="button-group filter-button-group text-left">
                                 <button class="active" data-filter="*">All</button>
-                                <button data-filter=".gal_a">Academic</button>
-                                <button data-filter=".gal_b">Non Academic</button>
-                                <!-- <button data-filter=".gal_c">Graphic Design</button> -->
+                                <button data-filter=".gal_a">Academic &amp; Coursework</button>
+                                <button data-filter=".gal_b">Research &amp; Industry Analytics</button>
                             </div>
                         </div>
                     </div>
@@ -457,7 +650,7 @@
                     <div class="gallery-list row">
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Travel Insurance.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Travel Insurance.png" class="img-fluid" alt="Travel Insurance Prediction">
                                 <div class="img-overlay">
                                     <a href="uploads/Machine-learning-project.pdf" class="hoverbutton global-radius"><i>Report</i></a>
                                 </div>
@@ -467,7 +660,7 @@
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Sql madison hospital.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Sql madison hospital.png" class="img-fluid" alt="SQL in Madison Hospital Database">
                                 <div class="img-overlay">
                                     <a href="uploads/Sql for madison hospital database cmis.pdf" class="hoverbutton global-radius"><i>Report</i></a>
                                 </div>
@@ -477,19 +670,19 @@
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/SQL murder mystery.png" class="img-fluid" alt="Github">
+                                <img src="uploads/SQL murder mystery.png" class="img-fluid" alt="SQL City Murder Mystery">
                                 <div class="img-overlay">
                                     <a href="uploads/SQL Murder Mystery.pdf" class="hoverbutton global-radius"><i>Investigation Report</i></a>
                                 </div>
-                                <h4>SQL city murder Mistery</h4>
+                                <h4>SQL City Murder Mystery</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/EFA.png" class="img-fluid" alt="Github">
+                                <img src="uploads/EFA.png" class="img-fluid" alt="EFA in National Marathon Data">
                                 <div class="img-overlay">
-                                    <a href="uploads/EFA Using R Stat 589 .pdf" class="hoverbutton global-radius"><i>Report ppt</i></a>
+                                    <a href="uploads/EFA Using R Stat 589 .pdf" class="hoverbutton global-radius"><i>Report PPT</i></a>
                                 </div>
                                 <h4>EFA in National Marathon Data</h4>
                             </div>
@@ -497,9 +690,9 @@
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/py4.png" class="img-fluid" alt="Github">
+                                <img src="uploads/py4.png" class="img-fluid" alt="Python for Everybody">
                                 <div class="img-overlay">
-                                    <a href="uploads/p4E for LWF.pdf" class="hoverbutton global-radius"><i>Report ppt</i></a>
+                                    <a href="uploads/p4E for LWF.pdf" class="hoverbutton global-radius"><i>Report PPT</i></a>
                                 </div>
                                 <h4>Python for Everybody</h4>
                             </div>
@@ -507,7 +700,7 @@
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Treadmil problem.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Treadmil problem.png" class="img-fluid" alt="Cardio Good Fitness">
                                 <div class="img-overlay">
                                     <a href="https://www.kaggle.com/code/sagarkalauni/cardio-good-fitness-the-treadmill-problem" class="hoverbutton global-radius"><i>KAGGLE</i></a>
                                 </div>
@@ -517,478 +710,244 @@
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Courses and HW/Foundation of DataScience Notes.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Courses and HW/Foundation of DataScience Notes.png" class="img-fluid" alt="Foundations of Data Science Notes">
                                 <div class="img-overlay">
                                     <a href="uploads/Courses and HW/Stat_560_all_notes.pdf" class="hoverbutton global-radius"><i>Prof. Notes</i></a>
                                 </div>
-                                <h4>Foundation Of DataScience Note SIUe</h4>
+                                <h4>Foundations of Data Science Notes (SIUE)</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Courses and HW/Stat 562 notes.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Courses and HW/Stat 562 notes.png" class="img-fluid" alt="Machine Learning Notes">
                                 <div class="img-overlay">
                                     <a href="uploads/Courses and HW/Machine Learning & Classification.pdf" class="hoverbutton global-radius"><i>Prof. Notes</i></a>
                                 </div>
-                                <h4>Machine Learning & Classification Notes SIUe</h4>
+                                <h4>Machine Learning &amp; Classification Notes (SIUE)</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Courses and HW/Stat 653 Notes.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Courses and HW/Stat 653 Notes.png" class="img-fluid" alt="Predictive Modeling Notes">
                                 <div class="img-overlay">
                                     <a href="uploads/Courses and HW/Predective modeling and Visualization.pdf" class="hoverbutton global-radius"><i>Prof. Notes</i></a>
                                 </div>
-                                <h4>Predective Modeling & Visualization Notes SIUe</h4>
+                                <h4>Predictive Modeling &amp; Visualization Notes (SIUE)</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Courses and HW/Sql notes.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Courses and HW/Sql notes.png" class="img-fluid" alt="Oracle SQL Notes">
                                 <div class="img-overlay">
                                     <a href="uploads/Courses and HW/sql notes.pdf" class="hoverbutton global-radius"><i>Prof. Notes</i></a>
                                 </div>
-                                <h4>Oracle SQL for Business Analytics SIUe Notes</h4>
+                                <h4>Oracle SQL for Business Analytics Notes</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Courses and HW/Stat 560 HW.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Courses and HW/Stat 560 HW.png" class="img-fluid" alt="STAT 560 HW">
                                 <div class="img-overlay">
                                     <a href="uploads/Courses and HW/Foundation of DataScience HW.pdf" class="hoverbutton global-radius"><i>Weekly HW</i></a>
                                 </div>
-                                <h4>HomeWorks- Foundation of DataScience</h4>
+                                <h4>Labs: Foundations of Data Science</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Courses and HW/Stat 562 HW.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Courses and HW/Stat 562 HW.png" class="img-fluid" alt="STAT 562 HW">
                                 <div class="img-overlay">
                                     <a href="uploads/Courses and HW/Stat 562 Machine Learning.pdf" class="hoverbutton global-radius"><i>Weekly HW</i></a>
                                 </div>
-                                <h4>HomeWorks- Machine Learning & Classification</h4>
+                                <h4>Labs: Machine Learning &amp; Classification</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Courses and HW/Stat 563 HW.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Courses and HW/Stat 563 HW.png" class="img-fluid" alt="STAT 563 HW">
                                 <div class="img-overlay">
                                     <a href="uploads/Courses and HW/Stat 563 HW.pdf" class="hoverbutton global-radius"><i>Weekly HW</i></a>
                                 </div>
-                                <h4>HomeWorks- Predective Modeling & Visualization</h4>
+                                <h4>Labs: Predictive Modeling &amp; Visualization</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Courses and HW/SQl hw.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Courses and HW/SQl hw.png" class="img-fluid" alt="SQL Labs">
                                 <div class="img-overlay">
                                     <a href="uploads/Courses and HW/All Sql Labs.pdf" class="hoverbutton global-radius"><i>Weekly HW</i></a>
                                 </div>
-                                <h4>Hw labs: Oracle SQL for Business Analytics</h4>
+                                <h4>Labs: Oracle SQL for Business Analytics</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_a">
                             <div class="gallery-single fix">
-                                <img src="uploads/Walmarts sales data.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Walmarts sales data.png" class="img-fluid" alt="Walmart Sales Power BI">
                                 <div class="img-overlay">
-                                    <a href="uploads/Master's project sagar.pdf" class="hoverbutton global-radius"><i>KAGGLE</i></a>
+                                    <a href="uploads/Master's project sagar.pdf" class="hoverbutton global-radius"><i>Report</i></a>
                                 </div>
-                                <h4>Walmarts Sales data Analysis using PowerBI</h4>
+                                <h4>Walmart Sales Data Analysis using Power BI</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_b">
                             <div class="gallery-single fix">
-                                <img src="uploads/Bike Sharing company.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Bike Sharing company.png" class="img-fluid" alt="Bike Sharing">
                                 <div class="img-overlay">
                                     <a href="https://www.kaggle.com/code/sagarkalauni/google-data-analytics" class="hoverbutton global-radius"><i>KAGGLE</i></a>
                                 </div>
-                                <h4>Bike Sharing Company Data</h4>
+                                <h4>Bike Sharing Company Analytics</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_b">
                             <div class="gallery-single fix">
-                                <img src="uploads/Iphone Sale data.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Iphone Sale data.png" class="img-fluid" alt="iPhone Sales">
                                 <div class="img-overlay">
                                     <a href="https://www.kaggle.com/code/sagarkalauni/iphone-sale-analysis-flipkart" class="hoverbutton global-radius"><i>KAGGLE</i></a>
                                 </div>
-                                <h4>iPhone Sale Flipkart Data</h4>
+                                <h4>iPhone Sales Flipkart Data Analysis</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_b">
                             <div class="gallery-single fix">
-                                <img src="uploads/15 day powerBi.png" class="img-fluid" alt="Github">
+                                <img src="uploads/15 day powerBi.png" class="img-fluid" alt="15 Days 15 Power BI Projects">
                                 <div class="img-overlay">
-                                    <a href="uploads/15 day 15 project PowerBI.pdf" class="hoverbutton global-radius"><i>KAGGLE</i></a>
+                                    <a href="uploads/15 day 15 project PowerBI.pdf" class="hoverbutton global-radius"><i>Portfolio PDF</i></a>
                                 </div>
-                                <h4>15 day 15 powerBI project learning</h4>
+                                <h4>15 Days · 15 Power BI Dashboards</h4>
                             </div>
                         </div>
 
                         <div class="col-md-4 col-sm-6 gallery-grid gal_b">
                             <div class="gallery-single fix">
-                                <img src="uploads/Mreg final.png" class="img-fluid" alt="Github">
+                                <img src="uploads/Mreg final.png" class="img-fluid" alt="University of Michigan MREG">
                                 <div class="img-overlay">
-                                    <a href="https://sites.google.com/umich.edu/mreg-2023/home" class="hoverbutton global-radius"><i>MREG website</i></a>
+                                    <a href="https://sites.google.com/umich.edu/mreg-2023/home" class="hoverbutton global-radius"><i>MREG Website</i></a>
                                 </div>
-                                <h4>Upper Bound for Multiclass Perceptron</h4>
+                                <h4>Mistake Bounds for Multiclass Perceptron (UMich MREG)</h4>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-		<!--
-				<div class="col-md-4 col-sm-6 gallery-grid gal_a gal_c">
-					<div class="gallery-single fix">
-						<img src="uploads/gallery_img-03.jpg" class="img-fluid" alt="Github">
-						<div class="img-overlay">
-							<a href="uploads/gallery_img-03.jpg" data-rel="prettyPhoto[gal]" class="hoverbutton global-radius"><i>Github</i></a>
-						</div>
-					</div>
-				</div>-->
-		<!--		<div class="col-md-4 col-sm-6 gallery-grid gal_a gal_c">
-					<div class="gallery-single fix">
-						<img src="uploads/gallery_img-05.jpg" class="img-fluid" alt="Github">
-						<div class="img-overlay">
-							<a href="https://github.com/IamSagarShrestha/Carbon-FootPrint--Java" class="hoverbutton global-radius"><i>Github</i></a>
-						</div>
-					</div>
-				</div>
-
-			<div class="col-md-4 col-sm-6 gallery-grid gal_c gal_a">
-					<div class="gallery-single fix">
-						<img src="uploads/gallery_img-06.jpg" class="img-fluid" alt="Image">
-						<div class="img-overlay">
-							<a href="uploads/gallery_img-06.jpg" data-rel="prettyPhoto[gal]" class="hoverbutton global-radius"><i class="fa fa-picture-o"></i></a>
-						</div>
-					</div>
-				</div> -->
-			</div>
-			</div>
-		</div>
-	</div>
-
-<!--	 <div id="testimonials" class="section wb">
+    <!-- VOLUNTARY & ACADEMIC REFERENCES -->
+    <div id="Voluntary" class="section wb">
         <div class="container">
-            <div class="section-title text-left">
-                <h3>Testimonials</h3>
-                <p>We thanks for all our awesome testimonials! There are hundreds of our happy customers! </p>
-            </div><!-- end title -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="message-box">
+                        <h2>Leadership, Service &amp; Academic References</h2>
+                        <h3><strong>University &amp; Community Leadership</strong></h3>
+                        <ul>
+                            <li><strong>Southern Illinois University Edwardsville (SIUE):</strong> International Student Welcome &amp; Orientation Leader</li>
+                            <li><strong>Tribhuvan University (SNSC Nepal):</strong> Founding President of the Mathematical Student Club</li>
+                        </ul>
+                        <a href="uploads/voluntary 5.jpeg" class="sim-btn btn-hover-new" data-text="View Certificate" target="_blank"><span>View SIUE Certificate 1</span></a>
+                        <a href="uploads/voluntary 16.jpeg" class="sim-btn btn-hover-new" data-text="View Certificate" target="_blank"><span>View SIUE Certificate 2</span></a>
 
-  <!--          <div class="row">
-                <div class="col-md-12 col-sm-12">
-                    <div class="testi-carousel owl-carousel owl-theme">
-                        <div class="testimonial clearfix">
-                            <div class="desc">
-                                <h3><i class="fa fa-quote-left"></i> Wonderful Support!</h3>
-                                <p class="lead">They have got my project on time with the competition with a sed highly skilled, and experienced & professional team.</p>
+                        <h3 style="margin-top: 28px;"><strong>Academic &amp; Professional References</strong></h3>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="ref-card">
+                                    <h4>Erin Martin, Ph.D.</h4>
+                                    <p style="margin:0; font-size:13px;">Current Supervisor · Lindenwood University<br><a href="mailto:emartin@lindenwood.edu">emartin@lindenwood.edu</a></p>
+                                </div>
                             </div>
-                            <div class="testi-meta">
-                                <img src="uploads/testi_01.png" alt="" class="img-fluid alignleft">
-                                <h4>James Fernando <small>- Manager of Racer</small></h4>
+                            <div class="col-sm-6">
+                                <div class="ref-card">
+                                    <h4>Beidi Qiang, Ph.D.</h4>
+                                    <p style="margin:0; font-size:13px;">Master’s Thesis Supervisor · SIUE<br><a href="mailto:bqiang@siue.edu">bqiang@siue.edu</a></p>
+                                </div>
                             </div>
-                            <!-- end testi-meta -->
- <!--                       </div>
-                        <!-- end testimonial -->
-
- <!--                       <div class="testimonial clearfix">
-                            <div class="desc">
-                                <h3><i class="fa fa-quote-left"></i> Awesome Services!</h3>
-                                <p class="lead">Explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you completed.</p>
+                            <div class="col-sm-6">
+                                <div class="ref-card">
+                                    <h4>Song Foh Chew, Ph.D.</h4>
+                                    <p style="margin:0; font-size:13px;">Master’s Academic Advisor · SIUE<br><a href="mailto:schew@siue.edu">schew@siue.edu</a></p>
+                                </div>
                             </div>
-                            <div class="testi-meta">
-                                <img src="uploads/testi_02.png" alt="" class="img-fluid alignleft">
-                                <h4>Jacques Philips <small>- Designer</small></h4>
+                            <div class="col-sm-6">
+                                <div class="ref-card">
+                                    <h4>Steven Morrese, M.S. &amp; David Dixon, Ph.D.</h4>
+                                    <p style="margin:0; font-size:13px;">Faculty Supervisors · SIUE<br><a href="mailto:smorres@siue.edu">smorres@siue.edu</a> · <a href="mailto:ddixon@siue.edu">ddixon@siue.edu</a></p>
+                                </div>
                             </div>
-                            <!-- end testi-meta -->
- <!--                       </div>
-                        <!-- end testimonial -->
+                        </div>
+                    </div>
+                </div>
 
- <!--                       <div class="testimonial clearfix">
-                            <div class="desc">
-                                <h3><i class="fa fa-quote-left"></i> Great & Talented Team!</h3>
-                                <p class="lead">The master-builder of human happines no one rejects, dislikes avoids pleasure itself, because it is very pursue pleasure. </p>
-                            </div>
-                            <div class="testi-meta">
-                                <img src="uploads/testi_03.png" alt="" class="img-fluid alignleft">
-                                <h4>Venanda Mercy <small>- Newyork City</small></h4>
-                            </div>
-                            <!-- end testi-meta -->
- <!--                       </div>
-  <!--                      <!-- end testimonial -->
-  <!--                      <div class="testimonial clearfix">
-                            <div class="desc">
-                                <h3><i class="fa fa-quote-left"></i> Wonderful Support!</h3>
-                                <p class="lead">They have got my project on time with the competition with a sed highly skilled, and experienced & professional team.</p>
-                            </div>
-                            <div class="testi-meta">
-                                <img src="uploads/testi_01.png" alt="" class="img-fluid alignleft">
-                                <h4>James Fernando <small>- Manager of Racer</small></h4>
-                            </div>
-                            <!-- end testi-meta -->
-  <!--                      </div>
-                        <!-- end testimonial -->
+                <div class="col-md-6">
+                    <div class="right-box-pro wow fadeIn">
+                        <img src="uploads/welcome program.jpg" alt="Leadership & Welcome Event" class="img-fluid img-rounded">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-  <!--                      <div class="testimonial clearfix">
-                            <div class="desc">
-                                <h3><i class="fa fa-quote-left"></i> Awesome Services!</h3>
-                                <p class="lead">Explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you completed.</p>
-                            </div>
-                            <div class="testi-meta">
-                                <img src="uploads/testi_02.png" alt="" class="img-fluid alignleft">
-                                <h4>Jacques Philips <small>- Designer</small></h4>
-                            </div>
-                            <!-- end testi-meta -->
-  <!--                      </div>
-                        <!-- end testimonial -->
-
-  <!--                      <div class="testimonial clearfix">
-                            <div class="desc">
-                                <h3><i class="fa fa-quote-left"></i> Great & Talented Team!</h3>
-                                <p class="lead">The master-builder of human happines no one rejects, dislikes avoids pleasure itself, because it is very pursue pleasure. </p>
-                            </div>
-                            <div class="testi-meta">
-                                <img src="uploads/testi_03.png" alt="" class="img-fluid alignleft">
-                                <h4>Venanda Mercy <small>- Newyork City</small></h4>
-                            </div>
-                            <!-- end testi-meta -->
- <!--                       </div><!-- end testimonial -->
- <!--                   </div><!-- end carousel -->
- <!--               </div><!-- end col -->
- <!--           </div><!-- end row -->
- <!--       </div><!-- end container -->
- <!--   </div><!-- end section -->
-
-<!--	<div id="blog" class="section lb">
-		<div class="container">
-			<div class="section-title text-left">
-                <h3>Blog</h3>
-                <p>Quisque eget nisl id nulla sagittis auctor quis id. Aliquam quis vehicula enim, non aliquam risus.</p>
-            </div><!-- end title -->
-
-<!--			<div class="row">
-				<div class="col-md-4 col-sm-6 col-lg-4">
-					<div class="post-box">
-						<div class="post-thumb">
-							<img src="uploads/blog-01.jpg" class="img-fluid" alt="post-img" />
-							<div class="date">
-								<span>06</span>
-								<span>Aug</span>
-							</div>
-						</div>
-						<div class="post-info">
-							<h4>Quisque auctor lectus interdum nisl accumsan venenatis.</h4>
-							<ul>
-                                <li>by admin</li>
-                                <li>Apr 21, 2018</li>
-                                <li><a href="#"><b> Comments</b></a></li>
-                            </ul>
-							<p>Etiam materials ut mollis tellus, vel posuere nulla. Etiam sit amet massa sodales aliquam at eget quam. Integer ultricies et magna quis.</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4 col-sm-6 col-lg-4">
-					<div class="post-box">
-						<div class="post-thumb">
-							<img src="uploads/blog-02.jpg" class="img-fluid" alt="post-img" />
-							<div class="date">
-								<span>06</span>
-								<span>Aug</span>
-							</div>
-						</div>
-						<div class="post-info">
-							<h4>Quisque auctor lectus interdum nisl accumsan venenatis.</h4>
-							<ul>
-                                <li>by admin</li>
-                                <li>Apr 21, 2018</li>
-                                <li><a href="#"><b> Comments</b></a></li>
-                            </ul>
-							<p>Etiam materials ut mollis tellus, vel posuere nulla. Etiam sit amet massa sodales aliquam at eget quam. Integer ultricies et magna quis.</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-md-4 col-sm-6 col-lg-4">
-					<div class="post-box">
-						<div class="post-thumb">
-							<img src="uploads/blog-03.jpg" class="img-fluid" alt="post-img" />
-							<div class="date">
-								<span>06</span>
-								<span>Aug</span>
-							</div>
-						</div>
-						<div class="post-info">
-							<h4>Quisque auctor lectus interdum nisl accumsan venenatis.</h4>
-							<ul>
-                                <li>by admin</li>
-                                <li>Apr 21, 2018</li>
-                                <li><a href="#"><b> Comments</b></a></li>
-                            </ul>
-							<p>Etiam materials ut mollis tellus, vel posuere nulla. Etiam sit amet massa sodales aliquam at eget quam. Integer ultricies et magna quis.</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-		</div>
-	</div> -->
-  <div id="Voluntary" class="section wb">
-      <div class="container">
-          <div class="row">
-              <div class="col-md-6">
-                  <div class="message-box">
-                      <h2>Voluntary Works</h2>
-                      <h3>SIUe USA</h3>
-                          <ul>
-                             <li><strong>International Student welcome event Jan 5</strong></li>
-                             <li><strong>International Student welcome event Jan 5</strong></li>
-                          </ul>
-
-                      <a href="uploads/voluntary 5.jpeg" class="sim-btn btn-hover-new" data-text="View Welcome event at siue" target="_blank" ><span>View Certificate</span></a>
-                      <a href="uploads/voluntary 16.jpeg" class="sim-btn btn-hover-new" data-text="View welcome event at siue" target="_blank" ><span>View next Certificates</span></a>
-                      <h3>SNSC Nepal</h3>
-                          <ul>
-                             <li><strong>Founder president of Mathematical student club</strong></li>
-                          </ul>
-
-                  </div><!-- end messagebox -->
-              </div><!-- end col -->
-
-              <div class="col-md-6">
-                  <div class="right-box-pro wow fadeIn">
-                      <img src="uploads/welcome program.jpg" alt="" class="img-fluid img-rounded">
-                  </div><!-- end media -->
-              </div><!-- end col -->
-          </div><!-- end row -->
-      </div><!-- end container -->
-  </div><!-- end section -->
-
-
+    <!-- CONTACT SECTION -->
     <div id="Contact Me" class="section db">
         <div class="container">
             <div class="section-title text-left">
                 <h3>Contact Me</h3>
-               <!-- <p>Quisque eget nisl id nulla sagittis auctor quis id. Aliquam quis vehicula enim, non aliquam risus.</p>-->
-            </div><!-- end title -->
-           <div align="center">
-                <a href="https://www.facebook.com/kalaunisagar7/" class="fa fa-facebook" target="_blank"> </a>
-                <a href="https://www.linkedin.com/in/sagarkalauni7/" class="fa fa-linkedin" target="_blank"></a>
-                <p style="color:rgb(37, 37, 105)">Connect via Email at:<br>
-                    <a href="mailto:sagarkalauni7@gmail.com" style="color:white" >Sagar Kalauni</a></p>
-
-
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" align="right">
-
-            <!-- Add font awesome icons -->
-            <div id="wrapper-9cd199b9cc5410cd3b1ad21cab2e54d3">
-                <div id="map-9cd199b9cc5410cd3b1ad21cab2e54d3"></div><script>(function () {
-                var setting = {"height":250,"width":350,"zoom":10,"queryString":"******, Glen Carbon, IL, USA","place_id":"ChIJbefvMj3PD4gRuMPiPYtibww","satellite":false,"centerCoord":[42.026817314312176,-87.75860499999999],"cid":"0xc6f628b3de2c3b8","lang":"en","cityUrl":"/us/il/chicago","cityAnchorText":"Map of Chicago, Illinois, United States","id":"map-9cd199b9cc5410cd3b1ad21cab2e54d3","embed_id":"809999"};
-                var d = document;
-                var s = d.createElement('script');
-                s.src = 'https://1map.com/js/script-for-user.js?embed_id=809999';
-                s.async = true;
-                s.onload = function (e) {
-                  window.OneMap.initMap(setting)
-                };
-                var to = d.getElementsByTagName('script')[0];
-                to.parentNode.insertBefore(s, to);
-              })();</script><a href="https://1map.com/map-embed">1 Map</a>
-
+                <p>Available for academic collaborations, data science consulting, speaking engagements, and student mentorship.</p>
+            </div>
+            <div align="center" style="color: #ffffff;">
+                <p style="font-size: 18px; color: #f8fafc; margin-bottom: 16px;">
+                    <strong>Sagar Kalauni, M.S.</strong><br>
+                    Full-Time Data Science Faculty, Lindenwood University<br>
+                    📍 St. Charles, MO &amp; Glen Carbon, IL | 📞 (618) 917-9128<br>
+                    ✉️ <a href="mailto:analyst.sagar07@gmail.com" style="color: #c5b358; font-weight: bold;">analyst.sagar07@gmail.com</a>
+                </p>
+                <div style="margin-bottom: 24px;">
+                    <a href="https://www.linkedin.com/in/sagarkalauni7/" class="sim-btn btn-hover-new" data-text="LinkedIn" target="_blank"><span>LinkedIn (@sagarkalauni7)</span></a>
+                    <a href="https://github.com/SagarKalauni" class="sim-btn btn-hover-new" data-text="GitHub" target="_blank"><span>GitHub (@SagarKalauni)</span></a>
+                    <a href="https://ml-courses.netlify.app/" class="sim-btn btn-hover-new" data-text="ML Course Portal" target="_blank"><span>ML Course Portal</span></a>
+                </div>
             </div>
         </div>
-
-
-
-
-            <!-- <div class="row">
-                <div class="col-md-12">
-                    <div class="contact_form">
-                        <div id="message"></div>
-                        <form id="contactForm" name="sentMessage" novalidate="novalidate">
-							<div class="row">
-								<div class="col-md-6">
-									<div class="form-group">
-										<input class="form-control" id="name" type="text" placeholder="Your Name" required="required" data-validation-required-message="Please enter your name.">
-										<p class="help-block text-danger"></p>
-									</div>
-									<div class="form-group">
-										<input class="form-control" id="email" type="email" placeholder="Your Email" required="required" data-validation-required-message="Please enter your email address.">
-										<p class="help-block text-danger"></p>
-									</div>
-									<div class="form-group">
-										<input class="form-control" id="phone" type="tel" placeholder="Your Phone" required="required" data-validation-required-message="Please enter your phone number.">
-										<p class="help-block text-danger"></p>
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="form-group">
-										<textarea class="form-control" id="message" placeholder="Your Message" required="required" data-validation-required-message="Please enter a message."></textarea>
-										<p class="help-block text-danger"></p>
-									</div>
-								</div>
-								<div class="clearfix"></div>
-								<div class="col-lg-12 text-center">
-									<div id="success"></div>
-									<button id="sendMessageButton" class="sim-btn btn-hover-new" data-text="Send Message" type="submit" href="mailto:iamSagarshrestha@gmail.com">Send Message</button>
-								</div>
-							</div>
-						</form>
-                    </div>
-                </div><!-- end col -->
-            </div><!-- end row -->
-        </div><!-- end container -->
-    </div><!-- end section -->
-
-
-
-
-
-
-
-
+    </div>
 
     <div class="copyrights">
         <div class="container">
             <div class="footer-distributed">
                 <div class="footer-left">
                     <p class="footer-links">
-                        <a href="#">Home</a>
-                        <!-- <a href="#">Blog</a>
-                        <a href="#">Pricing</a> -->
-                        <a href="#">About</a>
-                        <!-- <a href="#">Faq</a> -->
-                        <a href="#">Contact</a>
+                        <a href="#home">Home</a>
+                        <a href="#about">About</a>
+                        <a href="#Work Experience">Experience</a>
+                        <a href="#interactive-labs">ML Masterclass &amp; Labs</a>
+                        <a href="#Portfolio">Awards</a>
+                        <a href="#Contact Me">Contact</a>
                     </p>
-                    <p class="footer-company-name">All Rights Reserved. &copy; 2024 <a href="#">aaeynimal</a> Design By :
-					<a href="https://html.design/">Sagar Kalauni</a></p>
+                    <p class="footer-company-name">All Rights Reserved. &copy; 2026 <a href="https://sagarkalauni.github.io">Sagar Kalauni, M.S.</a> · Full-Time Data Science Faculty @ Lindenwood University</p>
                 </div>
             </div>
-        </div><!-- end container -->
-    </div><!-- end copyrights -->
+        </div>
+    </div>
 
     <a href="#" id="scroll-to-top" class="dmtop global-radius"><i class="fa fa-angle-up"></i></a>
 
     <!-- ALL JS FILES -->
     <script src="js/all.js"></script>
-	<!-- Camera Slider -->
-	<script src="js/jquery.mobile.customized.min.js"></script>
-	<script src="js/jquery.easing.1.3.js"></script>
-	<script src="js/parallaxie.js"></script>
-	<script src="js/headline.js"></script>
-	<!-- Contact form JavaScript -->
+    <script src="js/jquery.mobile.customized.min.js"></script>
+    <script src="js/jquery.easing.1.3.js"></script>
+    <script src="js/parallaxie.js"></script>
+    <script src="js/headline.js"></script>
     <script src="js/jqBootstrapValidation.js"></script>
     <script src="js/contact_me.js"></script>
-    <!-- ALL PLUGINS -->
     <script src="js/custom.js"></script>
     <script src="js/jquery.vide.js"></script>
 

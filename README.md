@@ -4,6 +4,7 @@
 ### **Full-Time Data Science Faculty @ Lindenwood University | M.S. in Statistics & Operations Research**
 
 [![Visit Live Portfolio](https://img.shields.io/badge/Visit_Portfolio-sagarkalauni.github.io-C5B358?style=for-the-badge&logo=googlechrome&logoColor=black)](https://sagarkalauni.github.io/)
+[![Faculty Directory](https://img.shields.io/badge/Lindenwood_Faculty_Profile-Sagar_Kalauni-000000?style=for-the-badge&logo=academia&logoColor=C5B358)](https://www.lindenwood.edu/about/directories/faculty-staff-directory/details/skalauni/)
 [![ML Course Portal](https://img.shields.io/badge/ML_Masterclass_Portal-ml--courses.netlify.app-00C7B7?style=for-the-badge&logo=netlify&logoColor=black)](https://ml-courses.netlify.app/)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Sagar_Kalauni-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/sagarkalauni7/)
 [![GitHub](https://img.shields.io/badge/GitHub-@SagarKalauni-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/SagarKalauni)
@@ -17,11 +18,11 @@
 This repository hosts the source code for **[sagarkalauni.github.io](https://sagarkalauni.github.io/)**, the official academic and professional portfolio of **Sagar Kalauni, M.S.**
 
 It highlights:
-- **Academic Appointments & Curriculum Innovation** at **Lindenwood University** (*Machine Learning, Time Series Analysis, Regression Analysis, Probability & Mathematical Statistics, R, SQL, and Power BI*).
+- **Academic Appointments & Curriculum Innovation** at **Lindenwood University** ([Official Faculty Directory Profile](https://www.lindenwood.edu/about/directories/faculty-staff-directory/details/skalauni/)) across *Machine Learning, Time Series Analysis, Regression Analysis, Probability & Mathematical Statistics, R, SQL, and Power BI*.
 - **Flagship ML Masterclass Course Portal** — **[ml-courses.netlify.app](https://ml-courses.netlify.app/)** featuring 50+ lectures, 34 chapters of theory & coding practice tests, and interactive ML sandboxes.
 - **Interactive Pedagogical Software Suite** — 16+ D3.js and MathJax interactive machine learning and statistical visualizers used in university coursework.
 - **Research Publications & Theses** — Rare-event classification with SMOTE & finite sample correction (SIUE), Multiclass Perceptron mistake bounds (University of Michigan MREG), *Setaria viridis* hormone regression modeling, and Matrix Cryptography.
-- **Industry Data Analytics Impact** — Operations and Business Data Analysis across AllianceTel, Royal Cellular Inc., and Prairie State Generating Company ($46.9M inventory optimization).
+- **Industry Data Analytics Impact** — Business Data Analysis at Prairie State Generating Company ($46.9M inventory optimization and 99% dashboard tracking efficiency).
 
 ---
 
@@ -38,10 +39,10 @@ SagarKalauni.github.io/
 
 ---
 
-## 📬 Contact
+## 📬 Contact & Official Links
 
-- **Email:** [analyst.sagar07@gmail.com](mailto:analyst.sagar07@gmail.com)
+- **Lindenwood Faculty Directory:** [https://www.lindenwood.edu/about/directories/faculty-staff-directory/details/skalauni/](https://www.lindenwood.edu/about/directories/faculty-staff-directory/details/skalauni/)
 - **Portfolio:** [https://sagarkalauni.github.io](https://sagarkalauni.github.io)
 - **ML Course Portal:** [https://ml-courses.netlify.app/](https://ml-courses.netlify.app/)
 - **LinkedIn:** [https://www.linkedin.com/in/sagarkalauni7/](https://www.linkedin.com/in/sagarkalauni7/)
-- **Institution:** Lindenwood University, St. Charles, MO
+- **Email:** [analyst.sagar07@gmail.com](mailto:analyst.sagar07@gmail.com)
